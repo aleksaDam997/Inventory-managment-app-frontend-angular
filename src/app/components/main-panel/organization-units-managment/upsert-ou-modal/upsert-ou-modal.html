@@ -1,0 +1,72 @@
+<div class="modal fade" tabindex="-1" [ngClass]="{'show': show}" [ngStyle]="{'display': show ? 'block' : 'none'}" (click)="onBackdropClick()">
+  <div class="modal-dialog modal-xl" (click)="onDialogClick($event)">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ title }}</h5>
+        <button type="button" class="btn-close" (click)="close()"></button>
+      </div>
+      <div class="modal-body bg-light">
+
+        
+        <form [formGroup]="orgUnitForm" (ngSubmit)="onSubmit()" novalidate>
+
+            @if (companies && companies.length > 1) {
+            <div class="mb-3 me-1 w-50">
+              <label for="companyId" class="form-label">Firma</label>
+              <select
+              id="companyId"
+              class="form-select"
+              formControlName="companyId"
+              [ngClass]="{ 'is-invalid': submitted && orgUnitForm.get('companyId')?.['invalid'] }"
+              >
+              <option value="" disabled selected>Izaberi firmu</option>
+              <option *ngFor="let c of companies" [value]="c.companyId">{{ c.name }}</option>
+              </select>
+              <div *ngIf="submitted && orgUnitForm.get('companyId')?.errors" class="invalid-feedback">
+              <div *ngIf="orgUnitForm.get('companyId')?.errors?.['required']">Firma je obavezna.</div>
+              </div>
+            </div>
+          }
+
+          <div class="mb-3">
+            <label for="name" class="form-label">Naziv Filijale</label>
+            <input
+            type="text"
+            id="name"
+            class="form-control"
+            formControlName="name"
+            [ngClass]="{ 'is-invalid': submitted && orgUnitForm.get('name')?.invalid }"
+            placeholder="Unesite naziv filijale"
+            />
+            <div *ngIf="submitted && orgUnitForm.get('name')?.errors" class="invalid-feedback">
+            <div *ngIf="orgUnitForm.get('name')?.errors?.['required']">Naziv filijale je obavezan.</div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="code" class="form-label">Šifra organizacione jedinice</label>
+            <input
+            type="text"
+            id="code"
+            class="form-control"
+            formControlName="code"
+            [ngClass]="{ 'is-invalid': submitted && orgUnitForm.get('code')?.['invalid'] }"
+            placeholder="Unesite šifru organizacione jedinice"
+            />
+            <div *ngIf="submitted && orgUnitForm.get('code')?.errors" class="invalid-feedback">
+            <div *ngIf="orgUnitForm.get('code')?.errors?.['required']">Šifra organizacione jedinice je obavezna.</div>
+            <div *ngIf="orgUnitForm.get('code')?.errors?.['code']">Šifra organizacione jedinice nije validna.</div>
+            </div>
+          </div>
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="close()">Zatvori</button>
+        <button type="submit" class="btn btn-primary" (click)="onSubmit()">Potvrdi</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop fade" [ngClass]="{'show': show}" *ngIf="show"></div>

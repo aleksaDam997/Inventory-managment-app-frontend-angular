@@ -1,0 +1,92 @@
+<nav class="navbar navbar-expand-sm navbar-light bg-light">
+  <div class="container-fluid">
+
+    <!-- Brand (skriven ispod 576 px) -->
+    <a class="navbar-brand d-none d-sm-flex" routerLink="/">
+      <img src="logo.png"
+           alt="Logo"
+           class="d-inline-block align-text-top ms-5 logo">
+    </a>
+
+    <!-- Hamburger – jedini vidljiv na xs -->
+    <button class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Sadržaj koji se otvara klikom na hamburger -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link"
+             [routerLinkActive]="'highlighted'"
+             routerLink="/news">Početna</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link"
+             [routerLinkActive]="'highlighted'"
+             routerLink="/control-panel">Kontakt</a>
+        </li>
+
+      </ul>
+
+      <!-- Ikonice dropdown‑ova (skrivene ispod 576 px) -->
+      <div class="d-flex">
+
+        <div class="dropdown mx-2 d-none d-sm-block">
+          <a class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle"
+             id="dropdownNotification"
+             data-bs-toggle="dropdown"
+             aria-expanded="false">
+            <i class="bi bi-bell fs-4"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end text-small shadow"
+              aria-labelledby="dropdownNotification">
+            <li><a class="dropdown-item" href="#">Proces proslijedjen...</a></li>
+            <li><a class="dropdown-item" href="#">Proces dodjeljen...</a></li>
+            <li><a class="dropdown-item" href="#">Sarma</a></li>
+
+          </ul>
+        </div>
+
+        <div class="dropdown mx-2 d-none d-sm-block">
+          <a class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle"
+             id="dropdownMenu"
+             data-bs-toggle="dropdown"
+             aria-expanded="false">
+            <i class="bi bi-filter-square fs-4"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end text-small shadow"
+              aria-labelledby="dropdownMenu">
+            <li><a class="dropdown-item" href="#">So</a></li>
+            <li><a class="dropdown-item" href="#">Biber</a></li>
+
+          </ul>
+        </div>
+
+        <div class="dropdown mx-2 d-none d-sm-block">
+          <a class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle"
+             id="dropdownUser2"
+             data-bs-toggle="dropdown"
+             aria-expanded="false">
+            <i class="bi bi-person fs-4"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end text-small shadow"
+              aria-labelledby="dropdownUser2">
+            <li><a class="dropdown-item" href="#">Podesavanja</a></li>
+            <li><a class="dropdown-item" href="#">Profil</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#">Sign out</a></li>
+          </ul>
+        </div>
+
+      </div><!-- /d-flex -->
+    </div><!-- /collapse -->
+  </div><!-- /container-fluid -->
+</nav>

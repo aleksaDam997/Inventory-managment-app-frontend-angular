@@ -1,0 +1,114 @@
+<div class="bg-white shadow-sm p-3 rounded mb-4 text-center text-md-start">
+  <h2>Menadžment korisnika 🎉</h2>
+  <p>Ovdje možete pratiti sve korisnike i njihove uloge.</p>
+</div>
+
+<form class="row g-3 align-items-end" [formGroup]="userFilterForm" (ngSubmit)="onFilterSubmit()">
+
+  <div class="col-12 col-md-3">
+    <input class="form-control" type="search" placeholder="Pretraži" aria-label="Search" formControlName="inputText">
+  </div>
+
+  @if(role === 'ADMIN') {
+    <div class="col-12 col-md-2">
+      <label for="roleSelect" class="form-label">Uloga</label>
+      <select id="roleSelect" class="form-select" formControlName="role" required>
+      <!-- <option value="" disabled selected hidden>Sve uloge</option> -->
+        <option value="" selected>Sve uloge</option>
+        <option value="ADMIN">ADMIN</option>
+        <option value="EDITOR">EDITOR</option>
+        <option value="USER">USER</option>
+      </select>
+    </div>
+  }
+
+  @if(role === 'ADMIN') {
+    <div class="col-12 col-md-2">
+      <label for="companySelected" class="form-label">Firma</label>
+      <select id="companySelected" class="form-select" formControlName="companyId" required>
+        <option value="0" selected>Sve firme</option>
+        <option *ngFor="let company of companies" [value]="company.companyId">{{ company.name }}</option>
+      </select>
+    </div>
+  }
+
+  @if(userFilterForm.get('companyId')?.value) {
+    <div class="col-12 col-md-2">
+      <label for="orgUnitSelected" class="form-label">Filijala</label>
+      <select id="orgUnitSelected" class="form-select" formControlName="orgUnitId">
+        <option value="0" selected>Sve filijale</option>
+        <option *ngFor="let orgUnit of getOrgUnitsByCompanyId(userFilterForm.get('companyId')?.value)" [value]="orgUnit.orgUnitId">{{ orgUnit.name }}</option>
+      </select>
+    </div>
+  }
+
+  <div class="col-12 col-md-1 d-flex align-items-center mt-2 mt-md-0">
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" id="flexCheckDefault" formControlName="isActive">
+      <label class="form-check-label" for="flexCheckDefault">Aktivan</label>
+    </div>
+  </div>
+
+  <div class="col-12 col-md-2">
+    <button class="btn btn-outline-success w-100" type="submit">Filtriraj</button>
+  </div>
+
+  <div class="col-12 col-md-2 ms-auto">
+    <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#myModal" (click)="openCreateUserModal()">Dodaj korisnika</button>
+  </div>
+</form>
+
+<div class="table-responsive mt-3">
+  <table class="table table-borderless text-center">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Ime</th>
+        <th>Prezime</th>
+        <th>Korisničko ime</th>
+        <th>Email</th>
+        <th>Firma</th>
+        <th>Filijala</th>
+        <th>Uloga</th>
+        <th>Aktivan</th>
+        <th>Akcija</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <th scope="row">{{ user.userId }}</th>
+        <td>{{ user.firstName }}</td>
+        <td>{{ user.lastName }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ getCompanyName(user.companyId) }}</td>
+        <td>{{ getOrgUnitName(user.companyId, user.orgUnitId) }}</td>
+        <td>
+          <span class="role-tag" [ngClass]="user.role.toLowerCase().replace(' ', '-')">{{ user.role }}</span>
+        </td>
+        <td [ngClass]="{'text-success': user.isActive, 'text-danger': !user.isActive}">
+          {{ user.isActive ? 'Da' : 'Ne' }}
+        </td>
+        <td>
+          <button class="btn btn-sm btn-outline-primary me-2" (click)="openUpdateUserModal(user)">
+            <i class="bi bi-pencil"></i>
+          </button>
+          <button class="btn btn-sm btn-outline-danger">
+            <i class="bi bi-trash"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<app-upsert-user-modal
+  [show]="showModal"
+  [isCreateUserModal]="isCreateUserModal"
+  [companies]="companies"
+  (closed)="closeModal()"
+  (confirmed)="confirmModal($event)"
+  [userForm]="userForm"
+>
+  <p>Ovo je sadržaj modala unutar ng-content!</p>
+</app-upsert-user-modal>

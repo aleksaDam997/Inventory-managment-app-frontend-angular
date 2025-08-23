@@ -1,0 +1,77 @@
+<div class="modal fade" [ngClass]="{'show': show}" [ngStyle]="{'display': show ? 'block' : 'none'}" (click)="onBackdropClick()">
+  <div class="modal-dialog modal-lg" (click)="onDialogClick($event)">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ title }}</h5>
+        <button type="button" class="btn-close" (click)="close()"></button>
+      </div>
+      <div class="modal-body bg-light">
+
+        
+        <form [formGroup]="productForm" (ngSubmit)="onSubmit()" novalidate>
+
+          
+            @if (companies && companies.length > 1) {
+              <div class="mb-3 me-1 w-50">
+                <label for="companyId" class="form-label">Firma</label>
+                <select
+                id="companyId"
+                class="form-select"
+                formControlName="companyId"
+                [ngClass]="{ 'is-invalid': submitted && productForm.get('companyId')?.['invalid'] }"
+                >
+                <option value="" disabled selected>Izaberi firmu</option>
+                <option *ngFor="let c of companies" [value]="c.companyId">{{ c.name }}</option>
+                </select>
+                <div *ngIf="submitted && productForm.get('companyId')?.errors" class="invalid-feedback">
+                <div *ngIf="productForm.get('companyId')?.errors?.['required']">Firma je obavezna.</div>
+                </div>
+              </div>
+            }
+
+            <div class="mb-3 me-1">
+                <label for="name" class="form-label">Naziv</label>
+                <input
+                type="text"
+                id="name"
+                class="form-control"
+                formControlName="name"
+                [ngClass]="{ 'is-invalid': submitted && productForm.get('name')?.invalid }"
+                placeholder="Unesite naziv proizvoda"
+                />
+                <div *ngIf="submitted && productForm.get('name')?.errors" class="invalid-feedback">
+                <div *ngIf="productForm.get('name')?.errors?.['required']">Naziv proizvoda je obavezan.</div>
+                </div>
+            </div>
+
+
+
+            <div class="mb-3 w-50">
+                <label for="price" class="form-label">Cijena</label>
+                <input
+                type="number"
+                id="price"
+                class="form-control"
+                formControlName="price"
+                [ngClass]="{ 'is-invalid': submitted && productForm.get('price')?.['invalid'] }"
+                placeholder="Unesite cijenu"
+                />
+                <div *ngIf="submitted && productForm.get('price')?.errors" class="invalid-feedback">
+                <div *ngIf="productForm.get('price')?.errors?.['required']">Cijena je obavezna.</div>
+                <div *ngIf="productForm.get('price')?.errors?.['price']">Cijena nije validna.</div>
+                </div>
+            </div>
+
+
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="close()">Zatvori</button>
+        <button type="submit" class="btn btn-primary" (click)="onSubmit()">Potvrdi</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop fade" [ngClass]="{'show': show}" *ngIf="show"></div>

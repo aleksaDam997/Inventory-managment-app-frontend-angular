@@ -1,0 +1,26 @@
+.role-tag {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 900; /* ultra bold */
+  letter-spacing: 0.2px;
+}
+
+.role-tag.admin {
+  background-color: #C1F5C1;
+  color: #168D16;
+  border: 2px solid #168D16;
+}
+
+.role-tag.editor {
+  background-color: #D1E8FF; /* svijetlo plava */
+  color: #004085;
+  border: 2px solid #004085;
+}
+
+.role-tag.user {
+  background-color: #CBC3E3;
+  color: #6952AD;
+  border: 2px solid #6952AD;
+}
