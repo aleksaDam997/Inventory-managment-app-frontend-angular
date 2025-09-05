@@ -41,7 +41,13 @@ loginForm: FormGroup;
             }
 
             this.authService.setUserData(loginResponse);
-            this.router.navigate(['/app']);
+
+            if(loginResponse.role === 'ADMIN' || loginResponse.role === 'EDITOR') {
+              this.router.navigate(['/app']);
+            }else if(loginResponse.role === 'USER') {
+              this.router.navigate(['/app/inventory-managment']);
+            }
+
           }
           
         },

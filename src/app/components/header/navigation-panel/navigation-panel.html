@@ -10,11 +10,6 @@
     </div>
     <hr>
    <ul class="nav nav-pills flex-column mb-auto">
-      <li class="nav-item">
-        <a routerLink="user-managment" routerLinkActive="active" class="nav-link" [routerLinkActiveOptions]="{ exact: true }">
-          <i class="bi bi-person-gear"></i> <span *ngIf="!sidebarCollapsed"> Menadžment korisnika</span>
-        </a>
-      </li>
       <li>
         <a routerLink="companies-managment" routerLinkActive="active" class="nav-link">
           <i class="bi bi-buildings"></i> <span *ngIf="!sidebarCollapsed"> Menadžment firmi</span>
@@ -23,6 +18,11 @@
       <li>
         <a routerLink="organization-units-managment" routerLinkActive="active" class="nav-link">
           <i class="bi bi-book"></i> <span *ngIf="!sidebarCollapsed"> Menadžment organizacionih jedinica</span>
+        </a>
+      </li>
+            <li class="nav-item">
+        <a routerLink="user-managment" routerLinkActive="active" class="nav-link" [routerLinkActiveOptions]="{ exact: true }">
+          <i class="bi bi-person-gear"></i> <span *ngIf="!sidebarCollapsed"> Menadžment korisnika</span>
         </a>
       </li>
       <li>

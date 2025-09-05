@@ -5,7 +5,6 @@ import { CreateApiResponse } from '../../../models/response.models';
 import { UserRole } from '../../../models/user.model';
 import { AuthService } from '../../../services/auth.service';
 import { CompanyManagmentService } from '../../../services/company.managment.service';
-import { OrgUnitsManagmentService } from '../../../services/org_units.managment.service';
 import { CommonModule } from '@angular/common';
 import { UpsertPriceListModal } from './upsert-price-list-modal/upsert-price-list-modal';
 import { ProductService } from '../../../services/product.service';

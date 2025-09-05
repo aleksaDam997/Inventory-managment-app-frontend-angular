@@ -41,7 +41,7 @@ export class OrganizationUnitsManagment implements OnInit{
       orgUnitId: new FormControl(null),
       name: new FormControl(''),
       code: new FormControl(''),
-      companyId: new FormControl(null)
+      companyId: new FormControl(0)
       
     });
 
@@ -78,7 +78,7 @@ export class OrganizationUnitsManagment implements OnInit{
       orgUnitId: null,
       name: '',
       code: '',
-      companyId: null
+      companyId: 0
     });
 
     this.modalTitle = 'Dodaj novu organizacionu jedinicu';

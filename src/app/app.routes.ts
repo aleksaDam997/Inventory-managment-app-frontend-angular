@@ -18,8 +18,8 @@ export const routes: Routes = [
         { path: 'companies-managment', component: CompaniesManagment, canActivate: [RoleGuard], data: { roles: ['ADMIN'] } },
         { path: 'organization-units-managment', component: OrganizationUnitsManagment, canActivate: [RoleGuard], data: { roles: ['ADMIN', 'EDITOR'] } },
         { path: 'price-list', component: PriceList, canActivate: [RoleGuard], data: { roles: ['ADMIN', 'EDITOR'] } },
-        { path: 'inventory-managment', component: InventoryManagment, canActivate: [RoleGuard], data: { roles: ['ADMIN', 'EDITOR'] } },
-        { path: 'graphs', component: Graphs, canActivate: [RoleGuard], data: { roles: ['ADMIN'] } },
+        { path: 'inventory-managment', component: InventoryManagment, canActivate: [RoleGuard], data: { roles: ['ADMIN', 'EDITOR', 'USER'] } },
+        { path: 'graphs', component: Graphs, canActivate: [RoleGuard], data: { roles: ['ADMIN', 'EDITOR', 'USER'] } },
         { path: '', redirectTo: 'user-managment', pathMatch: 'full' } 
     ]}
 

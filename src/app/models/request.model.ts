@@ -1,3 +1,4 @@
+import { OrderStatus } from "./models";
 import { UserRole } from "./user.model";
 
 export interface LoginRequestModel {
@@ -37,4 +38,34 @@ export interface CompanyRequest {
   country?: string;
   email?: string;
   website?: string;
+}
+
+export interface CreateOrgUnit {
+  orgUnitId: number | undefined | null;
+  name: string | undefined;
+  code: string | undefined;
+  companyId: number | null | undefined;
+}
+
+export interface CreateProduct {
+  productId: number;
+  name: string;
+  price: string;
+  description: string | undefined;
+  companyId: number | null;
+}
+
+export interface CreateOrderRequest {
+  orderId: number | undefined
+  productId: number | undefined;
+  quantity: number | undefined;
+  status: OrderStatus | undefined;
+}
+
+export interface OrderFilterRequest {
+  startDate: Date | null;
+  endDate: Date | null;
+  status: OrderStatus | null;
+  companyId: number | null;
+  orgUnitId: number | null;
 }

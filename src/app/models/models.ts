@@ -33,3 +33,22 @@ export interface Product {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface Order {
+  orderId: number;
+  userId: number | undefined;
+  productId: number | undefined;
+  status: OrderStatus;
+  quantity: number | undefined;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// export type OrderStatus = 'PENDING' | 'CHANGED' | 'APPROVED' | 'COMPLETED';
+
+export enum OrderStatus {
+  PENDING = 'PENDING',
+  CHANGED = 'CHANGED',
+  APPROVED = 'APPROVED',
+  COMPLETED = 'COMPLETED',
+}

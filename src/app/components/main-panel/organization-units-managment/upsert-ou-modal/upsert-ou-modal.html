@@ -9,7 +9,6 @@
 
         
         <form [formGroup]="orgUnitForm" (ngSubmit)="onSubmit()" novalidate>
-
             @if (companies && companies.length > 1) {
             <div class="mb-3 me-1 w-50">
               <label for="companyId" class="form-label">Firma</label>
@@ -19,7 +18,7 @@
               formControlName="companyId"
               [ngClass]="{ 'is-invalid': submitted && orgUnitForm.get('companyId')?.['invalid'] }"
               >
-              <option value="" disabled selected>Izaberi firmu</option>
+              <option value="0" disabled selected>Izaberi firmu</option>
               <option *ngFor="let c of companies" [value]="c.companyId">{{ c.name }}</option>
               </select>
               <div *ngIf="submitted && orgUnitForm.get('companyId')?.errors" class="invalid-feedback">

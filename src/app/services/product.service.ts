@@ -5,6 +5,7 @@ import { Product } from '../models/models';
 import { environment } from '../../environments/environment';
 import { CreateApiResponse } from '../models/response.models';
 import { AuthService } from './auth.service';
+import { CreateProduct } from '../models/request.model';
 // import * as CryptoJS from 'crypto-js';
 
 @Injectable({
@@ -18,7 +19,7 @@ getAllProducts(): Observable<Product[]> {
 
     const token = this.authService.getAccessToken();
 
-    return this.http.get<Product[]>(environment.apiUrl + '/protected/get-all-products', {
+    return this.http.get<Product[]>(environment.apiUrl + '/base/get-all-products', {
     headers: {
         Authorization: `Bearer ${token}`
     }
@@ -39,20 +40,20 @@ getProductsByCompanyId(companyId: number): Observable<Product[]> {
 }
 
 
-createNewProduct(product: Product): Observable<CreateApiResponse<Product>> {
+createNewProduct(product: CreateProduct): Observable<CreateApiResponse<Product>> {
 
     const token = this.authService.getAccessToken();
 
-    return this.http.post<CreateApiResponse<Product>>(environment.apiUrl + '/create-product', product, {
+    return this.http.post<CreateApiResponse<Product>>(environment.apiUrl + '/protected/create-product', product, {
             headers: {
               Authorization: `Bearer ${token}`
             }
           });
 }
 
-updateProduct(product: Product): Observable<CreateApiResponse<Product>> {
+updateProduct(product: CreateProduct): Observable<CreateApiResponse<Product>> {
     const token = this.authService.getAccessToken();
-    return this.http.put<CreateApiResponse<Product>>(environment.apiUrl + '/update-product', product, {
+    return this.http.put<CreateApiResponse<Product>>(environment.apiUrl + '/protected/update-product', product, {
             headers: {
               Authorization: `Bearer ${token}`
             }
@@ -61,7 +62,7 @@ updateProduct(product: Product): Observable<CreateApiResponse<Product>> {
 
 deleteProduct(productId: number): Observable<CreateApiResponse<Product>> {
     const token = this.authService.getAccessToken();
-    return this.http.delete<CreateApiResponse<Product>>(environment.apiUrl + '/delete-product-by-id/' + productId, {
+    return this.http.delete<CreateApiResponse<Product>>(environment.apiUrl + '/protected/delete-product-by-id/' + productId, {
             headers: {
               Authorization: `Bearer ${token}`
             }

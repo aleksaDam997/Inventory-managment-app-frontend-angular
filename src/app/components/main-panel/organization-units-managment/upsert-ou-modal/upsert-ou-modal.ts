@@ -5,6 +5,7 @@ import { CreateApiResponse } from '../../../../models/response.models';
 import { OrgUnitsManagmentService } from '../../../../services/org_units.managment.service';
 import { Company, OrgUnit } from '../../../../models/models';
 import { UpsertOrgUnitForm } from '../../../../models/form.models';
+import { CreateOrgUnit } from '../../../../models/request.model';
 
 @Component({
   selector: 'app-upsert-ou-modal',
@@ -30,9 +31,24 @@ export class UpsertOuModal {
 
   constructor(private orgUnitsManagmentService: OrgUnitsManagmentService) {}  
     
-  close() {
+close() {
+  // Dodaj fade-out pre stvarnog uklanjanja sa DOM-a
+  const modal = document.querySelector('.modal-wrapper') as HTMLElement;
+  const backdrop = document.querySelector('.backdrop') as HTMLElement;
+
+  if (modal && backdrop) {
+    modal.style.animation = 'fadeOut 0.2s forwards';
+    backdrop.style.animation = 'fadeOut 0.2s forwards';
+    setTimeout(() => {
+      this.show = false;
+      this.closed.emit();
+    }, 200);
+  } else {
+    this.show = false;
     this.closed.emit();
   }
+}
+
 
   confirm(data: CreateApiResponse<OrgUnit>) {
     this.confirmed.emit(data);
@@ -47,7 +63,33 @@ export class UpsertOuModal {
   }
 
   onSubmit() {
-    if (this.orgUnitForm.valid) {
+
+    const orgUnitData: CreateOrgUnit = {
+      orgUnitId: this.orgUnitForm.get('orgUnitId')?.value,
+      name: this.orgUnitForm.get('name')?.value,
+      code: this.orgUnitForm.get('code')?.value,
+      companyId: Number(this.orgUnitForm.get('companyId')?.value)
+    };
+
+    if (this.isCreateCompanyModal) {
+
+      this.orgUnitsManagmentService.createNewOrgUnit(orgUnitData).subscribe({
+        next: (response) => {
+          this.confirm(response);
+        },
+        error: (error) => {
+          console.error('Error creating organizational unit:', error);
+        }
+      });
+    }else {
+      this.orgUnitsManagmentService.updateOrgUnit(orgUnitData).subscribe({
+        next: (response) => {
+          this.confirm(response);
+        },
+        error: (error) => {
+          console.error('Error updating organizational unit:', error);
+        }
+      });
     }
   }
 }
