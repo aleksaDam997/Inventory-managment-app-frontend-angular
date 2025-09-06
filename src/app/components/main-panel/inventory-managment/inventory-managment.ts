@@ -23,6 +23,7 @@ import { saveAs } from 'file-saver';
 export class InventoryManagment implements OnInit {
 
   modalRef?: BsModalRef;
+
   @ViewChild('ordersTable', { static: false }) ordersTable!: ElementRef;
 
   isCreateUserModal = false;
@@ -153,9 +154,6 @@ export class InventoryManagment implements OnInit {
     }
   }
 
-  closeModal() {
-    this.modalRef?.hide();
-  }
 
   onFilterSubmit() {
     const orderFilterReq: OrderFilterRequest = {
@@ -171,7 +169,8 @@ export class InventoryManagment implements OnInit {
     });
   }
 
-    downloadExcel() {
+  downloadExcel() {
+    
     const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(this.ordersTable.nativeElement);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
@@ -181,9 +180,11 @@ export class InventoryManagment implements OnInit {
     saveAs(blob, 'moja-tabela.xlsx');
   }
 
-    printTable() {
+  printTable() {
     const printContents = this.ordersTable.nativeElement.outerHTML;
+
     const popupWin = window.open('', '_blank', 'width=800,height=600');
+
     popupWin?.document.write(`
       <html>
         <head>
@@ -198,6 +199,7 @@ export class InventoryManagment implements OnInit {
         </body>
       </html>
     `);
+
     popupWin?.document.close();
   }
 }

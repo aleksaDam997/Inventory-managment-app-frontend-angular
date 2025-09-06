@@ -42,10 +42,13 @@ export class CompaniesManagment implements OnInit{
 
   ngOnInit(): void {
 
-    this.companyManagmentService.getAllCompanies().subscribe(companies => {
-      this.companies = companies;
-
-
+    this.companyManagmentService.getAllCompanies().subscribe({
+      next: (companies) => {
+         this.companies = companies;
+      },
+      error: (error) => {
+        console.error('Error fetching companies:', error);
+      }
     });
   }
 
