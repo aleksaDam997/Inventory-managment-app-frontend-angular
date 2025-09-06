@@ -14,6 +14,7 @@ export interface CreateUserForm {
   address: FormControl<string>;
   phone: FormControl<string>;
   companyId: FormControl<number>;
+  orgUnitId: FormControl<number>;
   isActive: FormControl<boolean>;
 }
 

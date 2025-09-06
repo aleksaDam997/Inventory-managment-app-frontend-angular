@@ -1,67 +1,57 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { UserRole, Users } from '../../../models/user.model';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserManagmentService } from '../../../services/user.managment.service';
 import {  UpsertUserModal } from './upsert-user-modal/upsert-user-modal';
 import { CompanyManagmentService } from '../../../services/company.managment.service';
 import { Company } from '../../../models/models';
 import { CreateApiResponse } from '../../../models/response.models';
-import { UserFilterRequest } from '../../../models/request.model';
+import { InitForms } from '../../../forms/init.forms';
 import { AuthService } from '../../../services/auth.service';
+import { nonZeroValidator } from '../../../validators/validator';
+import { BsModalRef, BsModalService, ModalModule } from 'ngx-bootstrap/modal';
+import { Subject, take, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-user-managment',
-  imports: [CommonModule, ReactiveFormsModule, UpsertUserModal],
+  imports: [CommonModule, ReactiveFormsModule, ModalModule],
   templateUrl: './user-managment.html',
   styleUrl: './user-managment.css'
 })
-export class UserManagment implements OnInit {
+export class UserManagment implements OnInit, OnDestroy {
+
+  modalRef?: BsModalRef<UpsertUserModal>;
+
+  userFilterForm: FormGroup;
+  userForm: FormGroup;
 
   users: Users[] = [];
   companies: Company[] = [];
-  userFilterForm: FormGroup;
-  userForm: FormGroup;
+
 
   showModal: boolean = false;
   isCreateUserModal: boolean = false;
 
-  role: UserRole | null;
+  role: UserRole;
+
+  private destroy$ = new Subject<void>();
+
 
   constructor(private formBuilder: FormBuilder, private userManagmentService: UserManagmentService,
-    private companyManagmentService: CompanyManagmentService, private authService: AuthService
+    private companyManagmentService: CompanyManagmentService, private authService: AuthService, private modalService: BsModalService
   ) {
     
     this.role = this.authService.getUserRole() as UserRole;
 
-    this.userFilterForm = this.formBuilder.group({
-      inputText: new FormControl(''),
-      role: new FormControl(''),
-      companyId: this.role === 'ADMIN'
-      ? new FormControl('0')
-      : new FormControl(this.authService.getCompanyId()),
-      orgUnitId: new FormControl('0'),
-      isActive: new FormControl(true)
-    });
-
-    this.userForm = this.formBuilder.group({
-      firstName: new FormControl(''),
-      lastName: new FormControl(''),
-      email: new FormControl(''),
-      username: new FormControl(''),
-      password: new FormControl(''),
-      passwordRepeat: new FormControl(''),
-      role: new FormControl(''),
-      address: new FormControl(''),
-      phone: new FormControl(''),
-      companyId: new FormControl(''),
-      isActive: new FormControl(true)
-    });
+    this.userFilterForm = InitForms.initializeUserFilterForm(this.role, this.authService.getCompanyId()!);  
+    this.userForm = InitForms.initializeUserForm(this.role, +this.authService.getCompanyId()!);
   }
 
   ngOnInit() {
 
-    this.userManagmentService.getUsersByFilterCriteria(this.userFilterForm.value).subscribe({
+    this.userManagmentService.getUsersByFilterCriteria(this.userFilterForm)
+    .pipe(takeUntil(this.destroy$)).subscribe({
       next: (users) => {
         this.users = users;
       },
@@ -70,14 +60,20 @@ export class UserManagment implements OnInit {
       }
     });
 
-    this.companyManagmentService.getAllCompanies().subscribe({
-      next: (companies) => {
-        this.companies = companies;
-      },
-      error: (error) => {
-        console.error('Error fetching companies:', error);
-      }
+    this.companyManagmentService.getAllCompanies()
+      .pipe(takeUntil(this.destroy$)).subscribe({
+        next: (companies) => {
+          this.companies = companies;
+        },
+        error: (error) => {
+          console.error('Error fetching companies:', error);
+        }
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   getCompanyName(companyId: number): string {
@@ -99,16 +95,9 @@ export class UserManagment implements OnInit {
 
   onFilterSubmit() {
 
-    
-    const ufReq: UserFilterRequest = {
-      inputText: this.userFilterForm.value.inputText,
-      role: this.userFilterForm.value.role,
-      companyId: +this.userFilterForm.value.companyId,
-      orgUnitId: +this.userFilterForm.value.orgUnitId,
-      isActive: this.userFilterForm.value.isActive
-    }
-
-      this.userManagmentService.getUsersByFilterCriteria(ufReq).subscribe({
+      this.userManagmentService.getUsersByFilterCriteria(this.userFilterForm)
+      .pipe(take(1))
+      .subscribe({
         next: (users) => {
           this.users = users;
         },
@@ -119,22 +108,17 @@ export class UserManagment implements OnInit {
   }
 
   openCreateUserModal() {
-    this.userForm.reset({
-      firstName: '',
-      lastName: '',
-      email: '',
-      username: '',
-      password: '',
-      passwordRepeat: '',
-      address: '',
-      phone: '',
-      companyId: '',
-      isActive: true
-    });
 
-    this.showModal = true;
-    this.isCreateUserModal = false;
+    this.userForm.reset();
+    this.userForm.patchValue({
+      companyId: this.role === 'ADMIN' ? 0 : +this.authService.getCompanyId()!,
+      orgUnitId: 0,
+      isActive: true
+    })
+
+    this.callModal(true, true);
   }
+
 
   closeModal() {
     this.showModal = false;
@@ -143,29 +127,57 @@ export class UserManagment implements OnInit {
   confirmModal(apiResponse: CreateApiResponse<Users>) {
 
     this.userManagmentService
-      .getUsersByFilterCriteria(this.userFilterForm.value)
+      .getUsersByFilterCriteria(this.userFilterForm)
       .subscribe({
         next: (users) => {
           this.users = users;
 
-          alert(apiResponse.message);
-          this.closeModal();
         },
         error: (error) => {
           console.error('Error fetching users:', error);
-          // this.showErrorMessage('Greška prilikom učitavanja korisnika.');
         }
       });
     }
 
     openUpdateUserModal(user: Users) {
+
       this.userForm.patchValue(user);
-      this.showModal = true;
-      this.isCreateUserModal = false;
+      this.callModal(true, false);
     }
 
     deleteUser(userId: number) {
-      
+      this.userManagmentService.deleteUser(userId).subscribe({
+        next: () => {
+          this.users = this.users.filter(u => u.userId !== userId);
+          alert('User deleted successfully');
+        },
+        error: (error) => {
+          console.error('Error deleting user:', error);
+          alert('Error deleting user');
+        }
+      });
+    }
+
+    callModal(show: boolean, isCreate: boolean) {
+    
+      this.modalRef = this.modalService.show(UpsertUserModal, {
+        class: 'modal-dialog modal-xl modal-fullscreen-md-down modal-dialog-centered',
+        initialState: {
+          show: show,
+          isCreateUserModal: isCreate,
+          companies: this.companies,
+          userForm:  this.userForm,
+          userRole: this.role
+        },
+        ignoreBackdropClick: true,
+        keyboard: false 
+      });
+
+      this.modalRef.content?.confirm
+      .pipe(take(1))
+      .subscribe((response: CreateApiResponse<Users>) => {
+        this.confirmModal(response);
+      });
     }
 }
 

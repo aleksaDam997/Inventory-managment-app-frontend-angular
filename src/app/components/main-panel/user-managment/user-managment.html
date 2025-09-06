@@ -54,7 +54,7 @@
   </div>
 
   <div class="col-12 col-md-2 ms-auto">
-    <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#myModal" (click)="openCreateUserModal()">Dodaj korisnika</button>
+    <button class="btn btn-primary w-100" (click)="openCreateUserModal()">Dodaj korisnika</button>
   </div>
 </form>
 
@@ -93,7 +93,7 @@
           <button class="btn btn-sm btn-outline-primary me-2" (click)="openUpdateUserModal(user)">
             <i class="bi bi-pencil"></i>
           </button>
-          <button class="btn btn-sm btn-outline-danger">
+          <button class="btn btn-sm btn-outline-danger" (click)="deleteUser(user.userId)">
             <i class="bi bi-trash"></i>
           </button>
         </td>
@@ -102,13 +102,4 @@
   </table>
 </div>
 
-<app-upsert-user-modal
-  [show]="showModal"
-  [isCreateUserModal]="isCreateUserModal"
-  [companies]="companies"
-  (closed)="closeModal()"
-  (confirmed)="confirmModal($event)"
-  [userForm]="userForm"
->
-  <p>Ovo je sadržaj modala unutar ng-content!</p>
-</app-upsert-user-modal>
+

@@ -24,6 +24,7 @@ export interface CreateUserRequest {
   address: string;
   phone: string;
   companyId: number;
+  orgUnitId: number;
   isActive: boolean;
 }
 
@@ -68,4 +69,18 @@ export interface OrderFilterRequest {
   status: OrderStatus | null;
   companyId: number | null;
   orgUnitId: number | null;
+}
+
+export interface UpdateUserRequest {
+  userId: number;
+  firstName: string | null;
+  lastName: string | null;
+  email: string | null;
+  username: string | null;
+  password: string | null;
+  role: UserRole | null;
+  orgUnitId: number | null;
+  address: string | null;
+  phone: string | null;
+  isActive: boolean | null;
 }

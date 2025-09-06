@@ -1,199 +1,219 @@
-<div class="modal modal-fade" tabindex="-1" #userModal [ngClass]="{'show': show}" [ngStyle]="{'display': show ? 'block' : 'none'}" (click)="onBackdropClick()">
-  <!--modal-fullscreen-->
-  <!-- modal-dialog-scrollable-->
-  <div class="modal-dialog modal-xl modal-fullscreen-md-down modal-dialog-centered" (click)="onDialogClick($event)">
-    <div class="modal-content bg-light">
-      <div class="modal-header">
-        <h5 class="modal-title">{{ title }}</h5>
-        <button type="button" class="btn-close" (click)="close()"></button>
-      </div>
-      <div class="modal-body bg-light">
+<div class="modal-content bg-light">
+  <div class="modal-header">
+    <h5 class="modal-title">{{ title }}</h5>
+    <button type="button" class="btn-close"  (click)="close()"></button>
+  </div>
+  <div class="modal-body bg-light">
 
-        
-        <form [formGroup]="userForm" (ngSubmit)="onSubmit()" novalidate>
+    
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()" novalidate>
 
-          <div class="d-flex">
-            <div class="mb-3 me-1 w-50">
-                <label for="firstName" class="form-label">Ime</label>
-                <input
-                type="text"
-                id="firstName"
-                class="form-control"
-                formControlName="firstName"
-                [ngClass]="{ 'is-invalid': submitted && userForm.get('firstName')?.invalid }"
-                placeholder="Unesite ime"
-                />
-                <div *ngIf="submitted && userForm.get('firstName')?.errors" class="invalid-feedback">
-                <div *ngIf="userForm.get('firstName')?.errors?.['required']">Ime je obavezno.</div>
-                <div *ngIf="userForm.get('firstName')?.errors?.['minlength']">Ime mora imati najmanje 2 slova.</div>
-                <div *ngIf="userForm.get('firstName')?.errors?.['maxlength']">Ime ne smije imati više od 50 slova.</div>
-                </div>
+      <div class="d-flex">
+        <div class="mb-3 me-1 w-50">
+            <label for="firstName" class="form-label">Ime</label>
+            <input
+            type="text"
+            id="firstName"
+            class="form-control"
+            formControlName="firstName"
+            [ngClass]="{ 'is-invalid': submitted && userForm.get('firstName')?.invalid }"
+            placeholder="Unesite ime"
+            />
+            <div *ngIf="submitted && userForm.get('firstName')?.errors" class="invalid-feedback">
+            <div *ngIf="userForm.get('firstName')?.errors?.['required']">Ime je obavezno.</div>
+            <div *ngIf="userForm.get('firstName')?.errors?.['minlength']">Ime mora imati najmanje 2 slova.</div>
+            <div *ngIf="userForm.get('firstName')?.errors?.['maxlength']">Ime ne smije imati više od 50 slova.</div>
             </div>
+        </div>
 
-            <div class="mb-3 ms-1 w-50">
-                <label for="lastName" class="form-label">Prezime</label>
-                <input
-                type="text"
-                id="lastName"
-                class="form-control"
-                formControlName="lastName"
-                [ngClass]="{ 'is-invalid': submitted && userForm.get('lastName')?.['invalid'] }"
-                placeholder="Unesite prezime"
-                />
-                <div *ngIf="submitted && userForm.get('lastName')?.errors" class="invalid-feedback">
-                <div *ngIf="userForm.get('lastName')?.errors?.['required']">Prezime je obavezno.</div>
-                </div>
+        <div class="mb-3 ms-1 w-50">
+            <label for="lastName" class="form-label">Prezime</label>
+            <input
+            type="text"
+            id="lastName"
+            class="form-control"
+            formControlName="lastName"
+            [ngClass]="{ 'is-invalid': submitted && userForm.get('lastName')?.['invalid'] }"
+            placeholder="Unesite prezime"
+            />
+            <div *ngIf="submitted && userForm.get('lastName')?.errors" class="invalid-feedback">
+            <div *ngIf="userForm.get('lastName')?.errors?.['required']">Prezime je obavezno.</div>
+            <div *ngIf="userForm.get('lastName')?.errors?.['minlength']">Prezime mora imati najmanje 2 slova.</div>
+            <div *ngIf="userForm.get('lastName')?.errors?.['maxlength']">Prezime ne smije imati više od 50 slova.</div>
+            </div>
+        </div>
+      </div>
+
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input
+            type="email"
+            id="email"
+            class="form-control"
+            formControlName="email"
+            [ngClass]="{ 'is-invalid': submitted && userForm.get('email')?.['invalid'] }"
+            placeholder="Unesite email"
+            />
+            <div *ngIf="submitted && userForm.get('email')?.errors" class="invalid-feedback">
+            <div *ngIf="userForm.get('email')?.errors?.['required']">Email je obavezan.</div>
+            <div *ngIf="userForm.get('email')?.errors?.['email']">Email nije validan.</div>
+            </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="username" class="form-label">Korisničko ime</label>
+          <input
+          type="text"
+          id="username"
+          class="form-control"
+          formControlName="username"
+          [ngClass]="{ 'is-invalid': submitted && userForm.get('username')?.['invalid'] }"
+          placeholder="Unesite korisničko ime"
+          />
+          <div *ngIf="submitted && userForm.get('username')?.errors" class="invalid-feedback">
+          <div *ngIf="userForm.get('username')?.errors?.['required']">Korisničko ime je obavezno.</div>
+          <div *ngIf="userForm.get('username')?.errors?.['minlength']">Korisničko ime mora imati najmanje 2 slova.</div>
+          <div *ngIf="userForm.get('username')?.errors?.['maxlength']">Korisničko ime ne smije imati više od 50 slova.</div>
+          </div>
+        </div>
+
+        <div class="d-flex">
+            <div class="mb-3 me-2 w-50">
+            <label for="password" class="form-label">Lozinka</label>
+            <input
+            type="password"
+            id="password"
+            class="form-control"
+            formControlName="password"
+            [ngClass]="{ 'is-invalid': submitted && userForm.get('password')?.['invalid'] }"
+            placeholder="Unesite lozinku"
+            />
+            <div *ngIf="submitted && userForm.get('password')?.errors" class="invalid-feedback">
+            <div *ngIf="userForm.get('password')?.errors?.['required']">Lozinka je obavezna.</div>
+            <div *ngIf="userForm.get('password')?.errors?.['minlength']">Lozinka mora imati najmanje 6 karaktera.</div>
             </div>
           </div>
 
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input
-                type="email"
-                id="email"
-                class="form-control"
-                formControlName="email"
-                [ngClass]="{ 'is-invalid': submitted && userForm.get('email')?.['invalid'] }"
-                placeholder="Unesite email"
-                />
-                <div *ngIf="submitted && userForm.get('email')?.errors" class="invalid-feedback">
-                <div *ngIf="userForm.get('email')?.errors?.['required']">Email je obavezan.</div>
-                <div *ngIf="userForm.get('email')?.errors?.['email']">Email nije validan.</div>
-                </div>
-            </div>
-
-            <div class="mb-3">
-              <label for="username" class="form-label">Korisničko ime</label>
+          <div class="mb-3 me-2 w-50">
+              <label for="passwordRepeat" class="form-label">Ponovite lozinku</label>
               <input
-              type="text"
-              id="username"
+              type="password"
+              id="passwordRepeat"
               class="form-control"
-              formControlName="username"
-              [ngClass]="{ 'is-invalid': submitted && userForm.get('username')?.['invalid'] }"
-              placeholder="Unesite korisničko ime"
+              formControlName="passwordRepeat"
+              [ngClass]="{ 'is-invalid': submitted && userForm.get('passwordRepeat')?.['invalid'] }"
+              placeholder="Ponovite lozinku"
               />
-              <div *ngIf="submitted && userForm.get('username')?.errors" class="invalid-feedback">
-              <div *ngIf="userForm.get('username')?.errors?.['required']">Korisničko ime je obavezno.</div>
-              <div *ngIf="userForm.get('username')?.errors?.['minlength']">Korisničko ime mora imati najmanje 2 slova.</div>
-              <div *ngIf="userForm.get('username')?.errors?.['maxlength']">Korisničko ime ne smije imati više od 50 slova.</div>
+              <div *ngIf="submitted && userForm.get('passwordRepeat')?.errors" class="invalid-feedback">
+              <div *ngIf="userForm.get('passwordRepeat')?.errors?.['required']">Ponovite lozinku je obavezna.</div>
+              <div *ngIf="userForm.get('passwordRepeat')?.errors?.['minlength']">Ponovite lozinku mora imati najmanje 6 karaktera.</div>
+              </div>
+          </div>
+        </div>
+
+        @if(userRole === 'ADMIN') {
+          <div class="d-flex">
+            <div class="mb-3 me-1 w-50">
+              <label for="role" class="form-label">Uloga</label>
+              <select
+              id="role"
+              class="form-select"
+              formControlName="role"
+              [ngClass]="{ 'is-invalid': submitted && userForm.get('role')?.['invalid'] }"
+              >
+              <option value="" disabled selected>Izaberi ulogu</option>
+              <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
+              </select>
+              <div *ngIf="submitted && userForm.get('role')?.errors" class="invalid-feedback">
+              <div *ngIf="userForm.get('role')?.errors?.['required']">Uloga je obavezna.</div>
               </div>
             </div>
 
-            <div class="d-flex">
-               <div class="mb-3 me-2 w-50">
-                <label for="password" class="form-label">Lozinka</label>
-                <input
-                type="password"
-                id="password"
-                class="form-control"
-                formControlName="password"
-                [ngClass]="{ 'is-invalid': submitted && userForm.get('password')?.['invalid'] }"
-                placeholder="Unesite lozinku"
-                />
-                <div *ngIf="submitted && userForm.get('password')?.errors" class="invalid-feedback">
-                <div *ngIf="userForm.get('password')?.errors?.['required']">Lozinka je obavezna.</div>
-                <div *ngIf="userForm.get('password')?.errors?.['minlength']">Lozinka mora imati najmanje 6 karaktera.</div>
-                </div>
-              </div>
-
-              <div class="mb-3 me-2 w-50">
-                  <label for="passwordRepeat" class="form-label">Ponovite lozinku</label>
-                  <input
-                  type="password"
-                  id="passwordRepeat"
-                  class="form-control"
-                  formControlName="passwordRepeat"
-                  [ngClass]="{ 'is-invalid': submitted && userForm.get('passwordRepeat')?.['invalid'] }"
-                  placeholder="Ponovite lozinku"
-                  />
-                  <div *ngIf="submitted && userForm.get('passwordRepeat')?.errors" class="invalid-feedback">
-                  <div *ngIf="userForm.get('passwordRepeat')?.errors?.['required']">Ponovite lozinku je obavezna.</div>
-                  <div *ngIf="userForm.get('passwordRepeat')?.errors?.['minlength']">Ponovite lozinku mora imati najmanje 6 karaktera.</div>
-                  </div>
-              </div>
-            </div>
-
-            <div class="d-flex">
-
-              <div class="mb-3 me-1 w-50">
-                <label for="role" class="form-label">Uloga</label>
-                <select
-                id="role"
-                class="form-select"
-                formControlName="role"
-                [ngClass]="{ 'is-invalid': submitted && userForm.get('role')?.['invalid'] }"
-                >
-                <option value="" disabled selected>Izaberi ulogu</option>
-                <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
-                </select>
-                <div *ngIf="submitted && userForm.get('role')?.errors" class="invalid-feedback">
-                <div *ngIf="userForm.get('role')?.errors?.['required']">Uloga je obavezna.</div>
-                </div>
-              </div>
-              <div *ngIf="userForm.get('role')?.value !== 'ADMIN'" class="mb-3 ms-1 w-50">
-                <label for="companyId" class="form-label">Firma</label>
-                <select
-                id="companyId"
-                class="form-select"
-                formControlName="companyId"
-                [ngClass]="{ 'is-invalid': submitted && userForm.get('companyId')?.['invalid'] }"
-                >
-                  <option value="" disabled selected>Izaberi firmu</option>
-                  <option *ngFor="let c of companies" [value]="c.companyId">{{ c.name }}</option>
-                </select>
+            <div *ngIf="userForm.get('role')?.value !== 'ADMIN'" class="mb-3 ms-1 w-50">
+              <label for="companyId" class="form-label">Firma</label>
+              <select
+              id="companyId"
+              class="form-select"
+              formControlName="companyId"
+              [ngClass]="{ 'is-invalid': submitted && userForm.get('companyId')?.['invalid'] }"
+              >
+                <option value="" disabled selected>Izaberi firmu</option>
+                <option *ngFor="let c of companies" [value]="c.companyId">{{ c.name }}</option>
+              </select>
                 <div *ngIf="submitted && userForm.get('companyId')?.errors" class="invalid-feedback">
-                <div *ngIf="userForm.get('companyId')?.errors?.['required']">Firma je obavezna.</div>
+                  <div *ngIf="userForm.get('companyId')?.errors?.['required']">Firma je obavezna.</div>
                 </div>
-              </div>
             </div>
+          </div>
+        }
 
-            <div class="mb-3">
-              <label for="address" class="form-label">Adresa</label>
-              <input
-              type="text"
-              id="address"
-              class="form-control"
-              formControlName="address"
-              [ngClass]="{ 'is-invalid': submitted && userForm.get('address')?.['invalid'] }"
-              placeholder="Unesite adresu"
-              />
-              <div *ngIf="submitted && userForm.get('address')?.errors" class="invalid-feedback">
-              <div *ngIf="userForm.get('address')?.errors?.['required']">Adresa je obavezna.</div>
-              </div>
-            </div>
+        <div class="w-50">
+          <label for="orgUnitSelected" class="form-label">Filijala</label>
+          <select
+            formControlName="orgUnitId"
+            class="form-control"
+            [ngClass]="{'is-invalid': submitted && userForm.get('orgUnitId')?.errors}"
+          >
+            <option [value]="0">Izaberite filijalu</option>
+            <option *ngFor="let ou of getOrgUnitsByCompanyId(userForm.value.companyId!)" [value]="ou.orgUnitId">
+              {{ ou.name }}
+            </option>
+          </select>
 
-            <div class="mb-3">
-              <label for="phone" class="form-label">Telefon</label>
-              <input
-              type="text"
-              id="phone"
-              class="form-control"
-              formControlName="phone"
-              [ngClass]="{ 'is-invalid': submitted && userForm.get('phone')?.['invalid'] }"
-              placeholder="Unesite telefon"
-              />
-              <div *ngIf="submitted && userForm.get('phone')?.errors" class="invalid-feedback">
-              <div *ngIf="userForm.get('phone')?.errors?.['required']">Telefon je obavezan.</div>
-              <div *ngIf="userForm.get('phone')?.errors?.['pattern']">Telefon nije validan.</div>
-              </div>
-            </div>
+          <div *ngIf="submitted && userForm.get('orgUnitId')?.errors" class="invalid-feedback">
+            <div *ngIf="userForm.get('orgUnitId')?.errors?.['required']">Filijala je obavezna.</div>
+            <div *ngIf="userForm.get('orgUnitId')?.errors?.['nonZero']">Filijala mora biti različita od nule.</div>
+          </div>
 
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" formControlName="isActive">
-              <label class="form-check-label" for="flexCheckDefault">
-                  Aktivan
-              </label>
-            </div>
 
-        </form>
+        </div>
+        
 
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="close()">Zatvori</button>
-        <button type="submit" class="btn btn-primary" (click)="onSubmit()">Potvrdi</button>
-      </div>
-    </div>
+        <div class="mb-3">
+          <label for="address" class="form-label">Adresa</label>
+          <input
+          type="text"
+          id="address"
+          class="form-control"
+          formControlName="address"
+          [ngClass]="{ 'is-invalid': submitted && userForm.get('address')?.['invalid'] }"
+          placeholder="Unesite adresu"
+          />
+          <div *ngIf="submitted && userForm.get('address')?.errors" class="invalid-feedback">
+          <div *ngIf="userForm.get('address')?.errors?.['required']">Adresa je obavezna.</div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="phone" class="form-label">Telefon</label>
+          <input
+          type="text"
+          id="phone"
+          class="form-control"
+          formControlName="phone"
+          [ngClass]="{ 'is-invalid': submitted && userForm.get('phone')?.['invalid'] }"
+          placeholder="Unesite telefon"
+          />
+          <div *ngIf="submitted && userForm.get('phone')?.errors" class="invalid-feedback">
+          <div *ngIf="userForm.get('phone')?.errors?.['required']">Telefon je obavezan.</div>
+          <div *ngIf="userForm.get('phone')?.errors?.['pattern']">Telefon nije validan.</div>
+          </div>
+        </div>
+
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" formControlName="isActive">
+          <label class="form-check-label" for="flexCheckDefault">
+              Aktivan
+          </label>
+        </div>
+
+    </form>
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary"  (click)="close()">Zatvori</button>
+    <button type="submit" class="btn btn-primary" (click)="onSubmit()">Potvrdi</button>
   </div>
 </div>
 
-<div class="modal-backdrop fade" [ngClass]="{'show': show}" *ngIf="show"></div>
+
