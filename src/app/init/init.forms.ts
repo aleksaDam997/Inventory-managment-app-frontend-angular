@@ -1,6 +1,7 @@
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { UserRole } from "../models/user.model";
 import { nonZeroValidator } from "../validators/validator";
+import { InitConfig } from "./init.config";
 
 export class InitForms {
 
@@ -40,6 +41,16 @@ export class InitForms {
             companyId: role === 'ADMIN' ? new FormControl(0) : new FormControl(+companyId!, companyValidators),
             orgUnitId: new FormControl(0, [nonZeroValidator(), Validators.required]),
             isActive: new FormControl(true)
+        });
+    }
+
+    static initializeOrderFilterForm(): FormGroup {
+        return new FormGroup({
+            startDate: new FormControl(InitConfig.initStartDate()),
+            endDate: new FormControl(InitConfig.initEndDate()),
+            status: new FormControl(''),
+            companyId: new FormControl(0),
+            orgUnitId: new FormControl(0)
         });
     }
 }

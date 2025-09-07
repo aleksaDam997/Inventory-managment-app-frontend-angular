@@ -16,7 +16,6 @@
         bsDatepicker
         formControlName="startDate"
         [bsConfig]="bsConfig"
-        placeholder="yyyy-mm-dd"
       />
     </div>
 
@@ -30,11 +29,38 @@
         formControlName="endDate"
         [bsConfig]="bsConfig"
         [minDate]="orderFilterForm.get('startDate')?.value"
-        placeholder="yyyy-mm-dd"
       />
     </div>
 
-    <div class="me-2">
+    @if(role === 'ADMIN') {
+      <div class="col-12 col-md-2 me-2">
+        <label for="companySelected" class="form-label">Firma</label>
+        <select id="companySelected" class="form-select" formControlName="companyId" required>
+          <option value="{{0}}" selected>Sve firme</option>
+          <option *ngFor="let company of companies" value="{{company.companyId}}">{{ company.name }}</option>
+        </select>
+      </div>
+    }
+
+    @if(orderFilterForm.get('companyId')?.value) {
+      <div class="col-12 col-md-2 me-2">
+        <label for="orgUnitSelected" class="form-label">Filijala</label>
+        <select id="orgUnitSelected" class="form-select" formControlName="orgUnitId">
+          <option value="0" selected>Sve filijale</option>
+          <option *ngFor="let orgUnit of getOrgUnitsByCompanyId(orderFilterForm.get('companyId')?.value)" [value]="orgUnit.orgUnitId">{{ orgUnit.name }}</option>
+        </select>
+      </div>
+    }
+
+    <div class="col-12 col-md-2 me-2">
+      <label for="statusSelected" class="form-label">Status</label>
+      <select id="statusSelected" class="form-select" formControlName="status">
+        <option value="" selected>Svi statusi</option>
+        <option *ngFor="let status of orderStatuses" [value]="status">{{ statusTranslate(status) }}</option>
+      </select>
+    </div>
+
+    <div class="me-2 me-2">
       <button class="btn btn-outline-success" type="submit">Filtriraj</button>
     </div>
   </div>
@@ -50,8 +76,8 @@
 
 <div class="my-2 align-items-center">
   <b><i class="bi bi-download mx-2"></i> Preuzmi</b>
-  <button class="btn btn-success mx-2" (click)="downloadExcel()"><i class="bi bi-file-pdf"></i></button>
-  <button class="btn btn-danger mx-2" (click)="printTable()"><i class="bi bi-filetype-xls"></i></button>
+  <button class="btn btn-outline-success mx-2" (click)="downloadExcel()"><i class="bi bi-file-pdf"></i></button>
+  <button class="btn btn-outline-danger mx-2" (click)="printTable()"><i class="bi bi-filetype-xls"></i></button>
 </div>
 
 

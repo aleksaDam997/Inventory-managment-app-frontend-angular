@@ -7,7 +7,7 @@ import {  UpsertUserModal } from './upsert-user-modal/upsert-user-modal';
 import { CompanyManagmentService } from '../../../services/company.managment.service';
 import { Company } from '../../../models/models';
 import { CreateApiResponse } from '../../../models/response.models';
-import { InitForms } from '../../../forms/init.forms';
+import { InitForms } from '../../../init/init.forms';
 import { AuthService } from '../../../services/auth.service';
 import { nonZeroValidator } from '../../../validators/validator';
 import { BsModalRef, BsModalService, ModalModule } from 'ngx-bootstrap/modal';

@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Order, Product } from '../models/models';
+import { Order, OrderStatus, Product } from '../models/models';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
 import { CreateApiResponse, OrderResponse } from '../models/response.models';
 import { CreateOrderRequest, OrderFilterRequest } from '../models/request.model';
+import { FormGroup } from '@angular/forms';
 
 @Injectable({
     providedIn: 'root'
@@ -14,7 +15,15 @@ export class OrderService {
 
 constructor(private http: HttpClient, private authService: AuthService) { }
 
-getOrdersByCriteria(orderFilterReq: OrderFilterRequest): Observable<OrderResponse[]> {
+getOrdersByCriteria(orderFilterForm: FormGroup): Observable<OrderResponse[]> {
+
+     const orderFilterReq: OrderFilterRequest = {
+      startDate: orderFilterForm.get('startDate')?.value,
+      endDate: orderFilterForm.get('endDate')?.value,
+      status: orderFilterForm.get('status')?.value,
+      companyId: +orderFilterForm.get('companyId')?.value,
+      orgUnitId: +orderFilterForm.get('orgUnitId')?.value
+    }
 
     const token = this.authService.getAccessToken();
 
@@ -42,11 +51,15 @@ updateOrder(order: CreateOrderRequest): Observable<CreateApiResponse<Order>> {
 
     const token = this.authService.getAccessToken();
 
-    return this.http.put<CreateApiResponse<Order>>(environment.apiUrl + '/base/update-order', order, {
+    return this.http.put<CreateApiResponse<Order>>(environment.apiUrl + '/protected/update-order', order, {
     headers: {
         Authorization: `Bearer ${token}`
     }
     });
+}
+
+getOrderStatuses(): OrderStatus[] {
+    return [OrderStatus.PENDING, OrderStatus.CHANGED, OrderStatus.APPROVED, OrderStatus.COMPLETED];
 }
 
 }

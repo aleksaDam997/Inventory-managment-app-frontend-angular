@@ -12,3 +12,7 @@ select:hover {
 option:hover {
   cursor: pointer;
 }
+
+.form-check-input {
+  cursor: pointer;
+}

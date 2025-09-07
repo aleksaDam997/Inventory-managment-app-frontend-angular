@@ -1,6 +1,6 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {  OrderStatus, OrgUnit, Product } from '../../../models/models';
+import {  Company, OrderStatus, OrgUnit, Product } from '../../../models/models';
 import { CommonModule, JsonPipe } from '@angular/common';
 import { UserRole } from '../../../models/user.model';
 import { AuthService } from '../../../services/auth.service';
@@ -14,13 +14,18 @@ import { OrderFilterRequest } from '../../../models/request.model';
 import { OrderResponse } from '../../../models/response.models';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import { CompanyManagmentService } from '../../../services/company.managment.service';
+import { Subject, takeUntil } from 'rxjs';
+import { InitConfig } from '../../../init/init.config';
+import { InitForms } from '../../../init/init.forms';
+
 @Component({
   selector: 'app-inventory-managment',
   imports: [CommonModule, ReactiveFormsModule, BsDatepickerModule, ModalModule],
   templateUrl: './inventory-managment.html',
   styleUrl: './inventory-managment.css'
 })
-export class InventoryManagment implements OnInit {
+export class InventoryManagment implements OnInit, OnDestroy {
 
   modalRef?: BsModalRef;
 
@@ -30,6 +35,7 @@ export class InventoryManagment implements OnInit {
 
   orgUnits: OrgUnit[] = [];
   products: Product[] = [];
+  companies: Company[] = [];
   
 
   orderFilterForm: FormGroup;
@@ -42,74 +48,63 @@ export class InventoryManagment implements OnInit {
 
   OrderStatus = OrderStatus;
 
+  orderStatuses: OrderStatus[] = [];
+
+  private destroy$ = new Subject<void>();
+
   constructor(private authService: AuthService, private orgUnitsService: OrgUnitsManagmentService,
-    private productManagmentService: ProductService, private orderService: OrderService, 
+    private productManagmentService: ProductService, private orderService: OrderService,  private companyManagmentService: CompanyManagmentService,
     private modalService: BsModalService, private fb: FormBuilder) {
 
     this.role = this.authService.getUserRole() as UserRole;
 
-    this.bsConfig = {
-      containerClass: 'theme-blue', // default je 'theme-green'
-      dateInputFormat: 'DD.MM.YYYY',
-      // minDate: new Date(2025, 0, 1), 
-      // maxDate: new Date(2025, 11, 31),
-      // showWeekNumbers: true, 
-      // isAnimated: true,
-      // adaptivePosition: true, 
-      // showTodayButton: true,  
-      // showClearButton: true,
-      // customClasses: [
-      //   { date: new Date(2025, 7, 15), classes: ['bg-danger', 'text-white'] }
-      // ],
-      // isDisabled: false,
-      // selectWeek: false
-    };
-
-    const startDate: Date = new Date();
-    startDate.setDate(1)
-    startDate.setSeconds(0)
-    startDate.setMinutes(0)
-    startDate.setHours(0)
-
-     this.orderFilterForm = this.fb.group({
-      startDate: [startDate],
-      endDate: [new Date()],
-      status: [''],
-      companyId: [0],
-      orgUnitId: [0]
-    });
+    this.bsConfig = InitConfig.initDatePickerConfig();
+    this.orderFilterForm = InitForms.initializeOrderFilterForm();
 
     this.orderForm = new FormGroup({
       orgUnitId: new FormControl(0),
       productId: new FormControl(0),
       quantity: new FormControl(1),
-
     });
 
     this.orgUnits = [];
+
+    this.orderStatuses = this.orderService.getOrderStatuses();
   }
 
   ngOnInit() {
-    this.orgUnitsService.getAllOrgUnits().subscribe(orgUnits => {
+
+    this.orgUnitsService.getAllOrgUnits()
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(orgUnits => {
       this.orgUnits = orgUnits;
     });
 
-    this.productManagmentService.getAllProducts().subscribe(products => {
+    this.companyManagmentService.getAllCompanies()
+      .pipe(takeUntil(this.destroy$)).subscribe({
+        next: (companies) => {
+          this.companies = companies;
+        },
+        error: (error) => {
+          console.error('Error fetching companies:', error);
+        }
+    });
+
+    this.productManagmentService.getAllProducts().pipe(takeUntil(this.destroy$)).subscribe(products => {
       this.products = products;
     });
 
-    const orderFilterReq: OrderFilterRequest = {
-      startDate: this.orderFilterForm.get('startDate')?.value,
-      endDate: this.orderFilterForm.get('endDate')?.value,
-      status: this.orderFilterForm.get('status')?.value,
-      companyId: this.orderFilterForm.get('companyId')?.value,
-      orgUnitId: this.orderFilterForm.get('orgUnitId')?.value
-    }
 
-    this.orderService.getOrdersByCriteria(orderFilterReq).subscribe(orders => {
+
+    this.orderService.getOrdersByCriteria(this.orderFilterForm).subscribe(orders => {
       this.orders = orders;
       console.log(orders)
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 
@@ -130,7 +125,21 @@ export class InventoryManagment implements OnInit {
   }
 
   openUpdateOrderModal(order: OrderResponse) {
-    // Logic to open the update order modal
+
+    // this.orderForm.patchValue(order);
+
+    //   this.modalRef = this.modalService.show(ImUpsertModal, {
+    //     class: 'modal-dialog modal-xl modal-fullscreen-md-down modal-dialog-centered',
+    //     initialState: {
+    //       isCreate: true,
+    //       orgUnits: this.orgUnits,
+    //       products: this.products,
+    //       orderForm: this.orderForm,
+    //       role: this.role
+    //     },
+    //     ignoreBackdropClick: true, // 🚫 ne zatvara se klikom na pozadinu
+    //     keyboard: false            // 🚫 ne zatvara se na Escape
+    // });
   } 
 
   deleteOrder(orderId: number) {
@@ -164,9 +173,26 @@ export class InventoryManagment implements OnInit {
       orgUnitId: this.orderFilterForm.get('orgUnitId')?.value
     }
 
-    this.orderService.getOrdersByCriteria(orderFilterReq).subscribe(orders => {
+    this.orderService.getOrdersByCriteria(this.orderFilterForm).subscribe(orders => {
       this.orders = orders;
     });
+  }
+
+   getCompanyName(companyId: number): string {
+    const company = this.companies.find(c => c.companyId === companyId);
+    return company ? company.name : 'Nema firme';
+  }
+
+  getOrgUnitName(companyId: number, orgUnitId: number): string {
+    const company = this.companies.find(c => c.companyId === companyId);
+    const orgUnit = company?.orgUnits.find(ou => ou.orgUnitId === orgUnitId);
+    return orgUnit ? orgUnit.name : 'Nema filijale';
+  }
+
+  getOrgUnitsByCompanyId(companyId: number) {
+
+    const company = this.companies.find(c => +c.companyId === +companyId);
+    return company ? company.orgUnits : [];
   }
 
   downloadExcel() {
