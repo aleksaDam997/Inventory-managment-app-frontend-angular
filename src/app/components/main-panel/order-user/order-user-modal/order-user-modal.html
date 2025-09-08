@@ -1,0 +1,63 @@
+<div class="modal-content">
+  <div class="modal-header">
+    <h5 class="modal-title">{{ title }}</h5>
+    <button type="button" class="btn-close" (click)="close()"></button>
+  </div>
+
+  <div class="modal-body bg-light">
+    <form [formGroup]="orderForm" (ngSubmit)="onSubmit()" novalidate>
+      @if (orgUnits && orgUnits.length > 1) {
+        <div class="mb-3 me-1 w-50">
+          <label for="orgUnitId" class="form-label">Organizaciona jedinica</label>
+          <select
+            id="orgUnitId"
+            class="form-select"
+            formControlName="orgUnitId">
+            <option value="+0" disabled selected>Sve organizacione jedinice</option>
+            <option *ngFor="let orgUnit of orgUnits" [value]="orgUnit.orgUnitId">
+              {{ orgUnit.name }}
+            </option>
+          </select>
+          <div *ngIf="submitted && orderForm.get('orgUnitId')?.errors" class="invalid-feedback">
+            <div *ngIf="orderForm.get('orgUnitId')?.errors?.['required']">Organizaciona jedinica je obavezna.</div>
+          </div>
+        </div>
+      }
+
+      <div class="mb-3 me-1 w-50">
+        <label for="productId" class="form-label">Proizvod</label>
+        <select
+          id="productId"
+          class="form-select"
+          formControlName="productId">
+          <option value="+0" disabled selected>Izaberi proizvod</option>
+          <option *ngFor="let product of products" [value]="+product.productId">
+            {{ product.name }}
+          </option>
+        </select>
+        <div *ngIf="submitted && orderForm.get('productId')?.errors" class="invalid-feedback">
+          <div *ngIf="orderForm.get('productId')?.errors?.['required']">Proizvod je obavezan.</div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="quantity" class="form-label">Količina</label>
+        <input
+        type="number"
+        id="quantity"
+        class="form-control"
+        formControlName="quantity"
+        [ngClass]="{ 'is-invalid': submitted && orderForm.get('quantity')?.['invalid'] }"
+        placeholder="Unesite količinu"
+        />
+      </div>
+
+
+    </form>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="close()">Zatvori</button>
+    <button type="submit" class="btn btn-primary" (click)="onSubmit()">Potvrdi</button>
+  </div>
+</div>

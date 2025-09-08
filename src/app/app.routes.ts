@@ -8,6 +8,7 @@ import { UserManagment } from './components/main-panel/user-managment/user-manag
 import { CompaniesManagment } from './components/main-panel/companies-managment/companies-managment';
 import { OrganizationUnitsManagment } from './components/main-panel/organization-units-managment/organization-units-managment';
 import { PriceList } from './components/main-panel/price-list/price-list';
+import { OrderUser } from './components/main-panel/order-user/order-user';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full'},
@@ -18,7 +19,8 @@ export const routes: Routes = [
         { path: 'companies-managment', component: CompaniesManagment, canActivate: [RoleGuard], data: { roles: ['ADMIN'] } },
         { path: 'organization-units-managment', component: OrganizationUnitsManagment, canActivate: [RoleGuard], data: { roles: ['ADMIN', 'EDITOR'] } },
         { path: 'price-list', component: PriceList, canActivate: [RoleGuard], data: { roles: ['ADMIN', 'EDITOR'] } },
-        { path: 'inventory-managment', component: InventoryManagment, canActivate: [RoleGuard], data: { roles: ['ADMIN', 'EDITOR', 'USER'] } },
+        { path: 'order-managment', component: OrderUser, canActivate: [RoleGuard], data: { roles: ['USER'] } },
+        { path: 'inventory-managment', component: InventoryManagment, canActivate: [RoleGuard], data: { roles: ['ADMIN', 'EDITOR'] } },
         { path: 'graphs', component: Graphs, canActivate: [RoleGuard], data: { roles: ['ADMIN', 'EDITOR', 'USER'] } },
         { path: '', redirectTo: 'user-managment', pathMatch: 'full' } 
     ]}

@@ -1,33 +1,33 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {  Company, OrderStatus, OrgUnit, Product } from '../../../models/models';
-import { CommonModule, JsonPipe } from '@angular/common';
-import { UserRole } from '../../../models/user.model';
-import { AuthService } from '../../../services/auth.service';
-import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-import { OrgUnitsManagmentService } from '../../../services/org_units.managment.service';
+import { CommonModule } from '@angular/common';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalModule } from 'ngx-bootstrap/modal';
-import { ImUpsertModal } from './im-upsert-modal/im-upsert-modal';
-import { ProductService } from '../../../services/product.service';
-import { OrderService } from '../../../services/order.service';
-import { OrderFilterRequest } from '../../../models/request.model';
-import { OrderResponse } from '../../../models/response.models';
-import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver';
-import { CompanyManagmentService } from '../../../services/company.managment.service';
+import { Company, OrderStatus, OrgUnit, Product } from '../../../models/models';
+import { CreateApiResponse, OrderResponse } from '../../../models/response.models';
+import { OrgUnitsManagmentService } from '../../../services/org_units.managment.service';
+import saveAs from 'file-saver';
 import { Subject, takeUntil } from 'rxjs';
 import { InitConfig } from '../../../init/init.config';
 import { InitForms } from '../../../init/init.forms';
+import { OrderFilterRequest } from '../../../models/request.model';
+import { UserRole } from '../../../models/user.model';
+import { AuthService } from '../../../services/auth.service';
+import { CompanyManagmentService } from '../../../services/company.managment.service';
+import { OrderService } from '../../../services/order.service';
+import { ProductService } from '../../../services/product.service';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { OrderUserModal } from './order-user-modal/order-user-modal';
 
 @Component({
-  selector: 'app-inventory-managment',
-  imports: [CommonModule, ReactiveFormsModule, BsDatepickerModule, ModalModule],
-  templateUrl: './inventory-managment.html',
-  styleUrl: './inventory-managment.css'
+  selector: 'app-order-user',
+  imports: [CommonModule, ReactiveFormsModule, ModalModule, BsDatepickerModule],
+  templateUrl: './order-user.html',
+  styleUrl: './order-user.css'
 })
-export class InventoryManagment implements OnInit, OnDestroy {
+export class OrderUser {
 
-  modalRef?: BsModalRef<ImUpsertModal>;
+  
+  modalRef?: BsModalRef<OrderUserModal>;
 
   @ViewChild('ordersTable', { static: false }) ordersTable!: ElementRef;
 
@@ -44,7 +44,7 @@ export class InventoryManagment implements OnInit, OnDestroy {
   orders: OrderResponse[] = [];
 
   role: UserRole;
-  bsConfig: Partial<BsDatepickerModule>;
+  bsConfig: any;
 
   OrderStatus = OrderStatus;
 
@@ -110,7 +110,7 @@ export class InventoryManagment implements OnInit, OnDestroy {
 
   openCreateOrderModal() {
 
-    this.modalRef = this.modalService.show(ImUpsertModal, {
+    this.modalRef = this.modalService.show(OrderUserModal, {
       class: 'modal-dialog modal-xl modal-fullscreen-md-down modal-dialog-centered',
       initialState: {
         isCreate: true,
@@ -195,38 +195,4 @@ export class InventoryManagment implements OnInit, OnDestroy {
     return company ? company.orgUnits : [];
   }
 
-  downloadExcel() {
-    
-    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(this.ordersTable.nativeElement);
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-
-    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    const blob = new Blob([wbout], { type: 'application/octet-stream' });
-    saveAs(blob, 'moja-tabela.xlsx');
-  }
-
-  printTable() {
-    const printContents = this.ordersTable.nativeElement.outerHTML;
-
-    const popupWin = window.open('', '_blank', 'width=800,height=600');
-
-    popupWin?.document.write(`
-      <html>
-        <head>
-          <title>Print</title>
-          <style>
-            table { border-collapse: collapse; width: 100%; }
-            th, td { border: 1px solid black; padding: 8px; text-align: left; }
-          </style>
-        </head>
-        <body onload="window.print(); window.close()">
-          ${printContents}
-        </body>
-      </html>
-    `);
-
-    popupWin?.document.close();
-  }
 }
-
