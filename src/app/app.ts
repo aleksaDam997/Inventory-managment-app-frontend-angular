@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MainHeader } from './components/header/main-header/main-header';
-import { NavigationPanel } from './components/header/navigation-panel/navigation-panel';
-import { MainPanel } from './components/main-panel/main-panel';
+import { Toast } from './components/pop-up/toast/toast';
+
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, MainHeader],
+  imports: [RouterOutlet, MainHeader, Toast],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

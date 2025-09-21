@@ -57,10 +57,10 @@ export interface CreateProduct {
 }
 
 export interface CreateOrderRequest {
-  orderId: number | undefined
-  productId: number | undefined;
-  quantity: number | undefined;
-  status: OrderStatus | undefined;
+  productId: number | undefined | null;
+  orderId: number | undefined | null;
+  products: CreateOrderProductReq[];
+  status: OrderStatus | undefined | null;
 }
 
 export interface OrderFilterRequest {
@@ -83,4 +83,12 @@ export interface UpdateUserRequest {
   address: string | null;
   phone: string | null;
   isActive: boolean | null;
+}
+
+export interface CreateOrderProductReq {
+
+	productId: number | null;
+	quantity: number  | null;
+	currentPrice:number | null;
+
 }

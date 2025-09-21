@@ -1,12 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalModule } from 'ngx-bootstrap/modal';
-import { Company, OrderStatus, OrgUnit, Product } from '../../../models/models';
-import { CreateApiResponse, OrderResponse } from '../../../models/response.models';
-import { OrgUnitsManagmentService } from '../../../services/org_units.managment.service';
-import saveAs from 'file-saver';
-import { Subject, takeUntil } from 'rxjs';
+import { Company, Order, OrderStatus, OrgUnit, Product } from '../../../models/models';
+import { Subject, take, takeUntil } from 'rxjs';
 import { InitConfig } from '../../../init/init.config';
 import { InitForms } from '../../../init/init.forms';
 import { OrderFilterRequest } from '../../../models/request.model';
@@ -17,6 +14,8 @@ import { OrderService } from '../../../services/order.service';
 import { ProductService } from '../../../services/product.service';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { OrderUserModal } from './order-user-modal/order-user-modal';
+import { CreateApiResponse, OrderResponse } from '../../../models/response.models';
+import { NotificationService } from '../../../services/notification.service';
 
 @Component({
   selector: 'app-order-user',
@@ -25,7 +24,6 @@ import { OrderUserModal } from './order-user-modal/order-user-modal';
   styleUrl: './order-user.css'
 })
 export class OrderUser {
-
   
   modalRef?: BsModalRef<OrderUserModal>;
 
@@ -33,12 +31,10 @@ export class OrderUser {
 
   isCreateUserModal = false;
 
-  orgUnits: OrgUnit[] = [];
   products: Product[] = [];
-  companies: Company[] = [];
-  
 
   orderFilterForm: FormGroup;
+
   orderForm: FormGroup;
 
   orders: OrderResponse[] = [];
@@ -52,9 +48,9 @@ export class OrderUser {
 
   private destroy$ = new Subject<void>();
 
-  constructor(private authService: AuthService, private orgUnitsService: OrgUnitsManagmentService,
-    private productManagmentService: ProductService, private orderService: OrderService,  private companyManagmentService: CompanyManagmentService,
-    private modalService: BsModalService, private fb: FormBuilder) {
+  constructor(private authService: AuthService, private productManagmentService: ProductService, 
+    private orderService: OrderService,  private companyManagmentService: CompanyManagmentService,
+    private modalService: BsModalService, private notificationService: NotificationService) {
 
     this.role = this.authService.getUserRole() as UserRole;
 
@@ -62,44 +58,25 @@ export class OrderUser {
     this.orderFilterForm = InitForms.initializeOrderFilterForm();
 
     this.orderForm = new FormGroup({
-      orgUnitId: new FormControl(0),
-      productId: new FormControl(0),
-      quantity: new FormControl(1),
+      orderId: new FormControl(Number(0)),
+      status: new FormControl(''),
+      productId: new FormControl(Number(0)),
+      quantity: new FormControl(Number(1)),
+      orderProducts: new FormArray([])
     });
 
-    this.orgUnits = [];
 
     this.orderStatuses = this.orderService.getOrderStatuses();
   }
 
   ngOnInit() {
 
-    this.orgUnitsService.getAllOrgUnits()
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(orgUnits => {
-      this.orgUnits = orgUnits;
-    });
-
-    this.companyManagmentService.getAllCompanies()
-      .pipe(takeUntil(this.destroy$)).subscribe({
-        next: (companies) => {
-          this.companies = companies;
-        },
-        error: (error) => {
-          console.error('Error fetching companies:', error);
-        }
-    });
-
     this.productManagmentService.getAllProducts().pipe(takeUntil(this.destroy$)).subscribe(products => {
       this.products = products;
     });
 
 
-
-    this.orderService.getOrdersByCriteria(this.orderFilterForm).subscribe(orders => {
-      this.orders = orders;
-      console.log(orders)
-    });
+    this.onFilterSubmit();
   }
 
   ngOnDestroy(): void {
@@ -114,7 +91,6 @@ export class OrderUser {
       class: 'modal-dialog modal-xl modal-fullscreen-md-down modal-dialog-centered',
       initialState: {
         isCreate: true,
-        orgUnits: this.orgUnits,
         products: this.products,
         orderForm: this.orderForm,
         role: this.role
@@ -122,34 +98,82 @@ export class OrderUser {
       ignoreBackdropClick: true, // 🚫 ne zatvara se klikom na pozadinu
       keyboard: false            // 🚫 ne zatvara se na Escape
     });
+
+    this.modalRef.onHidden!.pipe(take(1)).subscribe(() => {
+      this.onFilterSubmit();
+    });
   }
 
   openUpdateOrderModal(order: OrderResponse) {
 
-    // this.orderForm.patchValue(order);
+    this.setOrder(order)
 
-    //   this.modalRef = this.modalService.show(ImUpsertModal, {
-    //     class: 'modal-dialog modal-xl modal-fullscreen-md-down modal-dialog-centered',
-    //     initialState: {
-    //       isCreate: true,
-    //       orgUnits: this.orgUnits,
-    //       products: this.products,
-    //       orderForm: this.orderForm,
-    //       role: this.role
-    //     },
-    //     ignoreBackdropClick: true, // 🚫 ne zatvara se klikom na pozadinu
-    //     keyboard: false            // 🚫 ne zatvara se na Escape
-    // });
+    this.modalRef = this.modalService.show(OrderUserModal, {
+      class: 'modal-dialog modal-xl modal-fullscreen-md-down modal-dialog-centered',
+      initialState: {
+        isCreate: false,
+        products: this.products,
+        orderForm: this.orderForm,
+        role: this.role
+      },
+      ignoreBackdropClick: true, // 🚫 ne zatvara se klikom na pozadinu
+      keyboard: false            // 🚫 ne zatvara se na Escape
+    });
+
+    this.modalRef.onHidden!.pipe(take(1)).subscribe(() => {
+      this.onFilterSubmit();
+    });
   } 
 
+  createOrderProductForm(product: any): FormGroup {
+    return new FormGroup({
+      orderProductId: new FormControl(product.orderProductId ?? 0),
+      productId: new FormControl(product.productId),
+      quantity: new FormControl(product.quantity),
+      currentPrice: new FormControl(product.currentPrice)
+    });
+  }
+
+  setOrder(order: any) {
+
+    this.orderForm.patchValue({
+      orderId: +order.orderId,
+      status: order.status,
+      productId: 0,
+      quantity: 1
+    });
+    
+
+    (this.orderForm.get('orderProducts') as FormArray).clear();
+
+    order.products.forEach((prod: any) => {
+      (this.orderForm.get('orderProducts') as FormArray).push(
+        this.createOrderProductForm(prod)
+        
+      );
+    });
+  }
+
+
+
   deleteOrder(orderId: number) {
-    // this.orderService.deleteOrder(orderId).subscribe(() => {
-    //   this.orders = this.orders.filter(order => order.orderId !== orderId);
-    // });
+    
+    this.orderService.deleteOrder(orderId).subscribe({
+        next: (response: CreateApiResponse<Order>) => {
+
+          this.notificationService.success(response.message);
+          this.onFilterSubmit();
+        },
+        error: (error) => {
+          this.notificationService.error(error.error);
+        }
+      });
   }
 
   statusTranslate(status: OrderStatus): string {
     switch (status) {
+      case OrderStatus.IN_PROGRESS:
+        return "U izradi";
       case OrderStatus.PENDING:
         return 'Na čekanju';
       case OrderStatus.CHANGED:
@@ -165,34 +189,14 @@ export class OrderUser {
 
 
   onFilterSubmit() {
-    const orderFilterReq: OrderFilterRequest = {
-      startDate: this.orderFilterForm.get('startDate')?.value,
-      endDate: this.orderFilterForm.get('endDate')?.value,
-      status: this.orderFilterForm.get('status')?.value,
-      companyId: this.orderFilterForm.get('companyId')?.value,
-      orgUnitId: this.orderFilterForm.get('orgUnitId')?.value
+    this.orderService.getUserOrders(this.orderFilterForm.value).pipe(takeUntil(this.destroy$)).subscribe({
+    next: (orders) => {
+      this.orders = orders.data!;
+      this.notificationService.success(orders.status + "\n" + orders.message)
+    },
+    error: (error) => {
+      this.notificationService.error(error);
     }
-
-    this.orderService.getOrdersByCriteria(this.orderFilterForm).subscribe(orders => {
-      this.orders = orders;
     });
   }
-
-   getCompanyName(companyId: number): string {
-    const company = this.companies.find(c => c.companyId === companyId);
-    return company ? company.name : 'Nema firme';
-  }
-
-  getOrgUnitName(companyId: number, orgUnitId: number): string {
-    const company = this.companies.find(c => c.companyId === companyId);
-    const orgUnit = company?.orgUnits.find(ou => ou.orgUnitId === orgUnitId);
-    return orgUnit ? orgUnit.name : 'Nema filijale';
-  }
-
-  getOrgUnitsByCompanyId(companyId: number) {
-
-    const company = this.companies.find(c => +c.companyId === +companyId);
-    return company ? company.orgUnits : [];
-  }
-
 }

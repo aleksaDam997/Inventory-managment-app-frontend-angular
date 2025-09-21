@@ -1,62 +1,94 @@
-<div class="modal-content">
-  <div class="modal-header">
+<div class="modal-content h-80">
+  <div class="modal-header bg-info">
     <h5 class="modal-title">{{ title }}</h5>
     <button type="button" class="btn-close" (click)="close()"></button>
   </div>
 
-  <div class="modal-body bg-light">
+  <div class="modal-body">
     <form [formGroup]="orderForm" (ngSubmit)="onSubmit()" novalidate>
-      @if (orgUnits && orgUnits.length > 1) {
-        <div class="mb-3 me-1 w-50">
-          <label for="orgUnitId" class="form-label">Organizaciona jedinica</label>
+      <div class="row align-items-end">
+        <div class="col-5">
+          <label for="productId" class="form-label">Proizvod</label>
           <select
-            id="orgUnitId"
+            id="productId"
             class="form-select"
-            formControlName="orgUnitId">
-            <option value="+0" disabled selected>Sve organizacione jedinice</option>
-            <option *ngFor="let orgUnit of orgUnits" [value]="orgUnit.orgUnitId">
-              {{ orgUnit.name }}
+            formControlName="productId">
+            <option [value]="+0" disabled selected>Izaberi proizvod</option>
+            <option *ngFor="let product of products" [value]="+product.productId">
+              {{ product.name }}
             </option>
           </select>
-          <div *ngIf="submitted && orderForm.get('orgUnitId')?.errors" class="invalid-feedback">
-            <div *ngIf="orderForm.get('orgUnitId')?.errors?.['required']">Organizaciona jedinica je obavezna.</div>
+          <div *ngIf="submitted && orderForm.get('productId')?.errors" class="invalid-feedback">
+            <div *ngIf="orderForm.get('productId')?.errors?.['required']">Proizvod je obavezan.</div>
           </div>
         </div>
-      }
 
-      <div class="mb-3 me-1 w-50">
-        <label for="productId" class="form-label">Proizvod</label>
-        <select
-          id="productId"
-          class="form-select"
-          formControlName="productId">
-          <option value="+0" disabled selected>Izaberi proizvod</option>
-          <option *ngFor="let product of products" [value]="+product.productId">
-            {{ product.name }}
-          </option>
-        </select>
-        <div *ngIf="submitted && orderForm.get('productId')?.errors" class="invalid-feedback">
-          <div *ngIf="orderForm.get('productId')?.errors?.['required']">Proizvod je obavezan.</div>
+        <div class="col-5">
+          <label for="quantity" class="form-label">Količina</label>
+          <input
+            type="number"
+            id="quantity"
+            class="form-control"
+            formControlName="quantity"
+            placeholder="Unesite količinu"
+          />
         </div>
+
+        <div class="col d-flex justify-content-end">
+          <button type="button" class="btn btn-primary" (click)="addProduct()"> Dodaj </button>
+        </div>
+
       </div>
 
-      <div class="mb-3">
-        <label for="quantity" class="form-label">Količina</label>
-        <input
-        type="number"
-        id="quantity"
-        class="form-control"
-        formControlName="quantity"
-        [ngClass]="{ 'is-invalid': submitted && orderForm.get('quantity')?.['invalid'] }"
-        placeholder="Unesite količinu"
-        />
+      <div class="table-responsive mt-3">
+        <table class="table table-borderless text-center">
+          <thead>
+            <tr>
+              <th>Proizvod</th>
+              <th>Količina</th>
+              <th>Cijena</th>
+              <th>Ukupno</th>
+              <th>Akcija</th>
+            </tr>
+          </thead>
+          <tbody formArrayName="orderProducts">
+
+            @for (group of orderProducts.controls; track $index; let i = $index) {
+              <tr [formGroupName]="i">
+                <td>
+                  {{ getProductById(group.get('productId')?.value).name }}
+                </td>
+                <td>
+                  <input type="number" class="form-control text-center" formControlName="quantity">
+                </td>
+                <td>
+                  {{getProductById(group.get('productId')?.value).price}} KM
+                </td>
+                <td>
+                  {{+getProductById(group.get('productId')?.value).price * +group.get('quantity')?.value}} KM
+                </td>
+                <td>
+                  <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeProduct(i)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
       </div>
-
-
     </form>
+
+
+  </div>
   </div>
 
-  <div class="modal-footer">
+  <div>
+
+
+
+
+  <div class="modal-footer bg-light">
     <button type="button" class="btn btn-secondary" (click)="close()">Zatvori</button>
     <button type="submit" class="btn btn-primary" (click)="onSubmit()">Potvrdi</button>
   </div>

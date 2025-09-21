@@ -79,6 +79,9 @@
   <button class="btn btn-outline-success mx-2" (click)="downloadExcel()"><i class="bi bi-file-pdf"></i></button>
   <button class="btn btn-outline-danger mx-2" (click)="printTable()"><i class="bi bi-filetype-xls"></i></button>
 </div>
+<!-- <a href="ms-word:ofe|u|file:///C:/Users/Korisnik/Downloads/ooroz.docx">
+Otvori dokument u Wordu
+</a> -->
 
 
 
@@ -88,9 +91,7 @@
       <tr>
         <th>Id</th>
         <th>Korisnik</th>
-        <th>Proizvod</th>
         <th>Cijena</th>
-        <th>Kolicina</th>
         <th>Status</th>
         <th>Datum kreiranja narudžbe</th>
         <th>Datum poslednje promjene</th>
@@ -102,9 +103,7 @@
         <tr>
           <th>{{ order.orderId }}</th>
           <td>{{ order.user?.label }}</td>
-          <td>{{ order.product?.name }}</td>
-          <td>{{ order.product?.price }} KM</td>
-          <td>{{ order.quantity }}</td>
+          <td>{{order.totalPrice}}</td>
           <td>
             <span
               class="badge"

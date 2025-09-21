@@ -19,12 +19,11 @@ getAllOrgUnits(): Observable<OrgUnit[]> {
 
     const token = this.authService.getAccessToken();
 
-    return this.http.get<OrgUnit[]>(environment.apiUrl + '/protected/get-all-org-units', {
+    return this.http.get<OrgUnit[]>(environment.apiUrl + '/universal/get-all-org-units', {
     headers: {
         Authorization: `Bearer ${token}`
     }
     });
-    return this.http.get<OrgUnit[]>(environment.apiUrl + '/protected/get-all-org-units');
 }
 
 

@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {  Company, OrderStatus, OrgUnit, Product } from '../../../models/models';
 import { CommonModule, JsonPipe } from '@angular/common';
 import { UserRole } from '../../../models/user.model';
@@ -11,13 +11,14 @@ import { ImUpsertModal } from './im-upsert-modal/im-upsert-modal';
 import { ProductService } from '../../../services/product.service';
 import { OrderService } from '../../../services/order.service';
 import { OrderFilterRequest } from '../../../models/request.model';
-import { OrderResponse } from '../../../models/response.models';
+import { CreateApiResponse, OrderResponse } from '../../../models/response.models';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { CompanyManagmentService } from '../../../services/company.managment.service';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, take, takeUntil } from 'rxjs';
 import { InitConfig } from '../../../init/init.config';
 import { InitForms } from '../../../init/init.forms';
+import { NotificationService } from '../../../services/notification.service';
 
 @Component({
   selector: 'app-inventory-managment',
@@ -54,7 +55,7 @@ export class InventoryManagment implements OnInit, OnDestroy {
 
   constructor(private authService: AuthService, private orgUnitsService: OrgUnitsManagmentService,
     private productManagmentService: ProductService, private orderService: OrderService,  private companyManagmentService: CompanyManagmentService,
-    private modalService: BsModalService, private fb: FormBuilder) {
+    private modalService: BsModalService, private notifyService: NotificationService) {
 
     this.role = this.authService.getUserRole() as UserRole;
 
@@ -62,9 +63,11 @@ export class InventoryManagment implements OnInit, OnDestroy {
     this.orderFilterForm = InitForms.initializeOrderFilterForm();
 
     this.orderForm = new FormGroup({
-      orgUnitId: new FormControl(0),
-      productId: new FormControl(0),
-      quantity: new FormControl(1),
+      orderId: new FormControl(Number(0)),
+      status: new FormControl(''),
+      productId: new FormControl(Number(0)),
+      quantity: new FormControl(Number(1)),
+      orderProducts: new FormArray([])
     });
 
     this.orgUnits = [];
@@ -96,9 +99,17 @@ export class InventoryManagment implements OnInit, OnDestroy {
 
 
 
-    this.orderService.getOrdersByCriteria(this.orderFilterForm).subscribe(orders => {
-      this.orders = orders;
-      console.log(orders)
+    this.orderService.getOrdersByCriteria(this.orderFilterForm).subscribe({
+        next: (orders) => {
+          this.orders = orders.data!;
+
+          console.log(this.orders)
+          this.notifyService.success("Sve cool :)")
+        },
+        error: (error) => {
+          console.log(error.message)
+          this.notifyService.error(error);
+        }
     });
   }
 
@@ -114,7 +125,6 @@ export class InventoryManagment implements OnInit, OnDestroy {
       class: 'modal-dialog modal-xl modal-fullscreen-md-down modal-dialog-centered',
       initialState: {
         isCreate: true,
-        orgUnits: this.orgUnits,
         products: this.products,
         orderForm: this.orderForm,
         role: this.role
@@ -126,20 +136,23 @@ export class InventoryManagment implements OnInit, OnDestroy {
 
   openUpdateOrderModal(order: OrderResponse) {
 
-    // this.orderForm.patchValue(order);
+    this.setOrder(order)
 
-    //   this.modalRef = this.modalService.show(ImUpsertModal, {
-    //     class: 'modal-dialog modal-xl modal-fullscreen-md-down modal-dialog-centered',
-    //     initialState: {
-    //       isCreate: true,
-    //       orgUnits: this.orgUnits,
-    //       products: this.products,
-    //       orderForm: this.orderForm,
-    //       role: this.role
-    //     },
-    //     ignoreBackdropClick: true, // 🚫 ne zatvara se klikom na pozadinu
-    //     keyboard: false            // 🚫 ne zatvara se na Escape
-    // });
+    this.modalRef = this.modalService.show(ImUpsertModal, {
+      class: 'modal-dialog modal-xl modal-fullscreen-md-down modal-dialog-centered',
+      initialState: {
+        isCreate: false,
+        products: this.products,
+        orderForm: this.orderForm,
+        role: this.role
+      },
+      ignoreBackdropClick: true,
+      keyboard: false
+    });
+
+    this.modalRef.onHidden!.pipe(take(1)).subscribe(() => {
+      this.onFilterSubmit();
+    });
   } 
 
   deleteOrder(orderId: number) {
@@ -174,7 +187,7 @@ export class InventoryManagment implements OnInit, OnDestroy {
     }
 
     this.orderService.getOrdersByCriteria(this.orderFilterForm).subscribe(orders => {
-      this.orders = orders;
+      this.orders = orders.data!;
     });
   }
 
@@ -203,7 +216,11 @@ export class InventoryManagment implements OnInit, OnDestroy {
 
     const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
     const blob = new Blob([wbout], { type: 'application/octet-stream' });
-    saveAs(blob, 'moja-tabela.xlsx');
+    const fileName = 'moja-tabela.xlsx';
+    saveAs(blob, fileName);
+    
+    const excelLink = `ms-excel:ofe|u|file:///C:/Users/Korisnik/Downloads/${fileName}`;
+    window.location.href = excelLink;
   }
 
   printTable() {
@@ -227,6 +244,35 @@ export class InventoryManagment implements OnInit, OnDestroy {
     `);
 
     popupWin?.document.close();
+  }
+
+    createOrderProductForm(product: any): FormGroup {
+    return new FormGroup({
+      orderProductId: new FormControl(product.orderProductId ?? 0),
+      productId: new FormControl(product.productId),
+      quantity: new FormControl(product.quantity),
+      currentPrice: new FormControl(product.currentPrice)
+    });
+  }
+
+  setOrder(order: any) {
+
+    this.orderForm.patchValue({
+      orderId: +order.orderId,
+      status: order.status,
+      productId: 0,
+      quantity: 1
+    });
+    
+
+    (this.orderForm.get('orderProducts') as FormArray).clear();
+
+    order.products.forEach((prod: any) => {
+      (this.orderForm.get('orderProducts') as FormArray).push(
+        this.createOrderProductForm(prod)
+        
+      );
+    });
   }
 }
 

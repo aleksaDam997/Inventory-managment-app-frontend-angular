@@ -32,26 +32,6 @@
       />
     </div>
 
-    @if(role === 'ADMIN') {
-      <div class="col-12 col-md-2 me-2">
-        <label for="companySelected" class="form-label">Firma</label>
-        <select id="companySelected" class="form-select" formControlName="companyId" required>
-          <option value="{{0}}" selected>Sve firme</option>
-          <option *ngFor="let company of companies" value="{{company.companyId}}">{{ company.name }}</option>
-        </select>
-      </div>
-    }
-
-    @if(orderFilterForm.get('companyId')?.value) {
-      <div class="col-12 col-md-2 me-2">
-        <label for="orgUnitSelected" class="form-label">Filijala</label>
-        <select id="orgUnitSelected" class="form-select" formControlName="orgUnitId">
-          <option value="0" selected>Sve filijale</option>
-          <option *ngFor="let orgUnit of getOrgUnitsByCompanyId(orderFilterForm.get('companyId')?.value)" [value]="orgUnit.orgUnitId">{{ orgUnit.name }}</option>
-        </select>
-      </div>
-    }
-
     <div class="col-12 col-md-2 me-2">
       <label for="statusSelected" class="form-label">Status</label>
       <select id="statusSelected" class="form-select" formControlName="status">
@@ -93,20 +73,20 @@
       @for (order of orders; track $index) {
         <tr>
           <th>{{ order.orderId }}</th>
-          <td>{{ order.user?.label }}</td>
-          <td>{{ order.product?.name }}</td>
-          <td>{{ order.product?.price }} KM</td>
-          <td>{{ order.quantity }}</td>
+          <td>{{ order.totalPrice }}</td>
           <td>
             <span
               class="badge"
               [ngClass]="{
+                'bg-secondary': order.status === OrderStatus.IN_PROGRESS,
                 'bg-warning': order.status === OrderStatus.PENDING,
                 'bg-primary': order.status === OrderStatus.CHANGED,
                 'bg-info': order.status === OrderStatus.APPROVED,
                 'bg-success': order.status === OrderStatus.COMPLETED
               }"  
             >
+          <td>{{ order.quantity }}</td>
+
               {{ statusTranslate(order.status) }}
             </span>
           </td>

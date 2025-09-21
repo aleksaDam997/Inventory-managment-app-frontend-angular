@@ -8,8 +8,11 @@ export interface CreateApiResponse<T> {
 
 export interface OrderResponse {
   orderId: number;
+  userFirstName: string;
+  userLastName: string;
+  totalPrice: number;
   user: IdLabelType | undefined;
-  product: Product | undefined;
+  products: Product[];
   status: OrderStatus;
   quantity: number | undefined;
   createdAt: Date;

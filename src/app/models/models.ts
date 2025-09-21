@@ -27,7 +27,7 @@ export interface OrgUnit {
 export interface Product {
   productId: number;
   name: string;
-  price: string;
+  price: number;
   description: string;
   companyId: number | null;
   createdAt: Date;
@@ -39,6 +39,7 @@ export interface Order {
   userId: number | undefined;
   productId: number | undefined;
   status: OrderStatus;
+  products: OrderProduct[];
   quantity: number | undefined;
   createdAt: Date;
   updatedAt: Date;
@@ -47,8 +48,21 @@ export interface Order {
 // export type OrderStatus = 'PENDING' | 'CHANGED' | 'APPROVED' | 'COMPLETED';
 
 export enum OrderStatus {
+  IN_PROGRESS = "IN_PROGRESS",
   PENDING = 'PENDING',
   CHANGED = 'CHANGED',
   APPROVED = 'APPROVED',
   COMPLETED = 'COMPLETED',
+}
+
+
+export interface OrderProduct {
+  orderproductId: number | null;
+  orderId: number | null;
+	name: string | null;
+	productId: number | null;
+	quantity: number  | null;
+	currentPrice:number | null;
+	createdAt: Date | null;
+	updatedAt: Date | null;
 }

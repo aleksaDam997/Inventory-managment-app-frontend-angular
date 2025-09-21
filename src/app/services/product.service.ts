@@ -19,7 +19,7 @@ getAllProducts(): Observable<Product[]> {
 
     const token = this.authService.getAccessToken();
 
-    return this.http.get<Product[]>(environment.apiUrl + '/base/get-all-products', {
+    return this.http.get<Product[]>(environment.apiUrl + '/universal/get-all-products', {
     headers: {
         Authorization: `Bearer ${token}`
     }

@@ -21,7 +21,7 @@ import { AuthService } from './auth.service';
           
         const token = this.authService.getAccessToken();
     
-        return this.http.get<Company[]>(environment.apiUrl + '/protected/get-all-companies', {
+        return this.http.get<Company[]>(environment.apiUrl + '/universal/get-all-companies', {
                 headers: {
                   Authorization: `Bearer ${token}`
                 }
