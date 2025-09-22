@@ -1,7 +1,7 @@
 <div class="modal fade" tabindex="-1" [ngClass]="{'show': show}" [ngStyle]="{'display': show ? 'block' : 'none'}" (click)="onBackdropClick()">
   <div class="modal-dialog modal-xl" (click)="onDialogClick($event)">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header bg-info">
         <h5 class="modal-title">{{ title }}</h5>
         <button type="button" class="btn-close" (click)="close()"></button>
       </div>

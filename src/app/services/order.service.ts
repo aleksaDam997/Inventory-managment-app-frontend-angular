@@ -135,6 +135,38 @@ deleteOrder(orderId: number) {
     });
 }
 
+
+forwardUserOrderStatus(orderId: number): Observable<CreateApiResponse<null>> {
+    const token = this.authService.getAccessToken();
+    console.log("Token:", token);
+
+    return this.http.patch<CreateApiResponse<null>>(
+        `${environment.apiUrl}/base/forward-order-status-user/${orderId}`,
+        null, // <-- body, ako nemaš šta slati, stavi null
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+}
+
+forwardEditorOrderStatus(orderId: number): Observable<CreateApiResponse<null>> {
+    const token = this.authService.getAccessToken();
+    console.log("Token:", token);
+
+    return this.http.patch<CreateApiResponse<null>>(
+        `${environment.apiUrl}/protected/forward-order-status-editor/${orderId}`,
+        null, // <-- body, ako nemaš šta slati, stavi null
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+}
+
+
 getOrderStatuses(): OrderStatus[] {
     return [OrderStatus.PENDING, OrderStatus.CHANGED, OrderStatus.APPROVED, OrderStatus.COMPLETED];
 }

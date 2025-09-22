@@ -19,6 +19,7 @@ import { Subject, take, takeUntil } from 'rxjs';
 import { InitConfig } from '../../../init/init.config';
 import { InitForms } from '../../../init/init.forms';
 import { NotificationService } from '../../../services/notification.service';
+import { ConfirmDialogBox } from '../../pop-up/confirm-dialog-box/confirm-dialog-box';
 
 @Component({
   selector: 'app-inventory-managment',
@@ -29,6 +30,7 @@ import { NotificationService } from '../../../services/notification.service';
 export class InventoryManagment implements OnInit, OnDestroy {
 
   modalRef?: BsModalRef<ImUpsertModal>;
+  modalRefConfirm?: BsModalRef<ConfirmDialogBox>;
 
   @ViewChild('ordersTable', { static: false }) ordersTable!: ElementRef;
 
@@ -159,6 +161,35 @@ export class InventoryManagment implements OnInit, OnDestroy {
     // this.orderService.deleteOrder(orderId).subscribe(() => {
     //   this.orders = this.orders.filter(order => order.orderId !== orderId);
     // });
+  }
+
+  forwardStatus(orderId: number): void {
+
+
+    const modalRefConfirm: BsModalRef = this.modalService.show(ConfirmDialogBox, {
+      initialState: {
+        title: 'Promjena statusa',
+        message: 'Da li ste sigurni da želite promijeniti status?',
+        onConfirm: () => {
+          this.orderService.forwardEditorOrderStatus(orderId).pipe(take(1)).subscribe({
+            next: (response) => {
+              this.notifyService.success(response.message);
+              this.onFilterSubmit();
+            },
+            error: (error) => {
+              this.notifyService.error(error.error);
+            }
+          });
+        },
+        onCancel: () => {
+          this.notifyService.info('Promjena statusa otkazana');
+        } 
+      },
+        ignoreBackdropClick: true,
+        keyboard: false 
+    });
+
+
   }
 
   statusTranslate(status: OrderStatus): string {

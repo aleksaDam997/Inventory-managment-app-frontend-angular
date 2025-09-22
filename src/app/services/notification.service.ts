@@ -23,4 +23,8 @@ export class NotificationService {
   error(message: string, timeout = 5000) {
     this.show('danger', message, timeout);
   }
+
+  info(message: string, timeout = 5000) {
+    this.show('info', message, timeout);
+  }
 }

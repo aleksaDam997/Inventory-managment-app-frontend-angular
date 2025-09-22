@@ -1,0 +1,13 @@
+<div class="modal-header">
+  <h5 class="modal-title">{{ title || 'Potvrda' }}</h5>
+  <button type="button" class="btn-close" aria-label="Zatvori" (click)="bsModalRef.hide()"></button>
+</div>
+
+<div class="modal-body">
+  <p>{{ message || 'Da li ste sigurni?' }}</p>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="onCancel?.(); bsModalRef.hide()">Ne</button>
+  <button type="button" class="btn btn-primary" (click)="onConfirm?.(); bsModalRef.hide()">Da</button>
+</div>

@@ -93,6 +93,9 @@
           <td>{{ order.createdAt | date:'medium' }}</td>
           <td>{{ order.updatedAt | date:'medium' }}</td>
           <td>
+            <button class="btn btn-sm btn-outline-success me-2" (click)="forwardStatus(order.orderId)">
+              <i class="bi bi-fast-forward-circle"></i>
+            </button>
             <button class="btn btn-sm btn-outline-primary me-2" (click)="openUpdateOrderModal(order)">
               <i class="bi bi-pencil"></i>
             </button>

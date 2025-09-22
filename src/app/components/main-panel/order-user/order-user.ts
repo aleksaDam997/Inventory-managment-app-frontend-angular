@@ -16,6 +16,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { OrderUserModal } from './order-user-modal/order-user-modal';
 import { CreateApiResponse, OrderResponse } from '../../../models/response.models';
 import { NotificationService } from '../../../services/notification.service';
+import { ConfirmDialogBox } from '../../pop-up/confirm-dialog-box/confirm-dialog-box';
 
 @Component({
   selector: 'app-order-user',
@@ -26,6 +27,7 @@ import { NotificationService } from '../../../services/notification.service';
 export class OrderUser {
   
   modalRef?: BsModalRef<OrderUserModal>;
+  modalRefConfirm?: BsModalRef<ConfirmDialogBox>;
 
   @ViewChild('ordersTable', { static: false }) ordersTable!: ElementRef;
 
@@ -124,6 +126,35 @@ export class OrderUser {
       this.onFilterSubmit();
     });
   } 
+
+  forwardStatus(orderId: number): void {
+
+
+    const modalRefConfirm: BsModalRef = this.modalService.show(ConfirmDialogBox, {
+      initialState: {
+        title: 'Promjena statusa',
+        message: 'Da li ste sigurni da želite promijeniti status?',
+        onConfirm: () => {
+          this.orderService.forwardUserOrderStatus(orderId).pipe(take(1)).subscribe({
+            next: (response) => {
+              this.notificationService.success(response.message);
+              this.onFilterSubmit();
+            },
+            error: (error) => {
+              this.notificationService.error(error.error);
+            }
+          });
+        },
+        onCancel: () => {
+          this.notificationService.info('Promjena statusa otkazana');
+        } 
+      },
+        ignoreBackdropClick: true,
+        keyboard: false 
+    });
+
+
+  }
 
   createOrderProductForm(product: any): FormGroup {
     return new FormGroup({
