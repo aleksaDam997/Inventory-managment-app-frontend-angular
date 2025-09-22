@@ -1,1 +1,131 @@
-<p>graphs works!</p>
+<div class="w-full min-h-screen bg-light">
+  <!-- Sticky Filter Bar -->
+  <div class="sticky-top border-bottom bg-white py-3">
+    <div class="container">
+      <div class="d-flex flex-wrap align-items-center gap-3">
+        <select class="form-select w-auto">
+          <option selected>Tekući mjesec (MTD)</option>
+          <option>Prošli mjesec</option>
+          <option>QTD</option>
+          <option>YTD</option>
+          <option>Zadnja 3 mjeseca</option>
+          <option>Zadnjih 12 mjeseci</option>
+          <option>Prilagođeno…</option>
+        </select>
+
+        <select class="form-select w-auto">
+          <option selected>Svi centri</option>
+          <option>Prodaja</option>
+          <option>IT</option>
+          <option>Marketing</option>
+          <option>Operacije</option>
+        </select>
+
+        <select class="form-select w-auto">
+          <option selected>Sve vrste</option>
+          <option>Kancelarijski</option>
+          <option>IT potrošni</option>
+          <option>Oprema</option>
+        </select>
+
+        <input type="number" class="form-control w-auto" placeholder="Količina min">
+        <input type="number" class="form-control w-auto" placeholder="max">
+
+        <div class="ms-auto d-flex gap-2">
+          <button class="btn btn-outline-secondary">Reset</button>
+          <button class="btn btn-primary">Primijeni filtere</button>
+        </div>
+      </div>
+
+      <!-- Active filters -->
+      <div class="mt-2 d-flex flex-wrap gap-2">
+        <span class="badge bg-secondary">Period: MTD</span>
+        <span class="badge bg-secondary">Centar: Svi</span>
+        <span class="badge bg-secondary">Vrste: Sve</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="container py-4">
+    <!-- Row 1 -->
+    <div class="row g-3">
+      <div class="col-lg-4">
+        <div class="card h-100">
+          <div class="card-header">Potrošnja — prošli vs. tekući mjesec (KM)</div>
+          <div class="card-body">
+            <canvas baseChart [data]="spendMonthChart" chartType="bar"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-8">
+        <div class="card h-100">
+          <div class="card-header">Trend potrošnje — zadnjih 12 mjeseci (KM)</div>
+          <div class="card-body">
+            <canvas baseChart [data]="last12mChart" type="line"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 2 -->
+    <div class="row g-3 mt-1">
+      <div class="col-lg-6">
+        <div class="card h-100">
+          <div class="card-header">Top 5 troškovnih centara (KM)</div>
+          <div class="card-body">
+            <canvas baseChart [data]="topCentersChart" type="doughnut"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="card h-100">
+          <div class="card-header">Top 5 proizvoda — prošli vs. tekući mjesec</div>
+          <div class="card-body">
+            <ul class="nav nav-tabs" role="tablist">
+              <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#last" role="tab">Prošli mjesec</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#now" role="tab">Tekući (MTD)</a>
+              </li>
+            </ul>
+            <div class="tab-content pt-3">
+              <div class="tab-pane fade show active" id="last" role="tabpanel">
+                <canvas baseChart [data]="topProductsLastChart" type="radar"></canvas>
+              </div>
+              <div class="tab-pane fade" id="now" role="tabpanel">
+                <canvas baseChart [data]="topProductsNowChart" type="polarArea"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 3 -->
+    <div class="row g-3 mt-1">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">Pretraživanja prema filterima</div>
+          <div class="card-body">
+            <p>
+              Ovdje idu sekcije <b>Narudžbe, Stavke, Dobavljači, Kategorije, Projekti, Budžet vs. stvarno, Otvorene narudžbe</b>.
+            </p>
+            <div class="d-flex flex-wrap gap-2">
+              <button class="btn btn-outline-primary btn-sm">Narudžbe</button>
+              <button class="btn btn-outline-primary btn-sm">Stavke</button>
+              <button class="btn btn-outline-primary btn-sm">Dobavljači</button>
+              <button class="btn btn-outline-primary btn-sm">Kategorije</button>
+              <button class="btn btn-outline-primary btn-sm">Projekti</button>
+              <button class="btn btn-outline-primary btn-sm">Budžet vs. stvarno</button>
+              <button class="btn btn-outline-primary btn-sm">Otvorene narudžbe</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
