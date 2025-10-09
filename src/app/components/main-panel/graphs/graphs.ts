@@ -1,59 +1,145 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ChartConfiguration } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
+import { AuthService } from '../../../services/auth.service';
+import { ReportsService } from '../../../services/reports.service';
+import { CreateApiResponse, Report, SpendByMonth } from '../../../models/response.models';
+import { NotificationService } from '../../../services/notification.service';
+import { Subject, takeUntil } from 'rxjs';
+import { UserRole } from '../../../models/user.model';
+import { CompanyManagmentService } from '../../../services/company.managment.service';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { InitForms } from '../../../init/init.forms';
+import { ProductService } from '../../../services/product.service';
+import { Product } from '../../../models/models';
 
 @Component({
   selector: 'app-graphs',
-  imports: [BaseChartDirective, CommonModule],
+  imports: [BaseChartDirective, CommonModule, ReactiveFormsModule],
   templateUrl: './graphs.html',
   styleUrl: './graphs.css'
 })
-export class Graphs {
+export class Graphs implements OnInit {
 
-    last12m = [
-    { m: "Oct", v: 41000 },
-    { m: "Nov", v: 38000 },
-    { m: "Dec", v: 52000 },
-    { m: "Jan", v: 45000 },
-    { m: "Feb", v: 47000 },
-    { m: "Mar", v: 49000 },
-    { m: "Apr", v: 43000 },
-    { m: "May", v: 51000 },
-    { m: "Jun", v: 54000 },
-    { m: "Jul", v: 56000 },
-    { m: "Aug", v: 48000 },
-    { m: "Sep", v: 60000 },
-  ];
+  role: UserRole;
+  companies: any[] = [];
+  products: Product[] = [];
 
-  spendMonth = [
-    { label: "Prošli mjesec", value: 54890 },
-    { label: "Tekući (MTD)", value: 42230 },
-  ];
+  private destroy$ = new Subject<void>();
 
-  topCenters = [
-    { name: "Prodaja", km: 18500 },
-    { name: "IT", km: 16200 },
-    { name: "Marketing", km: 14100 },
-    { name: "Operacije", km: 11900 },
-    { name: "Logistika", km: 10100 },
-  ];
+  reportFilterForm: FormGroup;
 
-  topProductsLast = [
-    { name: "Papir A4", km: 5200 },
-    { name: "Toner HP 205A", km: 4100 },
-    { name: "HDD 1TB", km: 3800 },
-    { name: "Koverte C4", km: 2900 },
-    { name: "USB 32GB", km: 2500 },
-  ];
+  last12m: SpendByMonth[] = [];
+  
+  last12mOrderSum: SpendByMonth[] = []
 
-  topProductsNow = [
-    { name: "Papir A4", km: 3100 },
-    { name: "Toner HP 205A", km: 2900 },
-    { name: "Miš Logitech", km: 2400 },
-    { name: "USB 64GB", km: 2100 },
-    { name: "Marker set", km: 1800 },
-  ];
+  spendMonth: SpendByMonth[] = [];
+
+  topCenters: SpendByMonth[] = [];
+
+  topProductsLast: SpendByMonth[] = [];
+
+  topProductsNow: SpendByMonth[] = [];
+
+  last12mProductQuantity: SpendByMonth[] = [];
+
+  last12mProductSum: SpendByMonth[] = [];
+
+  constructor(private authService: AuthService, private companyManagmentService: CompanyManagmentService,
+     private reportsService: ReportsService, private productsService: ProductService, private notify: NotificationService) { 
+    this.role = this.authService.getUserRole() as UserRole;
+
+    this.reportFilterForm = InitForms.initializeReportsFilterForm(this.role, this.authService.getCompanyId()!);  
+  }
+
+  ngOnInit(): void {
+
+    this.companyManagmentService.getAllCompanies()
+      .pipe(takeUntil(this.destroy$)).subscribe({
+        next: (companies) => {
+          this.companies = companies;
+        },
+        error: (error) => {
+          console.error('Error fetching companies:', error);
+        }
+    });
+
+    this.productsService.getAllProducts()
+      .pipe(takeUntil(this.destroy$)).subscribe({
+        next: (products) => { 
+          this.products = products;
+        },
+        error: (error) => {
+          this.notify.error(error);
+        }
+    });
+    
+    this.onSubmit();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  onSubmit() {
+    this.reportsService.takeCurrentLastMonthReport(this.reportFilterForm).subscribe({
+      next: (res: CreateApiResponse<Report>) => {
+        const report = res.data;
+
+        this.spendMonth = report ? report.spendByMonth : [];
+        this.spendMonthChart = {
+          labels: this.spendMonth.map(d => d.label),
+          datasets: [{ data: this.spendMonth.map(d => d.value), label: 'Iznos (KM)' }]
+        };
+
+        this.last12m = report ? report.last12mOrderSum : [];
+
+        this.last12mChart = {
+          labels: this.last12m.map(d => d.label),
+          datasets: [{ data: this.last12m.map(d => d.value), label: 'Iznos (KM)' }]
+        };
+
+        this.last12mProductSum = report ? report.last12mProductSum : [];
+
+        this.last12mProductSumChart = {
+          labels: this.last12mProductSum.map(d => d.label),
+          datasets: [{ data: this.last12mProductSum.map(d => d.value), label: 'Iznos (KM)' }]
+        };
+
+        this.last12mProductQuantity = report ? report.last12mProductQuantity : [];
+
+        this.last12mProductQuantityChart = {
+          labels: this.last12mProductQuantity.map(d => d.label),
+          datasets: [{ data: this.last12mProductQuantity.map(d => d.value), label: 'Količina' }]
+        };
+
+        this.topCenters = report ? report.top5OrgUnits : [];
+        this.topCentersChart = {
+          labels: this.topCenters.map(d => d.label),
+          datasets: [{ data: this.topCenters.map(d => d.value), label: 'Iznos (KM)' }]
+        };
+
+        console.log(res.data);
+
+        this.notify.success(res.message);
+      },
+      error: (err) => {
+        
+
+      if (err.error && err.error.error) {
+        this.notify.error(err.error.error);
+      } 
+      else if (typeof err.error === 'string') {
+        this.notify.error(err.error);
+      } 
+      else {
+        this.notify.error(err);
+      }
+      }
+    });
+  }
 
   // --- Chart.js configs ---
   spendMonthChart: ChartConfiguration<'bar'>['data'] = {
@@ -62,22 +148,49 @@ export class Graphs {
   };
 
   last12mChart: ChartConfiguration<'line'>['data'] = {
-    labels: this.last12m.map(d => d.m),
-    datasets: [{ data: this.last12m.map(d => d.v), label: 'Iznos (KM)' }]
+    labels: this.last12m.map(d => d.label),
+    datasets: [{ data: this.last12m.map(d => d.value), label: 'Iznos (KM)' }]
+  };
+
+  last12mProductSumChart: ChartConfiguration<'line'>['data'] = {
+    labels: this.last12mProductSum.map(d => d.label),
+    datasets: [{ data: this.last12mProductSum.map(d => d.value), label: 'Iznos (KM)' }]
+  };
+
+  last12mProductQuantityChart: ChartConfiguration<'line'>['data'] = {
+    labels: this.last12mProductQuantity.map(d => d.label),
+    datasets: [{ data: this.last12mProductQuantity.map(d => d.value), label: 'Iznos (KM)' }]
   };
 
   topCentersChart: ChartConfiguration<'bar'>['data'] = {
-    labels: this.topCenters.map(d => d.name),
-    datasets: [{ data: this.topCenters.map(d => d.km), label: 'Iznos (KM)' }]
+    labels: this.topCenters.map(d => d.label),
+    datasets: [{ data: this.topCenters.map(d => d.value), label: 'Iznos (KM)' }]
   };
 
   topProductsLastChart: ChartConfiguration<'bar'>['data'] = {
-    labels: this.topProductsLast.map(d => d.name),
-    datasets: [{ data: this.topProductsLast.map(d => d.km), label: 'Iznos (KM)' }]
+    labels: this.topProductsLast.map(d => d.label),
+    datasets: [{ data: this.topProductsLast.map(d => d.value), label: 'Iznos (KM)' }]
   };
 
   topProductsNowChart: ChartConfiguration<'bar'>['data'] = {
-    labels: this.topProductsNow.map(d => d.name),
-    datasets: [{ data: this.topProductsNow.map(d => d.km), label: 'Iznos (KM)' }]
+    labels: this.topProductsNow.map(d => d.label),
+    datasets: [{ data: this.topProductsNow.map(d => d.value), label: 'Iznos (KM)' }]
   };
+
+    getCompanyName(companyId: number): string {
+    const company = this.companies.find(c => c.companyId === companyId);
+    return company ? company.name : 'Nema firme';
+  }
+
+  getOrgUnitName(companyId: number, orgUnitId: number): string {
+    const company = this.companies.find(c => c.companyId === companyId);
+    const orgUnit = company?.orgUnits.find((ou: any) => ou.orgUnitId === orgUnitId);
+    return orgUnit ? orgUnit.name : 'Nema filijale';
+  }
+
+  getOrgUnitsByCompanyId(companyId: number) {
+
+    const company = this.companies.find(c => +c.companyId === +companyId);
+    return company ? company.orgUnits : [];
+  }
 }

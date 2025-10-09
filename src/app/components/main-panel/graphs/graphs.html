@@ -1,50 +1,43 @@
 <div class="w-full min-h-screen bg-light">
   <!-- Sticky Filter Bar -->
-  <div class="sticky-top border-bottom bg-white py-3">
-    <div class="container">
-      <div class="d-flex flex-wrap align-items-center gap-3">
-        <select class="form-select w-auto">
-          <option selected>Tekući mjesec (MTD)</option>
-          <option>Prošli mjesec</option>
-          <option>QTD</option>
-          <option>YTD</option>
-          <option>Zadnja 3 mjeseca</option>
-          <option>Zadnjih 12 mjeseci</option>
-          <option>Prilagođeno…</option>
-        </select>
+  <form action="submit" [formGroup]="reportFilterForm" (ngSubmit)="onSubmit()">
+    <div class="sticky-top border-bottom bg-white py-3">
+      <div class="container row g-3">
+        @if(role === 'ADMIN') {
+            <div class="col-12 col-md-2">
+              <label for="companySelected" class="form-label">Firma</label>
+              <select id="companySelected" class="form-select" formControlName="companyId" required>
+                <option value="0" selected>Sve firme</option>
+                <option *ngFor="let company of companies" [value]="company.companyId">{{ company.name }}</option>
+              </select>
+            </div>
+          }
 
-        <select class="form-select w-auto">
-          <option selected>Svi centri</option>
-          <option>Prodaja</option>
-          <option>IT</option>
-          <option>Marketing</option>
-          <option>Operacije</option>
-        </select>
+          @if(reportFilterForm.get('companyId')?.value) {
+            <div class="col-12 col-md-2">
+              <label for="orgUnitSelected" class="form-label">Filijala</label>
+              <select id="orgUnitSelected" class="form-select" formControlName="orgUnitId">
+                <option value="0" selected>Sve filijale</option>
+                <option *ngFor="let orgUnit of getOrgUnitsByCompanyId(reportFilterForm.get('companyId')?.value)" [value]="orgUnit.orgUnitId">{{ orgUnit.name }}</option>
+              </select>
+            </div>
+          }
 
-        <select class="form-select w-auto">
-          <option selected>Sve vrste</option>
-          <option>Kancelarijski</option>
-          <option>IT potrošni</option>
-          <option>Oprema</option>
-        </select>
+          <div class="col-12 col-md-2">
+            <label for="productSelected" class="form-label">Proizvod</label>
+            <select id="productSelected" class="form-select" formControlName="productId">
+              <option value="0" selected>Svi proizvodi</option>
+              <option *ngFor="let product of products" [value]="product.productId">{{ product.name }}</option>
+            </select>
+          </div>
 
-        <input type="number" class="form-control w-auto" placeholder="Količina min">
-        <input type="number" class="form-control w-auto" placeholder="max">
 
-        <div class="ms-auto d-flex gap-2">
-          <button class="btn btn-outline-secondary">Reset</button>
-          <button class="btn btn-primary">Primijeni filtere</button>
-        </div>
-      </div>
+          <div class="col-12 col-md-2">
+            <button class="btn btn-primary mt-4 w-100" type="submit">Primijeni filter</button>
 
-      <!-- Active filters -->
-      <div class="mt-2 d-flex flex-wrap gap-2">
-        <span class="badge bg-secondary">Period: MTD</span>
-        <span class="badge bg-secondary">Centar: Svi</span>
-        <span class="badge bg-secondary">Vrste: Sve</span>
+          </div>
       </div>
     </div>
-  </div>
 
   <!-- Content -->
   <div class="container py-4">
@@ -60,10 +53,56 @@
       </div>
 
       <div class="col-lg-8">
-        <div class="card h-100">
-          <div class="card-header">Trend potrošnje — zadnjih 12 mjeseci (KM)</div>
-          <div class="card-body">
+        <ul class="nav nav-tabs" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link"
+              [class.active]="reportFilterForm.get('productId')?.value === 0"
+              [class.disabled]="reportFilterForm.get('productId')?.value !== 0"
+              data-bs-toggle="tab" href="#os" role="tab">
+              Suma svih porudžbina
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link"
+              [class.active]="reportFilterForm.get('productId')?.value !== 0"
+              [class.disabled]="reportFilterForm.get('productId')?.value === 0"
+              data-bs-toggle="tab" href="#ps" role="tab">
+              Suma za izabrani proizvod
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link"
+              [class.active]="false"
+              [class.disabled]="reportFilterForm.get('productId')?.value === 0"
+              data-bs-toggle="tab" href="#qs" role="tab">
+              Kolicina izabranog proizvoda
+            </a>
+          </li>
+        </ul>
+
+        <div class="tab-content pt-3">
+
+          <div class="tab-pane fade"
+              [class.show]="reportFilterForm.get('productId')?.value === 0"
+              [class.active]="reportFilterForm.get('productId')?.value === 0"
+              id="os" role="tabpanel">
             <canvas baseChart [data]="last12mChart" type="line"></canvas>
+          </div>
+
+          <div class="tab-pane fade"
+              [class.show]="reportFilterForm.get('productId')?.value !== 0"
+              [class.active]="reportFilterForm.get('productId')?.value !== 0"
+              id="ps" role="tabpanel">
+            <canvas baseChart [data]="last12mProductSumChart" type="line"></canvas>
+          </div>
+
+          <div class="tab-pane fade"
+              [class.show]="false"
+              [class.active]="false"
+              id="qs" role="tabpanel">
+            <canvas baseChart [data]="last12mProductQuantityChart" type="line"></canvas>
           </div>
         </div>
       </div>
@@ -104,28 +143,7 @@
         </div>
       </div>
     </div>
-
-    <!-- Row 3 -->
-    <div class="row g-3 mt-1">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-header">Pretraživanja prema filterima</div>
-          <div class="card-body">
-            <p>
-              Ovdje idu sekcije <b>Narudžbe, Stavke, Dobavljači, Kategorije, Projekti, Budžet vs. stvarno, Otvorene narudžbe</b>.
-            </p>
-            <div class="d-flex flex-wrap gap-2">
-              <button class="btn btn-outline-primary btn-sm">Narudžbe</button>
-              <button class="btn btn-outline-primary btn-sm">Stavke</button>
-              <button class="btn btn-outline-primary btn-sm">Dobavljači</button>
-              <button class="btn btn-outline-primary btn-sm">Kategorije</button>
-              <button class="btn btn-outline-primary btn-sm">Projekti</button>
-              <button class="btn btn-outline-primary btn-sm">Budžet vs. stvarno</button>
-              <button class="btn btn-outline-primary btn-sm">Otvorene narudžbe</button>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
+   </form>
+
 </div>

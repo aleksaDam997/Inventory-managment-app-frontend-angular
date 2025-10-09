@@ -23,3 +23,19 @@ export interface IdLabelType {
   id: number;
   label: string;
 }
+
+export interface Report {
+  spendByMonth: SpendByMonth[];
+  last12m: { label: string; value: number }[];
+  last12mOrderSum: { label: string; value: number }[];
+  last12mProductSum: { label: string; value: number }[];
+  last12mProductQuantity: { label: string; value: number }[];
+  top5OrgUnits: { label: string; value: number }[];
+  top5Products: { label: string; value: number }[];
+  top5ProductsNow: { label: string; value: number }[];
+}
+
+export interface SpendByMonth {
+  label: string;
+  value: number;
+}

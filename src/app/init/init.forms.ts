@@ -53,4 +53,16 @@ export class InitForms {
             orgUnitId: new FormControl(0)
         });
     }
+
+    static initializeReportsFilterForm(role: UserRole, companyId: number): FormGroup {
+        
+        return new FormGroup({
+            companyId: role === 'ADMIN'
+            ? new FormControl('0')
+            : new FormControl(companyId),
+            orgUnitId: new FormControl('0'),
+            productId: new FormControl(0)
+        });
+    
+    }
 }
