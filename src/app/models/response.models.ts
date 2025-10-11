@@ -31,7 +31,8 @@ export interface Report {
   last12mProductSum: { label: string; value: number }[];
   last12mProductQuantity: { label: string; value: number }[];
   top5OrgUnits: { label: string; value: number }[];
-  top5Products: { label: string; value: number }[];
+  top5ProductsLastMonth: { label: string; value: number }[];
+  top5ProductsPreviousMonth: { label: string; value: number }[];
   top5ProductsNow: { label: string; value: number }[];
 }
 

@@ -38,7 +38,9 @@ export class Graphs implements OnInit {
 
   topCenters: SpendByMonth[] = [];
 
-  topProductsLast: SpendByMonth[] = [];
+  top5ProductsLastMonth: SpendByMonth[] = [];
+
+  top5ProductsPreviousMonth: SpendByMonth[] = [];
 
   topProductsNow: SpendByMonth[] = [];
 
@@ -121,7 +123,20 @@ export class Graphs implements OnInit {
           datasets: [{ data: this.topCenters.map(d => d.value), label: 'Iznos (KM)' }]
         };
 
-        console.log(res.data);
+        this.top5ProductsLastMonth = report ? report.top5ProductsLastMonth : [];
+
+        this.top5ProductsLastMonthChart = {
+          labels: this.top5ProductsLastMonth.map(d => d.label),
+          datasets: [{ data: this.top5ProductsLastMonth.map(d => d.value), label: 'Iznos (KM)' }]
+        };
+
+        this.top5ProductsPreviousMonth = report ? report.top5ProductsPreviousMonth : [];
+
+        this.top5ProductsPreviousMonthChart = {
+          labels: this.top5ProductsPreviousMonth.map(d => d.label),
+          datasets: [{ data: this.top5ProductsPreviousMonth.map(d => d.value), label: 'Iznos (KM)' }]
+        };
+
 
         this.notify.success(res.message);
       },
@@ -167,9 +182,14 @@ export class Graphs implements OnInit {
     datasets: [{ data: this.topCenters.map(d => d.value), label: 'Iznos (KM)' }]
   };
 
-  topProductsLastChart: ChartConfiguration<'bar'>['data'] = {
-    labels: this.topProductsLast.map(d => d.label),
-    datasets: [{ data: this.topProductsLast.map(d => d.value), label: 'Iznos (KM)' }]
+  top5ProductsLastMonthChart: ChartConfiguration<'bar'>['data'] = {
+    labels: this.top5ProductsLastMonth.map(d => d.label),
+    datasets: [{ data: this.top5ProductsLastMonth.map(d => d.value), label: 'Iznos (KM)' }]
+  };
+
+  top5ProductsPreviousMonthChart: ChartConfiguration<'bar'>['data'] = {
+    labels: this.top5ProductsPreviousMonth.map(d => d.label),
+    datasets: [{ data: this.top5ProductsPreviousMonth.map(d => d.value), label: 'Iznos (KM)' }]
   };
 
   topProductsNowChart: ChartConfiguration<'bar'>['data'] = {

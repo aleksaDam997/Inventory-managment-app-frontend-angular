@@ -142,10 +142,10 @@
             <div class="card-title mb-3">Top 5 proizvoda — prošli vs. tekući mjesec</div>
             <div class="tab-content">
               <div class="tab-pane fade show active" id="last" role="tabpanel">
-                <canvas baseChart [data]="topProductsLastChart" type="radar"></canvas>
+                <canvas baseChart [data]="top5ProductsLastMonthChart" type="bar"></canvas>
               </div>
               <div class="tab-pane fade" id="now" role="tabpanel">
-                <canvas baseChart [data]="topProductsNowChart" type="polarArea"></canvas>
+                <canvas baseChart [data]="top5ProductsPreviousMonthChart" type="bar"></canvas>
               </div>
             </div>
           </div>
@@ -153,5 +153,19 @@
       </div>
     </div>
   </div>
+
+  <!-- Footer -->
+  <footer class="bg-white border-top py-3 mt-auto">
+    <div class="container-fluid">
+      <div class="row align-items-center">
+        <div class="col-12 col-md-6 text-center text-md-start mb-2 mb-md-0">
+          <small class="text-muted">© 2025 Menadžment Sistem. Sva prava zadržana.</small>
+        </div>
+        <div class="col-12 col-md-6 text-center text-md-end">
+          <small class="text-muted">Verzija 1.0.0</small>
+        </div>
+      </div>
+    </div>
+  </footer>
 
 </div>

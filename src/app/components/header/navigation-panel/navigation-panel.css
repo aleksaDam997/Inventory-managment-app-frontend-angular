@@ -3,7 +3,7 @@
   height: 100%;
   background: white;
   border-right: 1px solid #dee2e6;
-  transition: width 0.3s ease;
+  transition: width 0.4s ease-in-out; /* Sporije - bilo 0.3s */
   position: relative;
   flex-shrink: 0;
   overflow: hidden;
@@ -11,14 +11,16 @@
 
 /* Expanded state - samo desktop */
 @media (min-width: 768px) {
-  /* Hover expansion */
+  /* Hover expansion sa delay */
   .sidebar:hover {
     width: 260px;
+    transition-delay: 0.15s; /* Delay prije otvaranja */
   }
   
   .sidebar:hover .nav-text {
     opacity: 1;
     width: auto;
+    transition-delay: 0.2s; /* Tekst se pojavi nakonширине */
   }
   
   .sidebar:hover .nav-list a {
@@ -27,6 +29,15 @@
   
   .sidebar:hover .sidebar-header {
     justify-content: flex-start;
+  }
+  
+  /* Brže zatvaranje kad miš ode */
+  .sidebar:not(:hover) {
+    transition-delay: 0.1s;
+  }
+  
+  .sidebar:not(:hover) .nav-text {
+    transition-delay: 0s;
   }
 }
 
@@ -62,6 +73,7 @@
   padding: 0 15px;
   border-bottom: 1px solid #dee2e6;
   color: #0d6efd;
+  transition: justify-content 0.4s ease-in-out;
 }
 
 .sidebar-header i {
@@ -89,7 +101,7 @@
   color: #495057;
   text-decoration: none;
   border-radius: 8px;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   white-space: nowrap;
 }
 
@@ -113,7 +125,7 @@
   opacity: 0;
   width: 0;
   overflow: hidden;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease-in-out, width 0.3s ease-in-out; /* Sporije */
 }
 
 /* Scrollbar */
