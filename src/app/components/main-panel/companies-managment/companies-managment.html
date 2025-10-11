@@ -1,55 +1,112 @@
 <div class="bg-white shadow-sm p-3 rounded mb-4 flex-shrink-0">
-<h2>Menadžment firmi 🎉</h2>
-<p>Ovdje možete pratiti sve firme i njihove informacije.</p>
+  <h2>Menadžment firmi 🎉</h2>
+  <p>Ovdje možete pratiti sve firme i njihove informacije.</p>
 </div>
 
 <div class="d-flex justify-content-end mb-3">
-  <button class="btn btn-primary" (click)="openCreateCompanyModal()">Dodaj firmu</button>
-
+  <button class="btn btn-primary" (click)="openCreateCompanyModal()">
+    <i class="bi bi-plus-circle me-1 d-none d-sm-inline"></i>
+    Dodaj firmu
+  </button>
 </div>
 
 <div class="mt-3">
+  <!-- Desktop verzija (vidljiva na većim ekranima) -->
+  <div class="table-responsive d-none d-lg-block">
     <table class="table table-borderless text-center">
-  <thead>
-    <tr>
-      <th scope="col">Id</th>
-      <th scope="col">Naziv</th>
-      <th scope="col">pib</th>
-      <th scope="col">upin</th>
-      <th scope="col">Adresa</th>
-      <th scope="col">Država</th>
-      <th scope="col">Grad</th>
-      <th scope="col">Zip code</th>
-      <th scope="col">Email</th>
-      <th scope="col">Web site</th>
-      <th scope="col">Akcije</th>
-    </tr>
-  </thead>
-  <tbody>
-
-    <tr *ngFor="let company of companies;" class="align-middle">
-        <th scope="row">{{ company.companyId }}</th>
-        <td>{{ company.name }}</td>
-        <td>{{ company.pib }}</td>
-        <td>{{ company.upin }}</td>
-        <td>{{ company.address }}</td>
-        <td>{{ company.country }}</td>
-        <td>{{ company.city }}</td>
-        <td>{{ company.postalCode }}</td>
-        <td>{{ company.email }}</td>
-        <td>{{ company.website }}</td>
-        <td>
-            <button class="btn btn-sm btn-outline-primary mb-1" (click)="openUpdateCompanyModal(company)">
-            <i class="bi bi-pencil"></i>
+      <thead>
+        <tr>
+          <th scope="col">Id</th>
+          <th scope="col">Naziv</th>
+          <th scope="col">PIB</th>
+          <th scope="col">UPIN</th>
+          <th scope="col">Adresa</th>
+          <th scope="col">Grad</th>
+          <th scope="col">Zip code</th>
+          <th scope="col">Email</th>
+          <th scope="col">Akcije</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let company of companies;" class="align-middle">
+          <th scope="row">{{ company.companyId }}</th>
+          <td>{{ company.name }}</td>
+          <td>{{ company.pib }}</td>
+          <td>{{ company.upin }}</td>
+          <td>{{ company.address }}</td>
+          <td>{{ company.city }}</td>
+          <td>{{ company.postalCode }}</td>
+          <td>{{ company.email }}</td>
+          <td>
+            <button class="btn btn-sm btn-outline-primary me-1 mb-1" (click)="openUpdateCompanyModal(company)">
+              <i class="bi bi-pencil"></i>
             </button>
-            <button class="btn btn-sm btn-outline-danger" (click)="deleteCompany(company.companyId)">
-            <i class="bi bi-trash"></i>
+            <button class="btn btn-sm btn-outline-danger mb-1" (click)="deleteCompany(company.companyId)">
+              <i class="bi bi-trash"></i>
             </button>
-        </td>
-    </tr>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-  </tbody>
-</table>
+  <!-- Mobilna/Tablet verzija (vidljiva na manjim ekranima) -->
+  <div class="d-lg-none">
+    <div *ngFor="let company of companies;" class="card mb-3 shadow-sm">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <h5 class="card-title mb-0">{{ company.name }}</h5>
+          <span class="badge bg-secondary">ID: {{ company.companyId }}</span>
+        </div>
+        
+        <div class="row g-2 mt-2">
+          <div class="col-6">
+            <small class="text-muted d-block">PIB</small>
+            <strong>{{ company.pib }}</strong>
+          </div>
+          <div class="col-6">
+            <small class="text-muted d-block">UPIN</small>
+            <strong>{{ company.upin }}</strong>
+          </div>
+          <div class="col-12">
+            <small class="text-muted d-block">Adresa</small>
+            <strong>{{ company.address }}</strong>
+          </div>
+          <div class="col-6">
+            <small class="text-muted d-block">Grad</small>
+            <strong>{{ company.city }}</strong>
+          </div>
+          <div class="col-6">
+            <small class="text-muted d-block">Zip code</small>
+            <strong>{{ company.postalCode }}</strong>
+          </div>
+          <div class="col-12">
+            <small class="text-muted d-block">Država</small>
+            <strong>{{ company.country }}</strong>
+          </div>
+          <div class="col-12">
+            <small class="text-muted d-block">Email</small>
+            <strong class="text-break">{{ company.email }}</strong>
+          </div>
+          <div class="col-12">
+            <small class="text-muted d-block">Web site</small>
+            <strong class="text-break">{{ company.website }}</strong>
+          </div>
+        </div>
+        
+        <div class="d-flex gap-2 mt-3">
+          <button class="btn btn-sm btn-outline-primary flex-fill" (click)="openUpdateCompanyModal(company)">
+            <i class="bi bi-pencil me-1"></i>
+            Uredi
+          </button>
+          <button class="btn btn-sm btn-outline-danger flex-fill" (click)="deleteCompany(company.companyId)">
+            <i class="bi bi-trash me-1"></i>
+            Obriši
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <app-upsert-companies-modal

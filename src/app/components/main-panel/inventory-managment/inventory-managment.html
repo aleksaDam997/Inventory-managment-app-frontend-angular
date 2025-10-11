@@ -1,14 +1,15 @@
-<div class="bg-white shadow-sm p-3 rounded mb-4 text-center text-md-start">
+<div class="container-fluid">
+  <div class="bg-white shadow-sm p-3 rounded mb-4 text-center text-md-start">
   <h2>Menadžment Porudžbina 🎉</h2>
   <p>Ovdje možete pratiti sve porudžbine i njihove statuse.</p>
 </div>
 
-<form class="d-flex align-items-end w-100" [formGroup]="orderFilterForm" (ngSubmit)="onFilterSubmit()">
+<form class="mb-3" [formGroup]="orderFilterForm" (ngSubmit)="onFilterSubmit()">
   
-  <!-- Lijeva grupa -->
-  <div class="d-flex align-items-end">
-    <div class="me-2">
-      <label for="startDate" class="form-label">Select date:</label>
+  <div class="row g-2">
+    <!-- Datumi -->
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+      <label for="startDate" class="form-label">Od datuma:</label>
       <input
         id="startDate"
         type="text"
@@ -19,8 +20,8 @@
       />
     </div>
 
-    <div class="me-2">
-      <label for="endDate" class="form-label">Select date:</label>
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+      <label for="endDate" class="form-label">Do datuma:</label>
       <input
         id="endDate"
         type="text"
@@ -32,8 +33,9 @@
       />
     </div>
 
+    <!-- Firma -->
     @if(role === 'ADMIN') {
-      <div class="col-12 col-md-2 me-2">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-2">
         <label for="companySelected" class="form-label">Firma</label>
         <select id="companySelected" class="form-select" formControlName="companyId" required>
           <option value="{{0}}" selected>Sve firme</option>
@@ -42,8 +44,9 @@
       </div>
     }
 
+    <!-- Filijala -->
     @if(orderFilterForm.get('companyId')?.value) {
-      <div class="col-12 col-md-2 me-2">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-2">
         <label for="orgUnitSelected" class="form-label">Filijala</label>
         <select id="orgUnitSelected" class="form-select" formControlName="orgUnitId">
           <option value="0" selected>Sve filijale</option>
@@ -52,7 +55,8 @@
       </div>
     }
 
-    <div class="col-12 col-md-2 me-2">
+    <!-- Status -->
+    <div class="col-12 col-sm-6 col-md-4 col-lg-2">
       <label for="statusSelected" class="form-label">Status</label>
       <select id="statusSelected" class="form-select" formControlName="status">
         <option value="" selected>Svi statusi</option>
@@ -60,41 +64,39 @@
       </select>
     </div>
 
-    <div class="me-2 me-2">
-      <button class="btn btn-outline-success" type="submit">Filtriraj</button>
+    <!-- Dugmad -->
+    <div class="col-12 col-sm-6 col-md-4 col-lg-auto d-flex align-items-end gap-2">
+      <button class="btn btn-outline-success flex-fill flex-sm-grow-0" type="submit">Filtriraj</button>
+      <button class="btn btn-primary flex-fill flex-sm-grow-0" type="button" (click)="openCreateOrderModal()">
+        Dodaj
+      </button>
     </div>
   </div>
 
-  <!-- Dugme sa plus desno -->
-  <button class="btn btn-primary ms-auto" type="button" (click)="openCreateOrderModal()">
-    <!-- <i class="bi bi-plus"></i>
-     <span>Nova porudžbina</span> -->
-     Dodaj
-  </button>
-
 </form>
 
-<div class="my-2 align-items-center">
-  <b><i class="bi bi-download mx-2"></i> Preuzmi</b>
-  <button class="btn btn-outline-success mx-2" (click)="downloadExcel()"><i class="bi bi-file-pdf"></i></button>
-  <button class="btn btn-outline-danger mx-2" (click)="printTable()"><i class="bi bi-filetype-xls"></i></button>
+<!-- Download dugmad -->
+<div class="mb-3 d-flex flex-wrap align-items-center gap-2">
+  <b><i class="bi bi-download"></i> Preuzmi</b>
+  <button class="btn btn-outline-success" (click)="downloadExcel()">
+    <i class="bi bi-file-pdf"></i>
+  </button>
+  <button class="btn btn-outline-danger" (click)="printTable()">
+    <i class="bi bi-filetype-xls"></i>
+  </button>
 </div>
-<!-- <a href="ms-word:ofe|u|file:///C:/Users/Korisnik/Downloads/ooroz.docx">
-Otvori dokument u Wordu
-</a> -->
 
-
-
+<!-- Tabela -->
 <div class="table-responsive mt-3">
   <table #ordersTable id="ordersTable" class="table table-borderless text-center">
     <thead>
       <tr>
         <th>Id</th>
-        <th>Korisnik</th>
+        <th class="d-none d-md-table-cell">Korisnik</th>
         <th>Cijena</th>
         <th>Status</th>
-        <th>Datum kreiranja narudžbe</th>
-        <th>Datum poslednje promjene</th>
+        <th class="d-none d-lg-table-cell">Datum kreiranja</th>
+        <th class="d-none d-xl-table-cell">Datum promjene</th>
         <th>Akcija</th>
       </tr>
     </thead>
@@ -102,7 +104,7 @@ Otvori dokument u Wordu
       @for (order of orders; track $index) {
         <tr>
           <th>{{ order.orderId }}</th>
-          <td>{{ order.user?.label }}</td>
+          <td class="d-none d-md-table-cell">{{ order.user?.label }}</td>
           <td>{{order.totalPrice}}</td>
           <td>
             <span
@@ -117,22 +119,24 @@ Otvori dokument u Wordu
               {{ statusTranslate(order.status) }}
             </span>
           </td>
-          <td>{{ order.createdAt | date:'medium' }}</td>
-          <td>{{ order.updatedAt | date:'medium' }}</td>
+          <td class="d-none d-lg-table-cell">{{ order.createdAt | date:'medium' }}</td>
+          <td class="d-none d-xl-table-cell">{{ order.updatedAt | date:'medium' }}</td>
           <td>
-            <button class="btn btn-sm btn-outline-success me-2" (click)="forwardStatus(order.orderId)">
-              <i class="bi bi-fast-forward-circle"></i>
-            </button>
-            <button class="btn btn-sm btn-outline-primary me-2" (click)="openUpdateOrderModal(order)">
-              <i class="bi bi-pencil"></i>
-            </button>
-            <button class="btn btn-sm btn-outline-danger" (click)="deleteOrder(order.orderId)">
-              <i class="bi bi-trash"></i>
-        </button>
+            <div class="d-flex gap-1 justify-content-center">
+              <button class="btn btn-sm btn-outline-success" (click)="forwardStatus(order.orderId)" title="Naprijed">
+                <i class="bi bi-fast-forward-circle"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-primary" (click)="openUpdateOrderModal(order)" title="Izmijeni">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger" (click)="deleteOrder(order.orderId)" title="Obriši">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
           </td>
+        </tr>
       }
     </tbody>
   </table>
 </div>
-
-
+</div>

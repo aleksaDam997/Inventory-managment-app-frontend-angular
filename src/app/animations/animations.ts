@@ -7,68 +7,55 @@ import {
   animate,
 } from '@angular/animations';
 
-// Garantovana fade animacija
+// Smooth fade animacija
 export const fadeAnimation = trigger('routeAnimations', [
   transition('* <=> *', [
-    // Stil za ENTER komponentu
+    // Postavi stilove
+    query(':enter, :leave', [
+      style({
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+      })
+    ], { optional: true }),
+    
+    // Postavi početni stil za :enter
     query(':enter', [
-      style({
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        opacity: 0,
-      })
+      style({ opacity: 0 })
     ], { optional: true }),
     
-    // Stil za LEAVE komponentu
-    query(':leave', [
-      style({
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        opacity: 1,
-      })
-    ], { optional: true }),
-    
-    // Animacija
+    // Animiraj obje komponente istovremeno
     group([
       query(':leave', [
-        animate('250ms ease-out', style({ opacity: 0 }))
+        animate('200ms ease-out', style({ opacity: 0 }))
       ], { optional: true }),
       
       query(':enter', [
-        animate('400ms 100ms ease-in', style({ opacity: 1 }))
+        animate('300ms ease-in', style({ opacity: 1 }))
       ], { optional: true })
     ])
   ])
 ]);
 
-// Fade + Slide animacija (smooth)
+// Fade + Slide (smooth sa malim pomjeranjem)
 export const fadeSlideAnimation = trigger('routeAnimations', [
   transition('* <=> *', [
-    query(':enter', [
+    query(':enter, :leave', [
       style({
         position: 'absolute',
         top: 0,
         left: 0,
         width: '100%',
         height: '100%',
-        opacity: 0,
-        transform: 'translateY(20px)'
       })
     ], { optional: true }),
     
-    query(':leave', [
-      style({
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
+    query(':enter', [
+      style({ 
+        opacity: 0,
+        transform: 'translateX(15px)'
       })
     ], { optional: true }),
     
@@ -76,55 +63,49 @@ export const fadeSlideAnimation = trigger('routeAnimations', [
       query(':leave', [
         animate('250ms ease-out', style({ 
           opacity: 0,
-          transform: 'translateY(-20px)'
+          transform: 'translateX(-15px)'
         }))
       ], { optional: true }),
       
       query(':enter', [
-        animate('400ms 50ms cubic-bezier(0.35, 0, 0.25, 1)', style({ 
+        animate('350ms ease-out', style({ 
           opacity: 1,
-          transform: 'translateY(0)'
+          transform: 'translateX(0)'
         }))
       ], { optional: true })
     ])
   ])
 ]);
 
-// Scale + Fade (moderniji)
+// Scale fade (zoom efekat)
 export const fadeScaleAnimation = trigger('routeAnimations', [
   transition('* <=> *', [
-    query(':enter', [
+    query(':enter, :leave', [
       style({
         position: 'absolute',
         top: 0,
         left: 0,
         width: '100%',
         height: '100%',
-        opacity: 0,
-        transform: 'scale(0.95)'
       })
     ], { optional: true }),
     
-    query(':leave', [
-      style({
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
+    query(':enter', [
+      style({ 
+        opacity: 0,
+        transform: 'scale(0.96)'
       })
     ], { optional: true }),
     
     group([
       query(':leave', [
-        animate('200ms ease-in', style({ 
-          opacity: 0,
-          transform: 'scale(1.05)'
+        animate('200ms ease-out', style({ 
+          opacity: 0
         }))
       ], { optional: true }),
       
       query(':enter', [
-        animate('400ms 80ms cubic-bezier(0.35, 0, 0.25, 1)', style({ 
+        animate('350ms ease-out', style({ 
           opacity: 1,
           transform: 'scale(1)'
         }))

@@ -3,103 +3,171 @@
   <p>Ovdje možete pratiti sve korisnike i njihove uloge.</p>
 </div>
 
-<form class="row g-3 align-items-end" [formGroup]="userFilterForm" (ngSubmit)="onFilterSubmit()">
+<!-- Filter forma - poboljšana responsivnost -->
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <form class="row g-3" [formGroup]="userFilterForm" (ngSubmit)="onFilterSubmit()">
+      
+      <!-- Search input -->
+      <div class="col-12 col-lg-3">
+        <label for="searchInput" class="form-label small text-muted">Pretraga</label>
+        <input id="searchInput" class="form-control" type="search" placeholder="Pretraži korisnike..." aria-label="Search" formControlName="inputText">
+      </div>
 
-  <div class="col-12 col-md-3">
-    <input class="form-control" type="search" placeholder="Pretraži" aria-label="Search" formControlName="inputText">
+      <!-- Role select -->
+      @if(role === 'ADMIN') {
+        <div class="col-12 col-sm-6 col-lg-2">
+          <label for="roleSelect" class="form-label small text-muted">Uloga</label>
+          <select id="roleSelect" class="form-select" formControlName="role" required>
+            <option value="" selected>Sve uloge</option>
+            <option value="ADMIN">ADMIN</option>
+            <option value="EDITOR">EDITOR</option>
+            <option value="USER">USER</option>
+          </select>
+        </div>
+      }
+
+      <!-- Company select -->
+      @if(role === 'ADMIN') {
+        <div class="col-12 col-sm-6 col-lg-2">
+          <label for="companySelected" class="form-label small text-muted">Firma</label>
+          <select id="companySelected" class="form-select" formControlName="companyId" required>
+            <option value="0" selected>Sve firme</option>
+            <option *ngFor="let company of companies" [value]="company.companyId">{{ company.name }}</option>
+          </select>
+        </div>
+      }
+
+      <!-- Org Unit select -->
+      @if(userFilterForm.get('companyId')?.value) {
+        <div class="col-12 col-sm-6 col-lg-2">
+          <label for="orgUnitSelected" class="form-label small text-muted">Filijala</label>
+          <select id="orgUnitSelected" class="form-select" formControlName="orgUnitId">
+            <option value="0" selected>Sve filijale</option>
+            <option *ngFor="let orgUnit of getOrgUnitsByCompanyId(userFilterForm.get('companyId')?.value)" [value]="orgUnit.orgUnitId">{{ orgUnit.name }}</option>
+          </select>
+        </div>
+      }
+
+      <!-- Active checkbox -->
+      <div class="col-12 col-sm-6 col-lg-2 d-flex align-items-end">
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="checkbox" id="flexCheckDefault" formControlName="isActive">
+          <label class="form-check-label" for="flexCheckDefault">
+            Samo aktivni
+          </label>
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="col-12 col-sm-6 col-lg-auto ms-lg-auto d-flex align-items-end gap-2">
+        <button class="btn btn-outline-success flex-fill flex-sm-grow-0" type="submit">
+          <i class="bi bi-funnel me-1"></i>
+          Filtriraj
+        </button>
+        <button class="btn btn-primary flex-fill flex-sm-grow-0" type="button" (click)="openCreateUserModal()">
+          <i class="bi bi-plus-circle me-1"></i>
+          <span class="d-none d-sm-inline">Dodaj</span>
+          <span class="d-inline d-sm-none">Novi</span>
+        </button>
+      </div>
+
+    </form>
   </div>
-
-  @if(role === 'ADMIN') {
-    <div class="col-12 col-md-2">
-      <label for="roleSelect" class="form-label">Uloga</label>
-      <select id="roleSelect" class="form-select" formControlName="role" required>
-      <!-- <option value="" disabled selected hidden>Sve uloge</option> -->
-        <option value="" selected>Sve uloge</option>
-        <option value="ADMIN">ADMIN</option>
-        <option value="EDITOR">EDITOR</option>
-        <option value="USER">USER</option>
-      </select>
-    </div>
-  }
-
-  @if(role === 'ADMIN') {
-    <div class="col-12 col-md-2">
-      <label for="companySelected" class="form-label">Firma</label>
-      <select id="companySelected" class="form-select" formControlName="companyId" required>
-        <option value="0" selected>Sve firme</option>
-        <option *ngFor="let company of companies" [value]="company.companyId">{{ company.name }}</option>
-      </select>
-    </div>
-  }
-
-  @if(userFilterForm.get('companyId')?.value) {
-    <div class="col-12 col-md-2">
-      <label for="orgUnitSelected" class="form-label">Filijala</label>
-      <select id="orgUnitSelected" class="form-select" formControlName="orgUnitId">
-        <option value="0" selected>Sve filijale</option>
-        <option *ngFor="let orgUnit of getOrgUnitsByCompanyId(userFilterForm.get('companyId')?.value)" [value]="orgUnit.orgUnitId">{{ orgUnit.name }}</option>
-      </select>
-    </div>
-  }
-
-  <div class="col-12 col-md-1 d-flex align-items-center mt-2 mt-md-0">
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" id="flexCheckDefault" formControlName="isActive">
-      <label class="form-check-label" for="flexCheckDefault">Aktivan</label>
-    </div>
-  </div>
-
-  <div class="col-12 col-md-2">
-    <button class="btn btn-outline-success w-100" type="submit">Filtriraj</button>
-  </div>
-
-  <div class="col-12 col-md-2 ms-auto">
-    <button class="btn btn-primary w-100" (click)="openCreateUserModal()">Dodaj korisnika</button>
-  </div>
-</form>
-
-<div class="table-responsive mt-3">
-  <table class="table table-borderless text-center">
-    <thead>
-      <tr>
-        <th>Id</th>
-        <th>Ime</th>
-        <th>Prezime</th>
-        <th>Korisničko ime</th>
-        <th>Email</th>
-        <th>Firma</th>
-        <th>Filijala</th>
-        <th>Uloga</th>
-        <th>Aktivan</th>
-        <th>Akcija</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let user of users">
-        <th scope="row">{{ user.userId }}</th>
-        <td>{{ user.firstName }}</td>
-        <td>{{ user.lastName }}</td>
-        <td>{{ user.username }}</td>
-        <td>{{ user.email }}</td>
-        <td>{{ getCompanyName(user.companyId) }}</td>
-        <td>{{ getOrgUnitName(user.companyId, user.orgUnitId) }}</td>
-        <td>
-          <span class="role-tag" [ngClass]="user.role.toLowerCase().replace(' ', '-')">{{ user.role }}</span>
-        </td>
-        <td [ngClass]="{'text-success': user.isActive, 'text-danger': !user.isActive}">
-          {{ user.isActive ? 'Da' : 'Ne' }}
-        </td>
-        <td>
-          <button class="btn btn-sm btn-outline-primary me-2" (click)="openUpdateUserModal(user)">
-            <i class="bi bi-pencil"></i>
-          </button>
-          <button class="btn btn-sm btn-outline-danger" (click)="deleteUser(user.userId)">
-            <i class="bi bi-trash"></i>
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
 </div>
 
+<!-- Desktop verzija (vidljiva na velikim ekranima) -->
+<div class="d-none d-lg-block">
+  <div class="table-responsive" style="max-height: 70vh; overflow-y: auto;">
+    <table class="table table-hover table-borderless text-center align-middle">
+      <thead class="table-light sticky-top">
+        <tr>
+          <th>Id</th>
+          <th>Ime</th>
+          <th>Prezime</th>
+          <th>Korisničko ime</th>
+          <th>Email</th>
+          <th>Firma</th>
+          <th>Filijala</th>
+          <th>Uloga</th>
+          <th>Aktivan</th>
+          <th>Akcija</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <th scope="row">{{ user.userId }}</th>
+          <td>{{ user.firstName }}</td>
+          <td>{{ user.lastName }}</td>
+          <td>{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ getCompanyName(user.companyId) }}</td>
+          <td>{{ getOrgUnitName(user.companyId, user.orgUnitId) }}</td>
+          <td>
+            <span class="role-tag" [ngClass]="user.role.toLowerCase().replace(' ', '-')">{{ user.role }}</span>
+          </td>
+          <td [ngClass]="{'text-success': user.isActive, 'text-danger': !user.isActive}">
+            {{ user.isActive ? 'Da' : 'Ne' }}
+          </td>
+          <td>
+            <button class="btn btn-sm btn-outline-primary me-1" (click)="openUpdateUserModal(user)" title="Uredi">
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-danger" (click)="deleteUser(user.userId)" title="Obriši">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
+<!-- Mobilna/Tablet verzija (vidljiva na manjim ekranima) -->
+<div class="d-lg-none">
+  <div *ngFor="let user of users" class="card mb-3 shadow-sm">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-start mb-2">
+        <h5 class="card-title mb-0">{{ user.firstName }} {{ user.lastName }}</h5>
+        <span class="badge bg-secondary">ID: {{ user.userId }}</span>
+      </div>
+
+      <div class="mb-2">
+        <span class="role-tag" [ngClass]="user.role.toLowerCase().replace(' ', '-')">{{ user.role }}</span>
+        <span class="ms-2 badge" [ngClass]="{'bg-success': user.isActive, 'bg-danger': !user.isActive}">
+          {{ user.isActive ? 'Aktivan' : 'Neaktivan' }}
+        </span>
+      </div>
+
+      <div class="row g-2 mt-2">
+        <div class="col-12">
+          <small class="text-muted d-block">Korisničko ime</small>
+          <strong>{{ user.username }}</strong>
+        </div>
+        <div class="col-12">
+          <small class="text-muted d-block">Email</small>
+          <strong class="text-break">{{ user.email }}</strong>
+        </div>
+        <div class="col-6">
+          <small class="text-muted d-block">Firma</small>
+          <strong>{{ getCompanyName(user.companyId) }}</strong>
+        </div>
+        <div class="col-6">
+          <small class="text-muted d-block">Filijala</small>
+          <strong>{{ getOrgUnitName(user.companyId, user.orgUnitId) }}</strong>
+        </div>
+      </div>
+
+      <div class="d-flex gap-2 mt-3">
+        <button class="btn btn-sm btn-outline-primary flex-fill" (click)="openUpdateUserModal(user)">
+          <i class="bi bi-pencil me-1"></i>
+          Uredi
+        </button>
+        <button class="btn btn-sm btn-outline-danger flex-fill" (click)="deleteUser(user.userId)">
+          <i class="bi bi-trash me-1"></i>
+          Obriši
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
