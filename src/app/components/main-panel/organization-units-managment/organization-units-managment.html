@@ -37,15 +37,15 @@
   <tbody>
 
     <tr *ngFor="let orgUnit of orgUnits;" class="align-middle">
-      <td>{{ orgUnit.orgUnitId }}</td>
+      <th>{{ orgUnit.orgUnitId }}</th>
       <td>{{ orgUnit.name }}</td>
       <td>{{ orgUnit.code }}</td>
       <td>
-        <button class="btn btn-sm btn-outline-primary me-2" (click)="openUpdateOUModal(orgUnit)">
-        <i class="bi bi-pencil"></i>
+        <button class="btn btn-sm btn-outline-primary me-md-1 mb-sm-1 mb-md-0" (click)="openUpdateOUModal(orgUnit)">
+          <i class="bi bi-pencil"></i>
         </button>
         <button class="btn btn-sm btn-outline-danger" (click)="deleteOrgUnit(orgUnit.orgUnitId)">
-        <i class="bi bi-trash"></i>
+          <i class="bi bi-trash"></i>
         </button>
       </td>
     </tr>

@@ -1,3 +1,15 @@
+html, body {
+  font-family: 'Rubik', sans-serif;
+  font-weight: 400;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Rubik', sans-serif;
+  font-weight: 600; /* lijepi, masni naslovi */
+}
+
+
 html, body, app-root {
   height: 100%;
   margin: 0;

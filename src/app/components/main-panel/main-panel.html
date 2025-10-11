@@ -3,10 +3,11 @@
     <app-navigation-panel></app-navigation-panel>
   </div>
 
-  <div class="flex-grow-1 d-flex flex-column p-4 bg-light w-100">
-
-    <div>
-      <router-outlet></router-outlet>
+  <div class="flex-grow-1 d-flex flex-column p-4 bg-light w-100 main-panel-container">
+    
+    <div class="route-animation-wrapper" [@routeAnimations]="prepareRoute(outlet)">
+      <router-outlet #outlet="outlet"></router-outlet>
     </div>
+    
   </div>
 </div>
