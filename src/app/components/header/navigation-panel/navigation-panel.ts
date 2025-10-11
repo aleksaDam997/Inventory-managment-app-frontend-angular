@@ -44,7 +44,11 @@ onResize() {
   }
 }
 
+sidebarExpanded = false;
 
+toggleSidebar() {
+  this.sidebarExpanded = !this.sidebarExpanded;
+}
   ngOnInit() {
     if (this.isBrowser) {
       this.onResize();

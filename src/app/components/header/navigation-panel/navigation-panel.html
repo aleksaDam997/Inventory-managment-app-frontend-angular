@@ -1,62 +1,59 @@
-<div class="d-flex flex-column flex-md-row h-100">
-  <nav class="bg-light p-3" [class.d-none]="!sidebarOpen && isSmallScreen" style="width: 280px;" id="sidebar"
-  [ngStyle]="{ width: sidebarCollapsed ? '70px' : '280px' }"
-  [class.collapsed]="sidebarCollapsed">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <a class="fs-4 text-decoration-none link-dark" routerLink="/"><span *ngIf="!sidebarCollapsed">Navigator</span></a>
-      <button class="btn d-md-none" (click)="sidebarOpen = false">
-        <i class="bi bi-x-lg fs-5"></i>
-      </button>
-    </div>
-    <hr>
-   <ul class="nav nav-pills flex-column mb-auto">
-      <li>
-        <a routerLink="companies-managment" routerLinkActive="active" class="nav-link">
-          <i class="bi bi-buildings"></i> <span *ngIf="!sidebarCollapsed"> Menadžment firmi</span>
-        </a>
-      </li>
-      <li>
-        <a routerLink="organization-units-managment" routerLinkActive="active" class="nav-link">
-          <i class="bi bi-book"></i> <span *ngIf="!sidebarCollapsed"> Menadžment organizacionih jedinica</span>
-        </a>
-      </li>
-            <li class="nav-item">
-        <a routerLink="user-managment" routerLinkActive="active" class="nav-link" [routerLinkActiveOptions]="{ exact: true }">
-          <i class="bi bi-person-gear"></i> <span *ngIf="!sidebarCollapsed"> Menadžment korisnika</span>
-        </a>
-      </li>
-      <li>
-        <a routerLink="price-list" routerLinkActive="active" class="nav-link">
-          <i class="bi bi-tag"></i> <span *ngIf="!sidebarCollapsed"> Cjenovnik inventara</span>
-        </a>
-      </li>
-      <li>
-        <a routerLink="order-managment" routerLinkActive="active" class="nav-link">
-          <i class="bi bi-box-seam"></i> <span *ngIf="!sidebarCollapsed"> Narudžbe</span>
-        </a>
-      </li>
-      <li>
-        <a routerLink="inventory-managment" routerLinkActive="active" class="nav-link">
-          <i class="bi bi-box-seam"></i> <span *ngIf="!sidebarCollapsed"> Menadžment inventara</span>
-        </a>
-      </li>
-      <li>
-        <a routerLink="graphs" routerLinkActive="active" class="nav-link">
-          <i class="bi bi-bar-chart-line"></i> <span *ngIf="!sidebarCollapsed"> Graf</span>
-        </a>
-      </li>
-    </ul>
-
-  </nav>
-
-  <div class="p-1 bg-light border-bottom w-100 d-md-none d-flex justify-content-between align-items-center">
-    <button class="btn" (click)="sidebarOpen = true">
-      <i class="bi bi-list fs-3"></i>
-    </button>
+<nav class="sidebar">
+  <!-- Header -->
+  <div class="sidebar-header">
+    <i class="bi bi-compass"></i>
+    <span class="nav-text">Navigator</span>
   </div>
 
-  <button class="btn btn-sm smooth-btn w-auto d-none d-md-block bg-light" (click)="toggleSidebarCollapse()" title="Preklopi meni">
-    <i class="bi" [ngClass]="sidebarCollapsed ? 'bi-caret-right' : 'bi-caret-left'"></i>
-  </button>
-
-</div>
+  <!-- Navigation -->
+  <ul class="nav-list">
+    <li>
+      <a routerLink="companies-managment" routerLinkActive="active" title="Menadžment firmi">
+        <i class="bi bi-buildings"></i>
+        <span class="nav-text">Menadžment firmi</span>
+      </a>
+    </li>
+    
+    <li>
+      <a routerLink="organization-units-managment" routerLinkActive="active" title="Organizacione jedinice">
+        <i class="bi bi-diagram-3"></i>
+        <span class="nav-text">Organizacione jedinice</span>
+      </a>
+    </li>
+    
+    <li>
+      <a routerLink="user-managment" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" title="Menadžment korisnika">
+        <i class="bi bi-person-gear"></i>
+        <span class="nav-text">Menadžment korisnika</span>
+      </a>
+    </li>
+    
+    <li>
+      <a routerLink="price-list" routerLinkActive="active" title="Cjenovnik">
+        <i class="bi bi-tag"></i>
+        <span class="nav-text">Cjenovnik inventara</span>
+      </a>
+    </li>
+    
+    <li>
+      <a routerLink="order-managment" routerLinkActive="active" title="Narudžbe">
+        <i class="bi bi-cart3"></i>
+        <span class="nav-text">Narudžbe</span>
+      </a>
+    </li>
+    
+    <li>
+      <a routerLink="inventory-managment" routerLinkActive="active" title="Menadžment inventara">
+        <i class="bi bi-box-seam"></i>
+        <span class="nav-text">Menadžment inventara</span>
+      </a>
+    </li>
+    
+    <li>
+      <a routerLink="graphs" routerLinkActive="active" title="Statistika">
+        <i class="bi bi-bar-chart-line"></i>
+        <span class="nav-text">Statistika</span>
+      </a>
+    </li>
+  </ul>
+</nav>

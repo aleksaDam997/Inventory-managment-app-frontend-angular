@@ -1,89 +1,319 @@
-<nav class="navbar navbar-expand-sm navbar-light bg-light">
-  <div class="container-fluid">
-
-    <a class="navbar-brand d-sm-flex" routerLink="/">
-      <img src="logo.png"
-           alt="Logo"
-           class="d-inline-block align-text-top ms-5 logo">
+<nav class="main-header">
+  <div class="header-container">
+    <!-- Logo -->
+    <a class="logo-link" routerLink="/">
+      <img src="logo.png" alt="Logo" class="logo">
     </a>
 
-    <button class="navbar-toggler"
+    <!-- Hamburger button (mobile only) -->
+    <button class="hamburger-btn d-md-none" 
             type="button"
             data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-            aria-controls="navbarNav"
+            data-bs-target="#headerContent"
+            aria-controls="headerContent"
             aria-expanded="false"
-            aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
+            aria-label="Toggle menu">
+      <span class="hamburger-icon"></span>
     </button>
 
-    <div class="collapse navbar-collapse" id="navbarNav">
-
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-          <a class="nav-link"
-             [routerLinkActive]="'highlighted'"
-             routerLink="/news">Početna</a>
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse d-md-flex" id="headerContent">
+      <!-- Navigation links -->
+      <ul class="nav-links">
+        <li>
+          <a routerLink="/news" routerLinkActive="active">
+            <i class="bi bi-house-door me-1"></i>
+            Početna
+          </a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link"
-             [routerLinkActive]="'highlighted'"
-             routerLink="/control-panel">Kontakt</a>
+        <li>
+          <a routerLink="/control-panel" routerLinkActive="active">
+            <i class="bi bi-envelope me-1"></i>
+            Kontakt
+          </a>
         </li>
-
       </ul>
 
-      <!-- Ikonice dropdown‑ova (skrivene ispod 576 px) -->
-      <div class="d-flex">
-
-        <div class="dropdown mx-2 d-none d-sm-block">
-          <a class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle"
-             id="dropdownNotification"
-             data-bs-toggle="dropdown"
-             aria-expanded="false">
-            <i class="bi bi-bell fs-4"></i>
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end text-small shadow"
+      <!-- Icons/Dropdowns -->
+      <div class="header-actions">
+        <!-- Notifications -->
+        <div class="dropdown">
+          <button class="icon-btn" 
+                  id="dropdownNotification"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false">
+            <i class="bi bi-bell"></i>
+            <span class="badge">3</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow" 
               aria-labelledby="dropdownNotification">
-            <li><a class="dropdown-item" href="#">Proces proslijedjen...</a></li>
-            <li><a class="dropdown-item" href="#">Proces dodjeljen...</a></li>
-            <li><a class="dropdown-item" href="#">Sarma</a></li>
-
-          </ul>
-        </div>
-
-        <div class="dropdown mx-2 d-none d-sm-block">
-          <a class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle"
-             id="dropdownMenu"
-             data-bs-toggle="dropdown"
-             aria-expanded="false">
-            <i class="bi bi-filter-square fs-4"></i>
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end text-small shadow"
-              aria-labelledby="dropdownMenu">
-            <li><a class="dropdown-item" href="#">So</a></li>
-            <li><a class="dropdown-item" href="#">Biber</a></li>
-
-          </ul>
-        </div>
-
-        <div class="dropdown mx-2 d-none d-sm-block">
-          <a class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle"
-             id="dropdownUser2"
-             data-bs-toggle="dropdown"
-             aria-expanded="false">
-            <i class="bi bi-person fs-4"></i>
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end text-small shadow"
-              aria-labelledby="dropdownUser2">
-            <li><a class="dropdown-item" href="#">Podesavanja</a></li>
-            <li><a class="dropdown-item" href="#">Profil</a></li>
+            <li class="dropdown-header">Notifikacije</li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-info-circle me-2"></i>Proces proslijeđen...</a></li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-check-circle me-2"></i>Proces dodijeljen...</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Sign out</a></li>
+            <li><a class="dropdown-item text-center small" href="#">Prikaži sve</a></li>
           </ul>
         </div>
 
+        <!-- Filter -->
+        <div class="dropdown">
+          <button class="icon-btn" 
+                  id="dropdownMenu"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false">
+            <i class="bi bi-filter-square"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow" 
+              aria-labelledby="dropdownMenu">
+            <li class="dropdown-header">Filteri</li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-funnel me-2"></i>So</a></li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-funnel me-2"></i>Biber</a></li>
+          </ul>
+        </div>
+
+        <!-- User -->
+        <div class="dropdown">
+          <button class="icon-btn" 
+                  id="dropdownUser"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false">
+            <i class="bi bi-person-circle"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow" 
+              aria-labelledby="dropdownUser">
+            <li class="dropdown-header">Moj Nalog</li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Podešavanja</a></li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Profil</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>Odjavi se</a></li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
 </nav>
+
+<style>
+/* Header base */
+.main-header {
+  background: white;
+  border-bottom: 1px solid #dee2e6;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  max-width: 100%;
+}
+
+/* Logo */
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.logo {
+  height: 40px;
+  width: auto;
+}
+
+/* Hamburger button */
+.hamburger-btn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hamburger-btn:hover {
+  background: #f8f9fa;
+}
+
+.hamburger-icon {
+  width: 20px;
+  height: 2px;
+  background: #495057;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.hamburger-icon::before,
+.hamburger-icon::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 2px;
+  background: #495057;
+  transition: all 0.3s ease;
+}
+
+.hamburger-icon::before {
+  top: -6px;
+}
+
+.hamburger-icon::after {
+  top: 6px;
+}
+
+/* Collapsible content */
+.navbar-collapse {
+  align-items: center;
+  gap: 2rem;
+  flex-grow: 1;
+  justify-content: space-between;
+}
+
+/* Navigation links */
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links a {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  color: #495057;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.nav-links a:hover {
+  background: #f8f9fa;
+  color: #0d6efd;
+}
+
+.nav-links a.active {
+  color: #0d6efd;
+  background: #e7f1ff;
+}
+
+/* Header actions */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+/* Icon buttons */
+.icon-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #495057;
+}
+
+.icon-btn:hover {
+  background: #f8f9fa;
+  color: #0d6efd;
+}
+
+.icon-btn i {
+  font-size: 1.25rem;
+}
+
+.icon-btn .badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: #dc3545;
+  color: white;
+  font-size: 0.65rem;
+  padding: 2px 5px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+/* Dropdown menu styling */
+.dropdown-menu {
+  min-width: 220px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 0.5rem 0;
+}
+
+.dropdown-header {
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  color: #495057;
+  font-size: 0.875rem;
+}
+
+.dropdown-item {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background: #f8f9fa;
+  color: #0d6efd;
+}
+
+.dropdown-item i {
+  opacity: 0.7;
+}
+
+/* Mobile styles */
+@media (max-width: 767.98px) {
+  .navbar-collapse {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border-bottom: 1px solid #dee2e6;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    padding: 1rem;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .nav-links {
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  
+  .nav-links a {
+    width: 100%;
+  }
+  
+  .header-actions {
+    width: 100%;
+    justify-content: space-around;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #dee2e6;
+    margin-left: 0;
+  }
+}
+</style>
