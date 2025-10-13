@@ -5,87 +5,122 @@ import { CommonModule } from '@angular/common';
 import { CompanyManagmentService } from '../../../services/company.managment.service';
 import { UpsertCompaniesModal } from './upsert-companies-modal/upsert-companies-modal';
 import { CreateApiResponse } from '../../../models/response.models';
-import { count } from 'rxjs';
+import { BsModalRef, BsModalService, ModalModule } from 'ngx-bootstrap/modal';
+import { NotificationService } from '../../../services/notification.service';
+import { Subject, take, takeUntil } from 'rxjs';
+import { ConfirmDialogBox } from '../../pop-up/confirm-dialog-box/confirm-dialog-box';
+import { InitForms } from '../../../init/init.forms';
 
 @Component({
   selector: 'app-companies-managment',
   templateUrl: './companies-managment.html',
   styleUrls: ['./companies-managment.css'], // ispravljeno
   standalone: true, // dodaj ako želiš da koristiš imports
-  imports: [CommonModule, ReactiveFormsModule, UpsertCompaniesModal] // samo za standalone komponentu
+  imports: [CommonModule, ReactiveFormsModule, ModalModule] // samo za standalone komponentu
 })
 export class CompaniesManagment implements OnInit{
+
+  modalRef?: BsModalRef<UpsertCompaniesModal>;
+  modalRefConfirm?: BsModalRef<ConfirmDialogBox>;
 
   companyForm: FormGroup;
 
   modalTitle: string = 'Dodaj firmu';
 
-  showModal: boolean = false;
-  isCreateCompanyModal: boolean = false;
+  companies: Company[] = [];
 
-  companies: Company[] = []; // niz kompanija koji šablon može koristiti
-
-  constructor(private companyManagmentService: CompanyManagmentService) {
-    this.companyForm = new FormGroup({
-      name: new FormControl(''),
-      address: new FormControl(''),
-      city: new FormControl(''),
-      email: new FormControl(''),
-      phone: new FormControl(''),
-      website: new FormControl(''),
-      postalCode: new FormControl(),
-      country: new FormControl(''),
-      pib: new FormControl(''),
-      upin: new FormControl('')
-    });
+  constructor(private companyManagmentService: CompanyManagmentService, private modalService: BsModalService, 
+    private notifyService: NotificationService) {
+    this.companyForm = InitForms.initCompanyForm();
   }
 
   ngOnInit(): void {
+    this.onFilterSubmit();
+  }
 
-    this.companyManagmentService.getAllCompanies().subscribe({
+  onFilterSubmit() {
+        this.companyManagmentService.getAllCompanies().subscribe({
       next: (companies) => {
          this.companies = companies;
       },
       error: (error) => {
-        console.error('Error fetching companies:', error);
+        if (error.error && error.error.error) {
+          this.notifyService.error(error.error.error);
+        } 
+        else if (typeof error.error === 'string') {
+          this.notifyService.error(error.error);
+        } 
+        else {
+          this.notifyService.error(error);
+        }
       }
     });
   }
 
   openCreateCompanyModal() {
     this.companyForm.reset();
-    this.isCreateCompanyModal = true;
-    this.showModal = true;
+    this.modalTitle = 'Dodaj firmu';
+    this.callModal(true, true);
   }
 
   openUpdateCompanyModal(company: Company) {
     this.companyForm.patchValue(company);
     this.companyForm.addControl('companyId', new FormControl(company.companyId));
-    this.isCreateCompanyModal = false;
-    this.showModal = true;  
+    this.modalTitle = "Azuriraj podatke firme";
+    this.callModal(true, false);
+
   }
 
   deleteCompany(companyId: number) {
     
-    this.companyManagmentService.deleteCompany(companyId).subscribe({
-      next: (response) => {
-        console.log('Company deleted successfully:', response);
-        this.companies = this.companies.filter(company => company.companyId !== companyId);
-      },
-      error: (error) => {
-        console.error('Error deleting company:', error);
-      }
-    });
+    const modalRefConfirm: BsModalRef = this.modalService.show(ConfirmDialogBox, {
+          initialState: {
+            title: 'Izbriši firmu',
+            message: 'Da li ste sigurni da želite izbrisati ovu firmu?',
+            onConfirm: () => {
+              this.companyManagmentService.deleteCompany(companyId).subscribe({
+                next: (response) => {
+                  this.companies = this.companies.filter(company => company.companyId !== companyId);
+                },
+                error: (error) => {
+                  if (error.error && error.error.error) {
+                    this.notifyService.error(error.error.error);
+                  } 
+                  else if (typeof error.error === 'string') {
+                    this.notifyService.error(error.error);
+                  } 
+                  else {
+                    this.notifyService.error(error);
+                  }
+                }
+              });
+            },
+            onCancel: () => {
+              this.notifyService.info('Brisanje firme otkazano');
+            } 
+          },
+            ignoreBackdropClick: true,
+            keyboard: false 
+        });
   }
 
-  closeModal() {
-      this.showModal = false;
-    }
-  
-  confirmModal(apiResponse: CreateApiResponse<Company>) {
-
-    this.companyManagmentService.getAllCompanies().subscribe(companies => {
-      this.companies = companies;
+  callModal(show: boolean, isCreate: boolean) {
+      
+    this.modalRef = this.modalService.show(UpsertCompaniesModal, {
+      class: 'modal-dialog modal-xl modal-fullscreen-md-down modal-dialog-centered',
+      initialState: {
+        show: show,
+        isCreateCompanyModal: isCreate,
+        companyForm: this.companyForm,
+        title: this.modalTitle
+      },
+      ignoreBackdropClick: true,
+      keyboard: false 
     });
+
+    this.modalRef.onHidden!.pipe(take(1)).subscribe(() => {
+      this.onFilterSubmit();
+    });
+
   }
 }

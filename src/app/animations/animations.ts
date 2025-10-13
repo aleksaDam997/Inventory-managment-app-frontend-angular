@@ -67,14 +67,14 @@ export const fadeSlideAnimation = trigger('routeAnimations', [
     
     group([
       query(':leave', [
-        animate('300ms ease-out', style({ 
+        animate('400ms ease-out', style({ 
           opacity: 0,
           transform: 'translateX(-15px)'
         }))
       ], { optional: true }),
       
       query(':enter', [
-        animate('400ms ease-out', style({ 
+        animate('500ms ease-out', style({ 
           opacity: 1,
           transform: 'translateX(0)'
         }))

@@ -17,9 +17,7 @@ import { NotificationService } from '../../../../services/notification.service';
 export class ImUpsertModal {
 
 
-   @Input() orderForm!: FormGroup;
-
-
+  @Input() orderForm!: FormGroup;
   @Input() products: Product[] = [];
 
   @Input()
@@ -32,7 +30,7 @@ export class ImUpsertModal {
 
   submitted = false;
 
-  constructor(public bsModalRef: BsModalRef, private orderService: OrderService, private notificationService: NotificationService) {}
+  constructor(public bsModalRef: BsModalRef, private orderService: OrderService, private notifyService: NotificationService) {}
 
   close() {
     this.bsModalRef.hide();
@@ -43,23 +41,35 @@ export class ImUpsertModal {
     if (this.isCreate) {
       this.orderService.makeOrder(this.orderForm).subscribe({
         next: (response) => {
-
-          this.notificationService.success(response.message);
           this.close()
         },
         error: (error) => {
-          this.notificationService.error(error.error);
+          if (error.error && error.error.error) {
+            this.notifyService.error(error.error.error);
+          } 
+          else if (typeof error.error === 'string') {
+            this.notifyService.error(error.error);
+          } 
+          else {
+            this.notifyService.error(error);
+          }
         }
       });
     } else {
       this.orderService.updateOrder(this.orderForm).subscribe({
         next: (response) => {
-
-          this.notificationService.success(response.message);
           this.close()
         },
         error: (error) => {
-          this.notificationService.error(error.error);
+          if (error.error && error.error.error) {
+            this.notifyService.error(error.error.error);
+          } 
+          else if (typeof error.error === 'string') {
+            this.notifyService.error(error.error);
+          } 
+          else {
+            this.notifyService.error(error);
+          }
         }
       });
     }

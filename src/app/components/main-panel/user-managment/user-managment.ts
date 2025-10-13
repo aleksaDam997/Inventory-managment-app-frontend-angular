@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { UserRole, Users } from '../../../models/user.model';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { UserManagmentService } from '../../../services/user.managment.service';
 import {  UpsertUserModal } from './upsert-user-modal/upsert-user-modal';
 import { CompanyManagmentService } from '../../../services/company.managment.service';
@@ -9,9 +9,10 @@ import { Company } from '../../../models/models';
 import { CreateApiResponse } from '../../../models/response.models';
 import { InitForms } from '../../../init/init.forms';
 import { AuthService } from '../../../services/auth.service';
-import { nonZeroValidator } from '../../../validators/validator';
 import { BsModalRef, BsModalService, ModalModule } from 'ngx-bootstrap/modal';
 import { Subject, take, takeUntil } from 'rxjs';
+import { ConfirmDialogBox } from '../../pop-up/confirm-dialog-box/confirm-dialog-box';
+import { NotificationService } from '../../../services/notification.service';
 
 @Component({
   selector: 'app-user-managment',
@@ -21,6 +22,7 @@ import { Subject, take, takeUntil } from 'rxjs';
 })
 export class UserManagment implements OnInit, OnDestroy {
 
+  modalRefConfirm?: BsModalRef<ConfirmDialogBox>;
   modalRef?: BsModalRef<UpsertUserModal>;
 
   userFilterForm: FormGroup;
@@ -38,7 +40,7 @@ export class UserManagment implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
 
-  constructor(private formBuilder: FormBuilder, private userManagmentService: UserManagmentService,
+  constructor(private formBuilder: FormBuilder, private userManagmentService: UserManagmentService, private notifyService: NotificationService,
     private companyManagmentService: CompanyManagmentService, private authService: AuthService, private modalService: BsModalService
   ) {
     
@@ -54,9 +56,18 @@ export class UserManagment implements OnInit, OnDestroy {
     .pipe(takeUntil(this.destroy$)).subscribe({
       next: (users) => {
         this.users = users;
+        console.log(this.users);
       },
       error: (error) => {
-        console.error('Error fetching users:', error);
+        if (error.error && error.error.error) {
+          this.notifyService.error(error.error.error);
+        } 
+        else if (typeof error.error === 'string') {
+          this.notifyService.error(error.error);
+        } 
+        else {
+          this.notifyService.error(error);
+        }
       }
     });
 
@@ -66,7 +77,15 @@ export class UserManagment implements OnInit, OnDestroy {
           this.companies = companies;
         },
         error: (error) => {
-          console.error('Error fetching companies:', error);
+          if (error.error && error.error.error) {
+            this.notifyService.error(error.error.error);
+          } 
+          else if (typeof error.error === 'string') {
+            this.notifyService.error(error.error);
+          } 
+          else {
+            this.notifyService.error(error);
+          }
         }
     });
   }
@@ -102,7 +121,15 @@ export class UserManagment implements OnInit, OnDestroy {
           this.users = users;
         },
         error: (error) => {
-          console.error('Error fetching users:', error);
+          if (error.error && error.error.error) {
+            this.notifyService.error(error.error.error);
+          } 
+          else if (typeof error.error === 'string') {
+            this.notifyService.error(error.error);
+          } 
+          else {
+            this.notifyService.error(error);
+          }
         }
       });
   }
@@ -134,7 +161,15 @@ export class UserManagment implements OnInit, OnDestroy {
 
         },
         error: (error) => {
-          console.error('Error fetching users:', error);
+          if (error.error && error.error.error) {
+            this.notifyService.error(error.error.error);
+          } 
+          else if (typeof error.error === 'string') {
+            this.notifyService.error(error.error);
+          } 
+          else {
+            this.notifyService.error(error);
+          }
         }
       });
     }
@@ -146,15 +181,37 @@ export class UserManagment implements OnInit, OnDestroy {
     }
 
     deleteUser(userId: number) {
-      this.userManagmentService.deleteUser(userId).subscribe({
-        next: () => {
-          this.users = this.users.filter(u => u.userId !== userId);
-          alert('User deleted successfully');
+
+
+      const modalRefConfirm: BsModalRef = this.modalService.show(ConfirmDialogBox, {
+        initialState: {
+          title: 'Promjena statusa',
+          message: 'Da li ste sigurni da želite promijeniti status?',
+          onConfirm: () => {
+            this.userManagmentService.deleteUser(userId).subscribe({
+              next: () => {
+                this.onFilterSubmit();
+                this.notifyService.success("Korisnik uspješno izbrisan.")
+              },
+              error: (error) => {
+                if (error.error && error.error.error) {
+                  this.notifyService.error(error.error.error);
+                } 
+                else if (typeof error.error === 'string') {
+                  this.notifyService.error(error.error);
+                } 
+                else {
+                  this.notifyService.error(error);
+                }
+              }
+            });
+          },
+          onCancel: () => {
+            this.notifyService.info('Brisanje korisnika otkazano.');
+          } 
         },
-        error: (error) => {
-          console.error('Error deleting user:', error);
-          alert('Error deleting user');
-        }
+          ignoreBackdropClick: true,
+          keyboard: false 
       });
     }
 

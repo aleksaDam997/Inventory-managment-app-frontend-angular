@@ -73,7 +73,15 @@ export class Graphs implements OnInit {
           this.products = products;
         },
         error: (error) => {
-          this.notify.error(error);
+          if (error.error && error.error.error) {
+            this.notify.error(error.error.error);
+          } 
+          else if (typeof error.error === 'string') {
+            this.notify.error(error.error);
+          } 
+          else {
+            this.notify.error(error);
+          }
         }
     });
     
@@ -136,22 +144,17 @@ export class Graphs implements OnInit {
           labels: this.top5ProductsPreviousMonth.map(d => d.label),
           datasets: [{ data: this.top5ProductsPreviousMonth.map(d => d.value), label: 'Iznos (KM)' }]
         };
-
-
-        this.notify.success(res.message);
       },
       error: (err) => {
-        
-
-      if (err.error && err.error.error) {
-        this.notify.error(err.error.error);
-      } 
-      else if (typeof err.error === 'string') {
-        this.notify.error(err.error);
-      } 
-      else {
-        this.notify.error(err);
-      }
+        if (err.error && err.error.error) {
+          this.notify.error(err.error.error);
+        } 
+        else if (typeof err.error === 'string') {
+          this.notify.error(err.error);
+        } 
+        else {
+          this.notify.error(err);
+        }
       }
     });
   }

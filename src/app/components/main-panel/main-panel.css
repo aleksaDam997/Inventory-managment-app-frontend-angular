@@ -1,20 +1,28 @@
 /* MAIN PANEL CONTAINER */
 .main-panel-container {
-  position: relative;
-  height: 100%;
   display: flex;
+  flex: 1;
   flex-direction: column;
-  overflow: hidden;
+  height: 100%;
+  overflow: auto;
 }
 
-/* ANIMATION WRAPPER */
 .route-animation-wrapper {
   position: relative;
   width: 100%;
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
+
+  /* Dodaj dovoljno prostora na dnu da poslednji red bude vidljiv */
+  padding-bottom: 3rem; /* možeš povećati ako treba */
+  box-sizing: border-box; /* da padding ulazi u izračun visine */
 }
+
+
+
+
+
 
 /* CHILD KOMPONENTE - block display sa padding */
 .route-animation-wrapper > *:not(router-outlet) {
@@ -29,3 +37,4 @@
 router-outlet {
   display: none;
 }
+

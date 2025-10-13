@@ -10,8 +10,8 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 export class ConfirmDialogBox {
   title?: string;
   message?: string;
-  onConfirm?: () => void; // callback za "Da"
-  onCancel?: () => void;  // callback za "Ne"
+  onConfirm?: () => void;
+  onCancel?: () => void;
 
   constructor(public bsModalRef: BsModalRef) {}
 }

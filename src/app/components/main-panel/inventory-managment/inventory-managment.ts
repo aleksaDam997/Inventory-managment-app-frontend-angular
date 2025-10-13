@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {  Company, OrderStatus, OrgUnit, Product } from '../../../models/models';
+import {  Company, Order, OrderProduct, OrderStatus, OrgUnit, Product } from '../../../models/models';
 import { CommonModule, JsonPipe } from '@angular/common';
 import { UserRole } from '../../../models/user.model';
 import { AuthService } from '../../../services/auth.service';
@@ -12,7 +12,8 @@ import { ProductService } from '../../../services/product.service';
 import { OrderService } from '../../../services/order.service';
 import { OrderFilterRequest } from '../../../models/request.model';
 import { CreateApiResponse, OrderResponse } from '../../../models/response.models';
-import * as XLSX from 'xlsx';
+import * as ExcelJS from 'exceljs';
+
 import { saveAs } from 'file-saver';
 import { CompanyManagmentService } from '../../../services/company.managment.service';
 import { Subject, take, takeUntil } from 'rxjs';
@@ -91,7 +92,15 @@ export class InventoryManagment implements OnInit, OnDestroy {
           this.companies = companies;
         },
         error: (error) => {
-          console.error('Error fetching companies:', error);
+          if (error.error && error.error.error) {
+            this.notifyService.error(error.error.error);
+          } 
+          else if (typeof error.error === 'string') {
+            this.notifyService.error(error.error);
+          } 
+          else {
+            this.notifyService.error(error);
+          }
         }
     });
 
@@ -104,13 +113,17 @@ export class InventoryManagment implements OnInit, OnDestroy {
     this.orderService.getOrdersByCriteria(this.orderFilterForm).subscribe({
         next: (orders) => {
           this.orders = orders.data!;
-
-          console.log(this.orders)
-          this.notifyService.success("Sve cool :)")
         },
         error: (error) => {
-          console.log(error.message)
-          this.notifyService.error(error);
+          if (error.error && error.error.error) {
+            this.notifyService.error(error.error.error);
+          } 
+          else if (typeof error.error === 'string') {
+            this.notifyService.error(error.error);
+          } 
+          else {
+            this.notifyService.error(error);
+          }
         }
     });
   }
@@ -177,7 +190,15 @@ export class InventoryManagment implements OnInit, OnDestroy {
               this.onFilterSubmit();
             },
             error: (error) => {
-              this.notifyService.error(error.error);
+              if (error.error && error.error.error) {
+                this.notifyService.error(error.error.error);
+              } 
+              else if (typeof error.error === 'string') {
+                this.notifyService.error(error.error);
+              } 
+              else {
+                this.notifyService.error(error);
+              }
             }
           });
         },
@@ -239,43 +260,181 @@ export class InventoryManagment implements OnInit, OnDestroy {
     return company ? company.orgUnits : [];
   }
 
-  downloadExcel() {
-    
-    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(this.ordersTable.nativeElement);
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
 
-    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    const blob = new Blob([wbout], { type: 'application/octet-stream' });
-    const fileName = 'moja-tabela.xlsx';
-    saveAs(blob, fileName);
-    
-    const excelLink = `ms-excel:ofe|u|file:///C:/Users/Korisnik/Downloads/${fileName}`;
-    window.location.href = excelLink;
+
+async downloadExcel() {
+  
+  const workbook = new ExcelJS.Workbook();
+  const sheet = workbook.addWorksheet('Sheet1');
+
+  sheet.mergeCells('A1:I1');
+  const title = sheet.getCell('A1');
+  title.value = 'Narudžbe';
+  title.font = { bold: true, size: 16 };
+  title.alignment = { horizontal: 'center', vertical: 'middle' };
+
+  // 2) Header red (red 2) - porudžbine
+  const headerRow = sheet.addRow([
+    'ID', 'Ime i prezime', 'Cijena', 'Status', 'Datum kreiranja', 'Datum izmjene'
+  ]);
+  headerRow.font = { bold: true };
+  headerRow.alignment = { horizontal: 'center', vertical: 'middle' };
+
+  sheet.mergeCells('A3:B3');
+  sheet.mergeCells('C3:D3');
+  sheet.mergeCells('E3:F3');
+
+  sheet.getCell('A3').value = 'Proizvod';
+  sheet.getCell('C3').value = 'Cijena';
+  sheet.getCell('E3').value = 'Količina';
+
+  ['A3','C3','E3'].forEach(key => {
+    sheet.getCell(key).alignment = { horizontal: 'center', vertical: 'middle' };
+    sheet.getCell(key).font = { bold: true };
+  });
+
+  this.orders.forEach((order: OrderResponse) => {
+  sheet.addRow([order.orderId, order.user?.label, order.totalPrice, order.status, order.createdAt, order.updatedAt]);
+
+  order.products
+    .forEach((prod: OrderProduct) => {
+      const row = sheet.addRow([`${prod.name}`, '', prod.quantity, '', prod.currentPrice, '']);
+
+      const rowNumber = row.number;
+
+      sheet.mergeCells(`A${rowNumber}:B${rowNumber}`);
+      sheet.mergeCells(`C${rowNumber}:D${rowNumber}`);
+      sheet.mergeCells(`E${rowNumber}:F${rowNumber}`);
+
+      sheet.getCell(`A${rowNumber}`).value = prod.name;
+      sheet.getCell(`C${rowNumber}`).value = prod.currentPrice;
+      sheet.getCell(`E${rowNumber}`).value = prod.quantity;
+
+      ['A','C','E'].forEach(col => {
+        sheet.getCell(`${col}${rowNumber}`).alignment = { horizontal: 'center', vertical: 'middle' };
+      });
+    });
+});
+
+
+  sheet.eachRow((row) => {
+    row.eachCell((cell) => {
+      cell.alignment = { horizontal: 'center', vertical: 'middle' };
+    });
+  });
+
+  const totalColumns = sheet.getRow(2).cellCount; // sada = 6
+  for (let i = 1; i <= totalColumns; i++) {
+    const column = sheet.getColumn(i);
+    let maxLength = 10;
+    column.eachCell({ includeEmpty: true }, (cell) => {
+      const value = cell.value ? cell.value.toString() : '';
+      maxLength = Math.max(maxLength, value.length);
+    });
+    column.width = maxLength + 2;
   }
+
+  const buf = await workbook.xlsx.writeBuffer();
+  saveAs(new Blob([buf]), 'moja-tabela.xlsx');
+}
+
+
+
+
 
   printTable() {
-    const printContents = this.ordersTable.nativeElement.outerHTML;
+  const orders = this.orders || [];
 
-    const popupWin = window.open('', '_blank', 'width=800,height=600');
+  const popupWin = window.open('', '_blank', 'width=1000,height=800');
+  if (!popupWin) return;
 
-    popupWin?.document.write(`
-      <html>
-        <head>
-          <title>Print</title>
-          <style>
-            table { border-collapse: collapse; width: 100%; }
-            th, td { border: 1px solid black; padding: 8px; text-align: left; }
-          </style>
-        </head>
-        <body onload="window.print(); window.close()">
-          ${printContents}
-        </body>
-      </html>
-    `);
+  // HTML redovi
+  let tableRows = '';
+  for (const order of orders) {
+    const totalPrice = Number(order.totalPrice ?? 0).toFixed(2);
 
-    popupWin?.document.close();
+    // Red porudžbine
+    tableRows += `
+      <tr style="background-color: #e9f5ff;">
+        <th>${order.orderId}</th>
+        <td>${order.user?.label ?? ''}</td>
+        <td>${totalPrice}</td>
+        <td>
+          <span class="badge ${
+            order.status === 'PENDING' ? 'bg-warning' :
+            order.status === 'CHANGED' ? 'bg-primary' :
+            order.status === 'APPROVED' ? 'bg-info' : 'bg-success'
+          }">
+            ${this.statusTranslate(order.status)}
+          </span>
+        </td>
+        <td>${order.createdAt}</td>
+        <td>${order.updatedAt}</td>
+      </tr>
+    `;
+
+    // Redovi proizvoda
+    for (const prod of order.products || []) {
+      const price = Number(prod.currentPrice ?? 0).toFixed(2);
+      const quantity = Number(prod.quantity ?? 0);
+      tableRows += `
+        <tr class="product-row" style="background-color: #f7fbff;">
+          <td colspan="2" style="padding-left: 30px; font-style: italic;">${prod.name}</td>
+          <td>${price}</td>
+          <td colspan="3">${quantity}</td>
+        </tr>
+      `;
+    }
   }
+
+  // Popup HTML
+  popupWin.document.write(`
+    <html>
+      <head>
+        <title>Lista Porudžbina</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+        <style>
+          body { font-family: Arial, sans-serif; margin: 30px; color: #333; }
+          h1 { text-align: center; font-weight: bold; margin-bottom: 20px; font-size: 24px; color: #0d6efd; }
+          table { border-collapse: collapse; width: 100%; font-size: 14px; }
+          th, td { border: 1px solid #ccc; padding: 8px 12px; text-align: left; vertical-align: middle; }
+          th { background-color: #dbeafe; font-weight: bold; text-transform: uppercase; }
+          tr:nth-child(even) { background-color: #f1f5f9; }
+          .product-row td { padding-left: 30px; font-style: italic; background-color: #f7fbff; }
+          .badge { font-size: 0.85em; }
+          th:last-child, td:last-child { display: none !important; }
+        </style>
+      </head>
+      <body onload="window.print(); window.close()">
+        <h1>Lista Porudžbina</h1>
+        <table class="table table-borderless text-center">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Korisnik</th>
+              <th>Cijena</th>
+              <th>Status</th>
+              <th>Datum kreiranja</th>
+              <th>Datum promjene</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows}
+          </tbody>
+        </table>
+      </body>
+    </html>
+  `);
+
+  popupWin.document.close();
+}
+
+
+
+
+
+
+
 
     createOrderProductForm(product: any): FormGroup {
     return new FormGroup({

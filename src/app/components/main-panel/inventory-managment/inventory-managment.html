@@ -108,12 +108,12 @@
           <td>{{order.totalPrice}}</td>
           <td>
             <span
-              class="badge"
+              class="status-badge"
               [ngClass]="{
-                'bg-warning': order.status === OrderStatus.PENDING,
-                'bg-primary': order.status === OrderStatus.CHANGED,
-                'bg-info': order.status === OrderStatus.APPROVED,
-                'bg-success': order.status === OrderStatus.COMPLETED
+                'warning': order.status === OrderStatus.PENDING,
+                'primary': order.status === OrderStatus.CHANGED,
+                'info': order.status === OrderStatus.APPROVED,
+                'success': order.status === OrderStatus.COMPLETED
               }"  
             >
               {{ statusTranslate(order.status) }}

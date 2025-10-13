@@ -6,6 +6,8 @@ import { OrgUnitsManagmentService } from '../../../../services/org_units.managme
 import { Company, OrgUnit } from '../../../../models/models';
 import { UpsertOrgUnitForm } from '../../../../models/form.models';
 import { CreateOrgUnit } from '../../../../models/request.model';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { NotificationService } from '../../../../services/notification.service';
 
 @Component({
   selector: 'app-upsert-ou-modal',
@@ -24,34 +26,13 @@ export class UpsertOuModal {
 
   @Input() companies: Company[] = [];
 
-  @Output() closed = new EventEmitter<void>();
-  @Output() confirmed = new EventEmitter<CreateApiResponse<any>>();
-
   submitted = false;
 
-  constructor(private orgUnitsManagmentService: OrgUnitsManagmentService) {}  
+  constructor(private orgUnitsManagmentService: OrgUnitsManagmentService, private bsModalRef: BsModalRef, 
+    private notifyService: NotificationService) {}  
     
-close() {
-  // Dodaj fade-out pre stvarnog uklanjanja sa DOM-a
-  const modal = document.querySelector('.modal-wrapper') as HTMLElement;
-  const backdrop = document.querySelector('.backdrop') as HTMLElement;
-
-  if (modal && backdrop) {
-    modal.style.animation = 'fadeOut 0.2s forwards';
-    backdrop.style.animation = 'fadeOut 0.2s forwards';
-    setTimeout(() => {
-      this.show = false;
-      this.closed.emit();
-    }, 200);
-  } else {
-    this.show = false;
-    this.closed.emit();
-  }
-}
-
-
-  confirm(data: CreateApiResponse<OrgUnit>) {
-    this.confirmed.emit(data);
+  close() {
+    this.bsModalRef.hide();
   }
 
   onBackdropClick() {
@@ -75,19 +56,35 @@ close() {
 
       this.orgUnitsManagmentService.createNewOrgUnit(orgUnitData).subscribe({
         next: (response) => {
-          this.confirm(response);
+          this.close();
         },
         error: (error) => {
-          console.error('Error creating organizational unit:', error);
+          if (error.error && error.error.error) {
+            this.notifyService.error(error.error.error);
+          } 
+          else if (typeof error.error === 'string') {
+            this.notifyService.error(error.error);
+          } 
+          else {
+            this.notifyService.error(error);
+          }
         }
       });
     }else {
       this.orgUnitsManagmentService.updateOrgUnit(orgUnitData).subscribe({
         next: (response) => {
-          this.confirm(response);
+          this.close();
         },
         error: (error) => {
-          console.error('Error updating organizational unit:', error);
+          if (error.error && error.error.error) {
+            this.notifyService.error(error.error.error);
+          } 
+          else if (typeof error.error === 'string') {
+            this.notifyService.error(error.error);
+          } 
+          else {
+            this.notifyService.error(error);
+          }
         }
       });
     }

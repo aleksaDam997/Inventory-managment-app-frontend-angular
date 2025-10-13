@@ -1,4 +1,4 @@
-import { OrderStatus, Product } from "./models";
+import { OrderProduct, OrderStatus, Product } from "./models";
 
 export interface CreateApiResponse<T> {
   data: T | null;
@@ -12,7 +12,7 @@ export interface OrderResponse {
   userLastName: string;
   totalPrice: number;
   user: IdLabelType | undefined;
-  products: Product[];
+  products: OrderProduct[];
   status: OrderStatus;
   quantity: number | undefined;
   createdAt: Date;

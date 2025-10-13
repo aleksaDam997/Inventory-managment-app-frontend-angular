@@ -47,7 +47,15 @@ export class OrderUserModal {
           this.close()
         },
         error: (error) => {
-          this.notificationService.error(error.error);
+          if (error.error && error.error.error) {
+            this.notificationService.error(error.error.error);
+          } 
+          else if (typeof error.error === 'string') {
+            this.notificationService.error(error.error);
+          } 
+          else {
+            this.notificationService.error(error);
+          }
         }
       });
     } else {
@@ -58,7 +66,15 @@ export class OrderUserModal {
           this.close()
         },
         error: (error) => {
-          this.notificationService.error(error.error);
+          if (error.error && error.error.error) {
+            this.notificationService.error(error.error.error);
+          } 
+          else if (typeof error.error === 'string') {
+            this.notificationService.error(error.error);
+          } 
+          else {
+            this.notificationService.error(error);
+          }
         }
       });
     }

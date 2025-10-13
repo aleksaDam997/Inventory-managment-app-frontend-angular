@@ -6,6 +6,8 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { UpsertCompanyForm } from '../../../../models/form.models';
 import { CompanyRequest } from '../../../../models/request.model';
+import { BsModalRef } from 'ngx-bootstrap/modal';
+import { NotificationService } from '../../../../services/notification.service';
 
 @Component({
   selector: 'app-upsert-companies-modal',
@@ -24,26 +26,13 @@ export class UpsertCompaniesModal {
 
 
   @Output() closed = new EventEmitter<void>();
-  @Output() confirmed = new EventEmitter<CreateApiResponse<Company>>();
 
   submitted = false;
 
-  constructor(private companyManagmentService: CompanyManagmentService) {}
+  constructor(public bsModalRef: BsModalRef, private companyManagmentService: CompanyManagmentService, private notifyService: NotificationService) {}
 
-  close() {
-    this.closed.emit();
-  }
-
-  confirm(data: CreateApiResponse<Company>) {
-    this.confirmed.emit(data);
-  }
-
-  onBackdropClick() {
-    this.close();
-  }
-
-  onDialogClick(event: MouseEvent) {
-    event.stopPropagation();
+   close() {
+    this.bsModalRef.hide();
   }
 
   onSubmit() {
@@ -52,14 +41,11 @@ export class UpsertCompaniesModal {
       return;
     }
 
-
     const company: CompanyRequest = this.companyForm.value;
 
     if(this.isCreateCompanyModal) {
           this.companyManagmentService.createNewCompany(company).subscribe({
       next: (companyResponse: CreateApiResponse<Company>) => {
-
-        this.confirm(companyResponse);
 
         this.close();
 
@@ -75,7 +61,15 @@ export class UpsertCompaniesModal {
         });
       },
       error: (error) => {
-        console.error('Error creating user:', error);
+        if (error.error && error.error.error) {
+          this.notifyService.error(error.error.error);
+        } 
+        else if (typeof error.error === 'string') {
+          this.notifyService.error(error.error);
+        } 
+        else {
+          this.notifyService.error(error);
+        }
       }
     });
     }else {
@@ -83,8 +77,6 @@ export class UpsertCompaniesModal {
     this.companyManagmentService.updateCompany(company).subscribe({
       next: (companyResponse: CreateApiResponse<Company>) => {
 
-        this.confirm(companyResponse);
-
         this.close();
 
         this.companyForm.reset({
@@ -99,7 +91,15 @@ export class UpsertCompaniesModal {
         });
       },
       error: (error) => {
-        console.error('Error creating user:', error);
+        if (error.error && error.error.error) {
+          this.notifyService.error(error.error.error);
+        } 
+        else if (typeof error.error === 'string') {
+          this.notifyService.error(error.error);
+        } 
+        else {
+          this.notifyService.error(error);
+        }
       }
     });
     }

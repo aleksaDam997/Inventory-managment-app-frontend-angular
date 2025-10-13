@@ -52,13 +52,3 @@
   </tbody>
 </table>
 </div>
-
-<app-upsert-price-list-modal
-  [show]="showModal"
-  [isCreateCompanyModal]="isCreateCompanyModal"
-  (closed)="closeModal()"
-  [companies]="companies"
-  (confirmed)="confirmModal($event)"
-  [productForm]="productForm"
-  [title]="modalTitle"
-></app-upsert-price-list-modal>

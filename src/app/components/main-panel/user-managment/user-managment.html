@@ -4,83 +4,81 @@
 </div>
 
 <!-- Filter forma - poboljšana responsivnost -->
-<div class="card shadow-sm mb-4">
-  <div class="card-body">
-    <form class="row g-3" [formGroup]="userFilterForm" (ngSubmit)="onFilterSubmit()">
-      
-      <!-- Search input -->
-      <div class="col-12 col-lg-3">
-        <label for="searchInput" class="form-label small text-muted">Pretraga</label>
-        <input id="searchInput" class="form-control" type="search" placeholder="Pretraži korisnike..." aria-label="Search" formControlName="inputText">
-      </div>
 
-      <!-- Role select -->
-      @if(role === 'ADMIN') {
-        <div class="col-12 col-sm-6 col-lg-2">
-          <label for="roleSelect" class="form-label small text-muted">Uloga</label>
-          <select id="roleSelect" class="form-select" formControlName="role" required>
-            <option value="" selected>Sve uloge</option>
-            <option value="ADMIN">ADMIN</option>
-            <option value="EDITOR">EDITOR</option>
-            <option value="USER">USER</option>
-          </select>
-        </div>
-      }
-
-      <!-- Company select -->
-      @if(role === 'ADMIN') {
-        <div class="col-12 col-sm-6 col-lg-2">
-          <label for="companySelected" class="form-label small text-muted">Firma</label>
-          <select id="companySelected" class="form-select" formControlName="companyId" required>
-            <option value="0" selected>Sve firme</option>
-            <option *ngFor="let company of companies" [value]="company.companyId">{{ company.name }}</option>
-          </select>
-        </div>
-      }
-
-      <!-- Org Unit select -->
-      @if(userFilterForm.get('companyId')?.value) {
-        <div class="col-12 col-sm-6 col-lg-2">
-          <label for="orgUnitSelected" class="form-label small text-muted">Filijala</label>
-          <select id="orgUnitSelected" class="form-select" formControlName="orgUnitId">
-            <option value="0" selected>Sve filijale</option>
-            <option *ngFor="let orgUnit of getOrgUnitsByCompanyId(userFilterForm.get('companyId')?.value)" [value]="orgUnit.orgUnitId">{{ orgUnit.name }}</option>
-          </select>
-        </div>
-      }
-
-      <!-- Active checkbox -->
-      <div class="col-12 col-sm-6 col-lg-2 d-flex align-items-end">
-        <div class="form-check mb-2">
-          <input class="form-check-input" type="checkbox" id="flexCheckDefault" formControlName="isActive">
-          <label class="form-check-label" for="flexCheckDefault">
-            Samo aktivni
-          </label>
-        </div>
-      </div>
-
-      <!-- Action buttons -->
-      <div class="col-12 col-sm-6 col-lg-auto ms-lg-auto d-flex align-items-end gap-2">
-        <button class="btn btn-outline-success flex-fill flex-sm-grow-0" type="submit">
-          <i class="bi bi-funnel me-1"></i>
-          Filtriraj
-        </button>
-        <button class="btn btn-primary flex-fill flex-sm-grow-0" type="button" (click)="openCreateUserModal()">
-          <i class="bi bi-plus-circle me-1"></i>
-          <span class="d-none d-sm-inline">Dodaj</span>
-          <span class="d-inline d-sm-none">Novi</span>
-        </button>
-      </div>
-
-    </form>
+<form class="row g-3" [formGroup]="userFilterForm" (ngSubmit)="onFilterSubmit()">
+  
+  <!-- Search input -->
+  <div class="col-12 col-lg-3">
+    <label for="searchInput" class="form-label small text-muted">Pretraga</label>
+    <input id="searchInput" class="form-control" type="search" placeholder="Pretraži korisnike..." aria-label="Search" formControlName="inputText">
   </div>
-</div>
+
+  <!-- Role select -->
+  @if(role === 'ADMIN') {
+    <div class="col-12 col-sm-6 col-lg-2">
+      <label for="roleSelect" class="form-label small text-muted">Uloga</label>
+      <select id="roleSelect" class="form-select" formControlName="role" required>
+        <option value="" selected>Sve uloge</option>
+        <option value="ADMIN">ADMIN</option>
+        <option value="EDITOR">EDITOR</option>
+        <option value="USER">USER</option>
+      </select>
+    </div>
+  }
+
+  <!-- Company select -->
+  @if(role === 'ADMIN') {
+    <div class="col-12 col-sm-6 col-lg-2">
+      <label for="companySelected" class="form-label small text-muted">Firma</label>
+      <select id="companySelected" class="form-select" formControlName="companyId" required>
+        <option value="0" selected>Sve firme</option>
+        <option *ngFor="let company of companies" [value]="company.companyId">{{ company.name }}</option>
+      </select>
+    </div>
+  }
+
+  <!-- Org Unit select -->
+  @if(userFilterForm.get('companyId')?.value) {
+    <div class="col-12 col-sm-6 col-lg-2">
+      <label for="orgUnitSelected" class="form-label small text-muted">Filijala</label>
+      <select id="orgUnitSelected" class="form-select" formControlName="orgUnitId">
+        <option value="0" selected>Sve filijale</option>
+        <option *ngFor="let orgUnit of getOrgUnitsByCompanyId(userFilterForm.get('companyId')?.value)" [value]="orgUnit.orgUnitId">{{ orgUnit.name }}</option>
+      </select>
+    </div>
+  }
+
+  <!-- Active checkbox -->
+  <div class="col-12 col-sm-6 col-lg-2 d-flex align-items-end">
+    <div class="form-check mb-2">
+      <input class="form-check-input" type="checkbox" id="flexCheckDefault" formControlName="isActive">
+      <label class="form-check-label" for="flexCheckDefault">
+        Samo aktivni
+      </label>
+    </div>
+  </div>
+
+  <!-- Action buttons -->
+  <div class="col-12 col-sm-6 col-lg-auto ms-lg-auto d-flex align-items-end gap-2">
+    <button class="btn btn-outline-success flex-fill flex-sm-grow-0" type="submit">
+      <i class="bi bi-funnel me-1"></i>
+      Filtriraj
+    </button>
+    <button class="btn btn-primary flex-fill flex-sm-grow-0" type="button" (click)="openCreateUserModal()">
+      <i class="bi bi-plus-circle me-1"></i>
+      <span class="d-none d-sm-inline">Dodaj</span>
+      <span class="d-inline d-sm-none">Novi</span>
+    </button>
+  </div>
+
+</form>
+
 
 <!-- Desktop verzija (vidljiva na velikim ekranima) -->
 <div class="d-none d-lg-block">
-  <div class="table-responsive" style="max-height: 70vh; overflow-y: auto;">
+  <div class="table-responsive">
     <table class="table table-hover table-borderless text-center align-middle">
-      <thead class="table-light sticky-top">
+      <thead class="table-light">
         <tr>
           <th>Id</th>
           <th>Ime</th>

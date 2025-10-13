@@ -65,4 +65,28 @@ export class InitForms {
         });
     
     }
+
+    static initCompanyForm(): FormGroup {
+        return new FormGroup({
+            name: new FormControl(''),
+            address: new FormControl(''),
+            city: new FormControl(''),
+            email: new FormControl(''),
+            phone: new FormControl(''),
+            website: new FormControl(''),
+            postalCode: new FormControl(),
+            country: new FormControl(''),
+            pib: new FormControl(''),
+            upin: new FormControl('')
+            });
+    }
+
+    static initOrgUnitForm(): FormGroup {
+        return new FormGroup({
+            orgUnitId: new FormControl(null),
+            name: new FormControl(''),
+            code: new FormControl(''),
+            companyId: new FormControl(0)
+        });
+    }
 }

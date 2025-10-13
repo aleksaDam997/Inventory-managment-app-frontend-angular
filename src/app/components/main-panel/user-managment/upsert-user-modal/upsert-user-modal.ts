@@ -8,6 +8,7 @@ import { CreateUserRequest, UpdateUserRequest } from '../../../../models/request
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { CreateApiResponse } from '../../../../models/response.models';
 import { Users } from '../../../../models/user.model';
+import { NotificationService } from '../../../../services/notification.service';
 
 @Component({
   selector: 'app-upsert-user-modal',
@@ -35,7 +36,7 @@ export class UpsertUserModal {
 
   submitted = false;
 
-  constructor(public bsModalRef: BsModalRef, private userManagmentService: UserManagmentService) {
+  constructor(public bsModalRef: BsModalRef, private userManagmentService: UserManagmentService, private notifyService: NotificationService) {
 
     if(this.userRole !== 'ADMIN') {
       this.roles = this.roles.filter(role => role !== 'ADMIN');
@@ -113,7 +114,15 @@ export class UpsertUserModal {
           this.close();
         },
         error: (error) => {
-          console.error('Error creating user:', error);
+          if (error.error && error.error.error) {
+            this.notifyService.error(error.error.error);
+          } 
+          else if (typeof error.error === 'string') {
+            this.notifyService.error(error.error);
+          } 
+          else {
+            this.notifyService.error(error);
+          }
         }
       });
     } else {
@@ -153,7 +162,15 @@ export class UpsertUserModal {
           this.close();
         },
         error: (error) => {
-          console.error('Error updating user:', error);
+          if (error.error && error.error.error) {
+            this.notifyService.error(error.error.error);
+          } 
+          else if (typeof error.error === 'string') {
+            this.notifyService.error(error.error);
+          } 
+          else {
+            this.notifyService.error(error);
+          }
         }
       });
     }
