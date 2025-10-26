@@ -7,53 +7,15 @@
 
   <!-- Navigation -->
   <ul class="nav-list">
-    <li>
-      <a routerLink="companies-managment" routerLinkActive="active" title="Menadžment firmi">
-        <i class="bi bi-buildings"></i>
-        <span class="nav-text">Menadžment firmi</span>
-      </a>
-    </li>
-    
-    <li>
-      <a routerLink="organization-units-managment" routerLinkActive="active" title="Organizacione jedinice">
-        <i class="bi bi-diagram-3"></i>
-        <span class="nav-text">Organizacione jedinice</span>
-      </a>
-    </li>
-    
-    <li>
-      <a routerLink="user-managment" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" title="Menadžment korisnika">
-        <i class="bi bi-person-gear"></i>
-        <span class="nav-text">Menadžment korisnika</span>
-      </a>
-    </li>
-    
-    <li>
-      <a routerLink="price-list" routerLinkActive="active" title="Cjenovnik">
-        <i class="bi bi-tag"></i>
-        <span class="nav-text">Cjenovnik inventara</span>
-      </a>
-    </li>
-    
-    <li>
-      <a routerLink="order-managment" routerLinkActive="active" title="Narudžbe">
-        <i class="bi bi-cart3"></i>
-        <span class="nav-text">Narudžbe</span>
-      </a>
-    </li>
-    
-    <li>
-      <a routerLink="inventory-managment" routerLinkActive="active" title="Menadžment inventara">
-        <i class="bi bi-box-seam"></i>
-        <span class="nav-text">Menadžment inventara</span>
-      </a>
-    </li>
-    
-    <li>
-      <a routerLink="graphs" routerLinkActive="active" title="Statistika">
-        <i class="bi bi-bar-chart-line"></i>
-        <span class="nav-text">Statistika</span>
-      </a>
-    </li>
+    @for (r of routes; track $index) {
+      @if(r.data?.['roles']?.includes(role)) {
+        <li>
+          <a routerLink="{{ r.path }}" routerLinkActive="active" title="{{ r.data?.['title'] }}">
+            <i class="{{ r.data?.['icon'] }}"></i>
+            <span class="nav-text">{{ r.data?.['title'] }}</span>
+          </a>
+        </li>
+      }
+    }
   </ul>
 </nav>

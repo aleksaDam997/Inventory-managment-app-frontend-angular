@@ -21,6 +21,7 @@ import { InitConfig } from '../../../init/init.config';
 import { InitForms } from '../../../init/init.forms';
 import { NotificationService } from '../../../services/notification.service';
 import { ConfirmDialogBox } from '../../pop-up/confirm-dialog-box/confirm-dialog-box';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-inventory-managment',
@@ -36,6 +37,7 @@ export class InventoryManagment implements OnInit, OnDestroy {
   @ViewChild('ordersTable', { static: false }) ordersTable!: ElementRef;
 
   isCreateUserModal = false;
+  highlightedRowId: number | null = null;
 
   orgUnits: OrgUnit[] = [];
   products: Product[] = [];
@@ -58,7 +60,7 @@ export class InventoryManagment implements OnInit, OnDestroy {
 
   constructor(private authService: AuthService, private orgUnitsService: OrgUnitsManagmentService,
     private productManagmentService: ProductService, private orderService: OrderService,  private companyManagmentService: CompanyManagmentService,
-    private modalService: BsModalService, private notifyService: NotificationService) {
+    private modalService: BsModalService, private notifyService: NotificationService, private route: ActivatedRoute) {
 
     this.role = this.authService.getUserRole() as UserRole;
 
@@ -79,6 +81,8 @@ export class InventoryManagment implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+
+
 
     this.orgUnitsService.getAllOrgUnits()
     .pipe(takeUntil(this.destroy$))
@@ -108,11 +112,43 @@ export class InventoryManagment implements OnInit, OnDestroy {
       this.products = products;
     });
 
+    this.route.queryParams.subscribe(params => {
+      const highlightId = params['highlight'] ? +params['highlight'] : null;
+
+      if (highlightId) {
+        setTimeout(() => {
+          const element = document.getElementById(`row-${highlightId}`);
+          if (element) {
+
+            if (element.classList.contains('highlight-green') || element.classList.contains('highlight-warning')) {
+
+            } else {
+              const order = this.orders.find(o => o.orderId === highlightId);
+              if (!order) return;
+
+              if (order.status === OrderStatus.APPROVED) {
+                element.classList.add('highlight-green');
+              } else {
+                element.classList.add('highlight-warning');
+              }
+
+              element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+              setTimeout(() => {
+                element.classList.remove('highlight-green', 'highlight-warning');
+              }, 3000);
+            }
+          }
+        }, 50);
+      }
+    });
 
 
     this.orderService.getOrdersByCriteria(this.orderFilterForm).subscribe({
         next: (orders) => {
           this.orders = orders.data!;
+
+        
         },
         error: (error) => {
           if (error.error && error.error.error) {

@@ -56,3 +56,18 @@
   background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
   box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
 }
+
+tr td {
+  background-color: transparent;
+  transition: background-color 2s ease; /* fade efekt */
+}
+
+/* Highlight approved */
+.highlight-green td {
+  background-color: rgba(0, 255, 0, 0.3);
+}
+
+/* Highlight warning */
+.highlight-warning td {
+  background-color: rgba(255, 200, 0, 0.3);
+}

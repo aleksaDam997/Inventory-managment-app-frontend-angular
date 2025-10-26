@@ -11,7 +11,7 @@ import { fadeAnimation } from './animations/animations';
   styleUrl: './app.css'
 })
 export class App {
-  protected title = 'frontend_angular';
+  protected title = 'Inventory managment';
   
 
 }

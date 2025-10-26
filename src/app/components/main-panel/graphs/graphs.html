@@ -9,7 +9,7 @@
               <label for="companySelected" class="form-label">Firma</label>
               <select id="companySelected" class="form-select" formControlName="companyId" required>
                 <option value="0" selected>Sve firme</option>
-                <option *ngFor="let company of companies" [value]="company.companyId">{{ company.name }}</option>
+                <option *ngFor="let company of companies" [value]="+company.companyId">{{ company.name }}</option>
               </select>
             </div>
           }

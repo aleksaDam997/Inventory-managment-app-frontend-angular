@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { Location } from "@angular/common";
 import { Router, NavigationEnd } from "@angular/router";
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { LoginResponse, Users } from '../models/user.model';
-import { LoginRequestModel } from '../models/request.model';
+import { ConfirmAuthModel, LoginRequestModel } from '../models/request.model';
+import { environment } from '../../environments/environment.development';
 // import * as CryptoJS from 'crypto-js';
 
 @Injectable({
@@ -13,14 +14,22 @@ import { LoginRequestModel } from '../models/request.model';
   export class AuthService {
 
     userData: LoginResponse | null = null;
+    isLoggedIn$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
 
     private apiUrl = 'http://localhost:8080/login';
   
     constructor(private http: HttpClient) { }
   
-    login(LoginRequestModel: LoginRequestModel): Observable<LoginResponse> {
+    login(LoginRequestModel: LoginRequestModel): Observable<LoginResponse | ConfirmAuthModel> {
 
-      return this.http.post<LoginResponse>(this.apiUrl, LoginRequestModel);
+      return this.http.post<LoginResponse | ConfirmAuthModel>(environment.apiUrl + "/login",  LoginRequestModel);
+    }
+
+      
+    confirmAuth(confirmModel: ConfirmAuthModel): Observable<LoginResponse> {
+      console.log(confirmModel)
+      return this.http.post<LoginResponse>(environment.apiUrl + "/auth-code",  confirmModel);
     }
     
 

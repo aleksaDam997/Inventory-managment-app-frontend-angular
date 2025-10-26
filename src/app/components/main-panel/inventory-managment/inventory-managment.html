@@ -4,7 +4,7 @@
   <p>Ovdje možete pratiti sve porudžbine i njihove statuse.</p>
 </div>
 
-<form class="mb-3" [formGroup]="orderFilterForm" (ngSubmit)="onFilterSubmit()">
+<form class="mb-2 mx-3" [formGroup]="orderFilterForm" (ngSubmit)="onFilterSubmit()">
   
   <div class="row g-2">
     <!-- Datumi -->
@@ -102,7 +102,11 @@
     </thead>
     <tbody>
       @for (order of orders; track $index) {
-        <tr>
+        <tr [id]="'row-' + order.orderId"
+            [ngClass]="{
+              'highlight-green': order.orderId === highlightedRowId && order.status === OrderStatus.APPROVED,
+              'highlight-warning': order.orderId === highlightedRowId && order.status === OrderStatus.PENDING
+            }">
           <th>{{ order.orderId }}</th>
           <td class="d-none d-md-table-cell">{{ order.user?.label }}</td>
           <td>{{order.totalPrice}}</td>

@@ -1,0 +1,14 @@
+tr td {
+  background-color: transparent;
+  transition: background-color 2s ease; /* fade efekt */
+}
+
+/* Highlight approved */
+.highlight-primary td {
+  background-color: rgba(0, 0, 255, 0.3);
+}
+
+/* Highlight warning */
+.highlight-success td {
+  background-color: rgba(0, 255, 0, 0.3);
+}

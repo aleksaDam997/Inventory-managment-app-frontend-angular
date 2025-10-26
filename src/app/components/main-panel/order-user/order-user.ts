@@ -17,6 +17,7 @@ import { OrderUserModal } from './order-user-modal/order-user-modal';
 import { CreateApiResponse, OrderResponse } from '../../../models/response.models';
 import { NotificationService } from '../../../services/notification.service';
 import { ConfirmDialogBox } from '../../pop-up/confirm-dialog-box/confirm-dialog-box';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-order-user',
@@ -44,6 +45,8 @@ export class OrderUser {
   role: UserRole;
   bsConfig: any;
 
+  highlightedRowId: number | null = null;
+
   OrderStatus = OrderStatus;
 
   orderStatuses: OrderStatus[] = [];
@@ -52,7 +55,7 @@ export class OrderUser {
 
   constructor(private authService: AuthService, private productManagmentService: ProductService, 
     private orderService: OrderService,  private companyManagmentService: CompanyManagmentService,
-    private modalService: BsModalService, private notificationService: NotificationService) {
+    private modalService: BsModalService, private notificationService: NotificationService, private route: ActivatedRoute) {
 
     this.role = this.authService.getUserRole() as UserRole;
 
@@ -75,6 +78,37 @@ export class OrderUser {
 
     this.productManagmentService.getAllProducts().pipe(takeUntil(this.destroy$)).subscribe(products => {
       this.products = products;
+    });
+
+        this.route.queryParams.subscribe(params => {
+      const highlightId = params['highlight'] ? +params['highlight'] : null;
+
+      if (highlightId) {
+        setTimeout(() => {
+          const element = document.getElementById(`row-${highlightId}`);
+          if (element) {
+
+            if (element.classList.contains('highlight-success') || element.classList.contains('highlight-primary')) {
+
+            } else {
+              const order = this.orders.find(o => o.orderId === highlightId);
+              if (!order) return;
+
+              if (order.status === OrderStatus.APPROVED) {
+                element.classList.add('highlight-primary');
+              } else {
+                element.classList.add('highlight-success');
+              }
+
+              element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+              setTimeout(() => {
+                element.classList.remove('highlight-primary', 'highlight-success');
+              }, 3000);
+            }
+          }
+        }, 50);
+      }
     });
 
 
@@ -141,7 +175,15 @@ export class OrderUser {
               this.onFilterSubmit();
             },
             error: (error) => {
-              this.notificationService.error(error.error);
+              if (error.error && error.error.error) {
+                this.notificationService.error(error.error.error);
+              } 
+              else if (typeof error.error === 'string') {
+                this.notificationService.error(error.error);
+              } 
+              else {
+                this.notificationService.error(error);
+              }
             }
           });
         },
@@ -180,7 +222,6 @@ export class OrderUser {
     order.products.forEach((prod: any) => {
       (this.orderForm.get('orderProducts') as FormArray).push(
         this.createOrderProductForm(prod)
-        
       );
     });
   }
@@ -192,11 +233,18 @@ export class OrderUser {
     this.orderService.deleteOrder(orderId).subscribe({
         next: (response: CreateApiResponse<Order>) => {
 
-          this.notificationService.success(response.message);
           this.onFilterSubmit();
         },
         error: (error) => {
-          this.notificationService.error(error.error);
+          if (error.error && error.error.error) {
+            this.notificationService.error(error.error.error);
+          } 
+          else if (typeof error.error === 'string') {
+            this.notificationService.error(error.error);
+          } 
+          else {
+            this.notificationService.error(error);
+          }
         }
       });
   }
@@ -223,10 +271,17 @@ export class OrderUser {
     this.orderService.getUserOrders(this.orderFilterForm.value).pipe(takeUntil(this.destroy$)).subscribe({
     next: (orders) => {
       this.orders = orders.data!;
-      this.notificationService.success(orders.status + "\n" + orders.message)
     },
     error: (error) => {
-      this.notificationService.error(error);
+      if (error.error && error.error.error) {
+        this.notificationService.error(error.error.error);
+      } 
+      else if (typeof error.error === 'string') {
+        this.notificationService.error(error.error);
+      } 
+      else {
+        this.notificationService.error(error);
+      }
     }
     });
   }

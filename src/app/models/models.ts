@@ -66,3 +66,16 @@ export interface OrderProduct {
 	createdAt: Date | null;
 	updatedAt: Date | null;
 }
+
+export interface Notification {
+  notificationId: number;
+  userToId: number;
+  userFromId: number;
+  orderId: number;
+  message: string;
+  companyId: number | null;
+  notificationType: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+

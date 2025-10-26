@@ -17,13 +17,14 @@ export class ReportsService {
     takeCurrentLastMonthReport(reportFilterForm: FormGroup): Observable<CreateApiResponse<Report>> {
 
         const payload = {
+            companyId: +reportFilterForm.value.companyId,
             orgUnitId: +reportFilterForm.value.orgUnitId,
             productId: +reportFilterForm.value.productId
         };
 
         const token = this.authService.getAccessToken();
 
-        return this.http.post<CreateApiResponse<Report>>(`${environment.apiUrl}/universal/take-current-last-month-report`, payload, {
+        return this.http.post<CreateApiResponse<Report>>(`${environment.apiUrl}/protected/take-current-last-month-report`, payload, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

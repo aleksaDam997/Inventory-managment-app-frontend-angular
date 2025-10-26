@@ -3,56 +3,64 @@
   <p>Ovdje možete pratiti sve porudžbine i njihove statuse.</p>
 </div>
 
-<form class="d-flex align-items-end w-100" [formGroup]="orderFilterForm" (ngSubmit)="onFilterSubmit()">
-  
-  <!-- Lijeva grupa -->
-  <div class="d-flex align-items-end">
-    <div class="me-2">
-      <label for="startDate" class="form-label">Select date:</label>
-      <input
-        id="startDate"
-        type="text"
-        class="form-control"
-        bsDatepicker
-        formControlName="startDate"
-        [bsConfig]="bsConfig"
-      />
+<form
+  class="w-100 mb-2 p-1"
+  [formGroup]="orderFilterForm"
+  (ngSubmit)="onFilterSubmit()"
+>
+  <!-- Glavni flex -->
+  <div class="d-flex align-items-end justify-content-between w-100">
+
+    <!-- Lijeva grupa -->
+    <div class="d-flex align-items-end flex-wrap">
+      <div class="me-2">
+        <label for="startDate" class="form-label">Select date:</label>
+        <input
+          id="startDate"
+          type="text"
+          class="form-control"
+          bsDatepicker
+          formControlName="startDate"
+          [bsConfig]="bsConfig"
+        />
+      </div>
+
+      <div class="me-2">
+        <label for="endDate" class="form-label">Select date:</label>
+        <input
+          id="endDate"
+          type="text"
+          class="form-control"
+          bsDatepicker
+          formControlName="endDate"
+          [bsConfig]="bsConfig"
+          [minDate]="orderFilterForm.get('startDate')?.value"
+        />
+      </div>
+
+      <div class="me-2">
+        <label for="statusSelected" class="form-label">Status</label>
+        <select id="statusSelected" class="form-select" formControlName="status">
+          <option value="" selected>Svi statusi</option>
+          <option *ngFor="let status of orderStatuses" [value]="status">
+            {{ statusTranslate(status) }}
+          </option>
+        </select>
+      </div>
+
+      <div class="me-2">
+        <button class="btn btn-outline-success" type="submit">Filtriraj</button>
+      </div>
     </div>
 
-    <div class="me-2">
-      <label for="endDate" class="form-label">Select date:</label>
-      <input
-        id="endDate"
-        type="text"
-        class="form-control"
-        bsDatepicker
-        formControlName="endDate"
-        [bsConfig]="bsConfig"
-        [minDate]="orderFilterForm.get('startDate')?.value"
-      />
-    </div>
-
-    <div class="col-12 col-md-2 me-2">
-      <label for="statusSelected" class="form-label">Status</label>
-      <select id="statusSelected" class="form-select" formControlName="status">
-        <option value="" selected>Svi statusi</option>
-        <option *ngFor="let status of orderStatuses" [value]="status">{{ statusTranslate(status) }}</option>
-      </select>
-    </div>
-
-    <div class="me-2 me-2">
-      <button class="btn btn-outline-success" type="submit">Filtriraj</button>
-    </div>
+    <!-- Dugme DESNO -->
+    <button class="btn btn-primary me-2" type="button" (click)="openCreateOrderModal()">
+      Dodaj
+    </button>
   </div>
-
-  <!-- Dugme sa plus desno -->
-  <button class="btn btn-primary ms-auto" type="button" (click)="openCreateOrderModal()">
-    <!-- <i class="bi bi-plus"></i>
-     <span>Nova porudžbina</span> -->
-     Dodaj
-  </button>
-
 </form>
+
+
 
 
 
@@ -71,9 +79,13 @@
     </thead>
     <tbody>
       @for (order of orders; track $index) {
-        <tr>
+        <tr [id]="'row-' + order.orderId"
+            [ngClass]="{
+              'highlight-success': order.orderId === highlightedRowId && order.status === OrderStatus.COMPLETED,
+              'highlight-primary': order.orderId === highlightedRowId && order.status === OrderStatus.APPROVED
+            }">
           <th>{{ order.orderId }}</th>
-          <td>{{ order.totalPrice }}</td>
+          <td>{{ order.totalPrice }} KM</td>
           <td>
             <span
               class="badge"

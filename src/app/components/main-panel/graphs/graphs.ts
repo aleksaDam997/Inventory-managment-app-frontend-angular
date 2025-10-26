@@ -63,7 +63,15 @@ export class Graphs implements OnInit {
           this.companies = companies;
         },
         error: (error) => {
-          console.error('Error fetching companies:', error);
+          if (error.error && error.error.error) {
+            this.notify.error(error.error.error);
+          } 
+          else if (typeof error.error === 'string') {
+            this.notify.error(error.error);
+          } 
+          else {
+            this.notify.error(error);
+          }
         }
     });
 
@@ -146,14 +154,19 @@ export class Graphs implements OnInit {
         };
       },
       error: (err) => {
-        if (err.error && err.error.error) {
-          this.notify.error(err.error.error);
-        } 
-        else if (typeof err.error === 'string') {
-          this.notify.error(err.error);
-        } 
-        else {
-          this.notify.error(err);
+
+        if(this.role === 'ADMIN') {
+          this.notify.info("Molim izaberite firmu");
+        }else {
+          if (err.error && err.error.error) {
+            this.notify.error(err.error.error);
+          } 
+          else if (typeof err.error === 'string') {
+            this.notify.error(err.error);
+          } 
+          else {
+            this.notify.error(err);
+          }
         }
       }
     });

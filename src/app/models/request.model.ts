@@ -6,6 +6,14 @@ export interface LoginRequestModel {
   password: string;
 }
 
+export interface ConfirmAuthModel {
+  userId: number;
+  code: string;
+  status: number;
+  validUntil: Date;
+}
+
+
 export interface UserFilterRequest {
   inputText: string;
   role: UserRole | null;

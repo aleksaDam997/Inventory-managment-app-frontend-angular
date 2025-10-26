@@ -1,0 +1,24 @@
+<div class="modal-header">
+  <h5 class="modal-title">{{ title || 'Potvrda koda' }}</h5>
+  <button type="button" class="btn-close" aria-label="Zatvori" (click)="close(false)"></button>
+</div>
+
+<div class="modal-body">
+  <p>Unesite kod poslan na vaš email:</p>
+
+  <input type="text" class="form-control" [(ngModel)]="code" placeholder="Kod">
+
+  <div class="mt-2 text-info" *ngIf="timeLeft > 0">
+    <span class="fw-semibold">Vrijeme preostalo: </span> <span class="fw-bold">{{ timeLeft }}</span>
+
+  </div>
+
+  <div class="mt-2 text-danger" *ngIf="timeLeft <= 0">
+    <span class="fw-semibold">Vrijeme je isteklo!</span>
+  </div>
+</div>
+
+<div class="modal-footer" *ngIf="timeLeft > 0">
+  <button type="button" class="btn btn-secondary" (click)="close(false)">Otkaži</button>
+  <button type="button" class="btn btn-primary" (click)="confirm()">Potvrdi</button>
+</div>
