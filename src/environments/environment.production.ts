@@ -1,4 +1,5 @@
 export const environment = {
-  production: true,
-  apiUrl: 'https://myapp.com/',
+  production: false,
+  apiUrl: 'https://enabavke.com:8080',
+  wsUrl: 'wss://enabavke.com:8080/websocket-connection'
 };

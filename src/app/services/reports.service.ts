@@ -24,7 +24,7 @@ export class ReportsService {
 
         const token = this.authService.getAccessToken();
 
-        return this.http.post<CreateApiResponse<Report>>(`${environment.apiUrl}/protected/take-current-last-month-report`, payload, {
+        return this.http.post<CreateApiResponse<Report>>(`${environment.apiUrl}/universal/take-current-last-month-report`, payload, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

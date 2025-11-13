@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Notification } from '../models/models';
+import { environment } from '../../environments/environment.development';
 
 
 
@@ -14,7 +15,7 @@ export class WsService {
 
   connect(token : string | null) {
 
-    this.ws = new WebSocket(`ws://localhost:8080/websocket-connection?token=${token}`);
+    this.ws = new WebSocket(environment.wsUrl + `?token=${token}`);
 
     this.ws.onopen = (event) => {
       console.log("WebSocket connected:", event);
