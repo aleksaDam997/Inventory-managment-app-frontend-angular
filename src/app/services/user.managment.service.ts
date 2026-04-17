@@ -76,4 +76,14 @@ import { FormGroup } from '@angular/forms';
         }
       });
     }
+
+    getBriefUserProfile(): Observable<Users> {
+      const token = this.authService.getAccessToken();
+    
+      return this.http.get<Users>(environment.apiUrl + "/universal/get-brief-user-profile", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+    }
   }

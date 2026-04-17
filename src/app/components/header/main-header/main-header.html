@@ -36,6 +36,8 @@
 
       <!-- Icons/Dropdowns -->
       <div class="header-actions">
+      @if(isLoggedIn) {
+
         <!-- Notifications -->
         <div class="dropdown">
           <button class="icon-btn" 
@@ -83,22 +85,23 @@
         </div> -->
 
         <!-- User -->
-        <div class="dropdown">
-          <button class="icon-btn" 
-                  id="dropdownUser"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false">
-            <i class="bi bi-person-circle"></i>
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end shadow" 
-              aria-labelledby="dropdownUser">
-            <li class="dropdown-header">Moj Nalog</li>
-            <!-- <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Podešavanja</a></li> -->
-            <li><a class="dropdown-item" routerLink="/user-profile" routerLinkActive="active" title="Profil"><i class="bi bi-person me-2"></i>Profil</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>Odjavi se</a></li>
-          </ul>
-        </div>
+          <div class="dropdown">
+            <button class="icon-btn" 
+                    id="dropdownUser"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
+              <i class="bi bi-person-circle"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow" 
+                aria-labelledby="dropdownUser">
+              <li class="dropdown-header">Moj Nalog</li>
+              <!-- <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Podešavanja</a></li> -->
+              <li><a class="dropdown-item" routerLink="/user-profile" routerLinkActive="active" title="Profil"><i class="bi bi-person me-2"></i>Profil</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>Odjavi se</a></li>
+            </ul>
+          </div>
+        }
       </div>
     </div>
   </div>

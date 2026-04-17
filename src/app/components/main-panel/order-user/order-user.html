@@ -69,7 +69,7 @@
   <table #ordersTable id="ordersTable" class="table table-borderless text-left">
     <thead>
       <tr>
-        <th>Id</th>
+        <!-- <th>Id</th> -->
         <th>Ukupno</th>
         <th>Status</th>
         <th>Datum kreiranja narudžbe</th>
@@ -84,7 +84,7 @@
               'highlight-success': order.orderId === highlightedRowId && order.status === OrderStatus.COMPLETED,
               'highlight-primary': order.orderId === highlightedRowId && order.status === OrderStatus.APPROVED
             }">
-          <th>{{ order.orderId }}</th>
+          <!-- <th>{{ order.orderId }}</th> -->
           <td>{{ order.totalPrice }} KM</td>
           <td>
             <span

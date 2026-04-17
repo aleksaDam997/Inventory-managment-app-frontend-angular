@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Form, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { NotificationService } from '../../services/notification.service';
-import { LoginResponse } from '../../models/user.model';
+import { LoginResponse, Users } from '../../models/user.model';
 import { UserManagmentService } from '../../services/user.managment.service';
 import { Router } from '@angular/router';
 
@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
   templateUrl: './user-profile.html',
   styleUrl: './user-profile.css'
 })
-export class UserProfile {
+export class UserProfile implements OnInit {
 
   userForm: FormGroup<any>;
   submitted = false;
@@ -30,6 +30,22 @@ export class UserProfile {
       address: new FormControl(''),
       phone: new FormControl('')
     });
+  }
+
+  ngOnInit(): void {
+    
+    this.userManagmentService.getBriefUserProfile().subscribe({
+      next: (response: Users) => {
+
+        this.userForm.patchValue({
+          email: response.email,
+          address: response.address,
+          phone: response.phone
+        });
+      }, error: (error) => {
+        this.notify.error('Došlo je do greške prilikom učitavanja profila. Molimo pokušajte ponovo.');
+        console.error('Greška prilikom učitavanja profila:', error);
+      }});
   }
 
   onSubmit() {

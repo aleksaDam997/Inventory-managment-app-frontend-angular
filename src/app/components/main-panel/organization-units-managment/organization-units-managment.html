@@ -28,7 +28,7 @@
   <table class="table table-hover table-borderless text-left align-middle">
     <thead>
       <tr>
-        <th scope="col">Id</th>
+        <!-- <th scope="col">Id</th> -->
         @if (role === 'ADMIN') {
           <th scope="col">Naziv firme</th>
         }
@@ -40,7 +40,7 @@
     <tbody>
 
       <tr *ngFor="let orgUnit of orgUnits;" class="align-middle">
-        <th>{{ orgUnit.orgUnitId }}</th>
+        <!-- <th>{{ orgUnit.orgUnitId }}</th> -->
         @if (role === 'ADMIN') {
           <td>{{getCompanyName(orgUnit.companyId!)}}</td>
         }

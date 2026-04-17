@@ -15,12 +15,16 @@ import { Notification } from '../../../models/models';
 export class MainHeader implements OnInit{
 
   notifications: Notification[] = [];
+  isLoggedIn: boolean = false;
 
   constructor(private wsService: WsService, private authService: AuthService, private router: Router){}
 
   ngOnInit(): void {
     this.authService.isLoggedIn$.subscribe(loggedIn => {
       if (loggedIn) {
+
+        this.isLoggedIn = loggedIn;
+
         const token = this.authService.getAccessToken();
         this.wsService.connect(token);
 

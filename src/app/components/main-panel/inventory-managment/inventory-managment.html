@@ -90,7 +90,7 @@
   <table #ordersTable id="ordersTable" class="table table-borderless text-left">
     <thead>
       <tr>
-        <th>Id</th>
+        <!-- <th>Id</th> -->
         <th class="d-none d-md-table-cell">Korisnik</th>
         <th>Cijena</th>
         <th>Status</th>
@@ -106,7 +106,7 @@
               'highlight-green': order.orderId === highlightedRowId && order.status === OrderStatus.APPROVED,
               'highlight-warning': order.orderId === highlightedRowId && order.status === OrderStatus.PENDING
             }">
-          <th>{{ order.orderId }}</th>
+          <!-- <th>{{ order.orderId }}</th> -->
           <td class="d-none d-md-table-cell">{{ order.user?.label }}</td>
           <td>{{order.totalPrice}}</td>
           <td>
