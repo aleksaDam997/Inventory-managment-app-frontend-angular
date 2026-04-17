@@ -1,0 +1,102 @@
+ <div class="container">
+    <div class="contact-container">
+        <div class="row g-0">
+            <div class="col-lg-5 col-12">
+                <div class="info-section">
+                    <h1>Kontaktirajte Nas</h1>
+                    <p>Imate pitanje ili predlog? Slobodno nam se javite! Odgovorićemo vam u najkraćem mogućem roku.</p>
+                    
+                    <div class="contact-info">
+                        <p><i class="fas fa-envelope"></i> enabavkeinfo@gmail.com </p>
+                        <p><i class="fas fa-phone"></i> +387 65 123 4567</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Banja Luka, BiH</p>
+                    </div>
+
+                    <div class="developer-card">
+                        <h3><i class="fas fa-code"></i> Web Developer</h3>
+                        <p>Potreban vam je profesionalni web developer za vaš projekat? Specijalizovan sam za moderne web aplikacije, responsive dizajn i optimizaciju performansi.</p>
+                        <a href="https://aleksadam997.github.io/Portfolio/" target="_blank" class="portfolio-btn">
+                            <i class="fas fa-briefcase me-2"></i>Pogledaj Portfolio
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-7 col-12">
+                <div class="form-section">
+                    <h2>Pošaljite Poruku</h2>
+                    <p class="subtitle">Popunite formu ispod i javićemo vam se uskoro</p>
+
+                    <div class="success-message" *ngIf="showSuccess">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Hvala! Vaša poruka je uspješno poslata.
+                    </div>
+
+                    <!-- Angular Reactive Form Syntax -->
+                    <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Ime i Prezime</label>
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                id="name" 
+                                formControlName="name"
+                                placeholder="Vaše ime"
+                                [class.is-invalid]="name?.invalid && name?.touched">
+                            <div class="invalid-feedback" *ngIf="name?.invalid && name?.touched">
+                                Ime je obavezno polje.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="contact" class="form-label">Kontakt (Email ili broj telefona)</label>
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                id="contact" 
+                                formControlName="contact"
+                                placeholder="vasa.email@example.com"
+                                [class.is-invalid]="contact?.invalid && contact?.touched">
+                            <div class="invalid-feedback" *ngIf="contact?.invalid && contact?.touched">
+                                <span *ngIf="contact?.errors?.['required']">Kontakt je obavezan.</span>
+                                <!-- <span *ngIf="contact?.errors?.['email']">Unesite validnu email adresu.</span> -->
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Naslov</label>
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                id="subject" 
+                                formControlName="subject"
+                                placeholder="Tema poruke"
+                                [class.is-invalid]="subject?.invalid && subject?.touched">
+                            <div class="invalid-feedback" *ngIf="subject?.invalid && subject?.touched">
+                                Naslov je obavezan.
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="content" class="form-label">Poruka</label>
+                            <textarea 
+                                class="form-control" 
+                                id="content" 
+                                rows="5" 
+                                formControlName="content"
+                                placeholder="Vaša poruka..."
+                                [class.is-invalid]="content?.invalid && content?.touched"></textarea>
+                            <div class="invalid-feedback" *ngIf="content?.invalid && content?.touched">
+                                Poruka je obavezna.
+                            </div>
+                        </div>
+
+                        <button type="submit" class="submit-btn" [disabled]="contactForm.invalid">
+                            <i class="fas fa-paper-plane me-2"></i>Pošalji Poruku
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

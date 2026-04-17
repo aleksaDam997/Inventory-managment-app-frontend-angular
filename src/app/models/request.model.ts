@@ -93,10 +93,26 @@ export interface UpdateUserRequest {
   isActive: boolean | null;
 }
 
+export interface UpdateuserProfileRequest {
+  phone: string;
+  address: string;
+  email: string;
+  oldPassword: string;
+  passwordRepeat: string;
+  password: string;
+}
+
 export interface CreateOrderProductReq {
 
 	productId: number | null;
 	quantity: number  | null;
 	currentPrice:number | null;
 
+}
+
+export interface SendContactEmailRequest {
+  sender: string;
+  subject: string;
+  contact: string;
+  content: string;
 }

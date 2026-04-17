@@ -4,7 +4,7 @@ import { Router, NavigationEnd } from "@angular/router";
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { LoginResponse, Users } from '../models/user.model';
-import { ConfirmAuthModel, LoginRequestModel } from '../models/request.model';
+import { ConfirmAuthModel, LoginRequestModel, UpdateuserProfileRequest } from '../models/request.model';
 import { environment } from '../../environments/environment.development';
 // import * as CryptoJS from 'crypto-js';
 
@@ -15,9 +15,6 @@ import { environment } from '../../environments/environment.development';
 
     userData: LoginResponse | null = null;
     isLoggedIn$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-
-
-    private apiUrl = 'http://localhost:8080/login';
   
     constructor(private http: HttpClient) { }
   
@@ -31,8 +28,7 @@ import { environment } from '../../environments/environment.development';
       console.log(confirmModel)
       return this.http.post<LoginResponse>(environment.apiUrl + "/auth-code",  confirmModel);
     }
-    
-
+  
     saveAccessToken(token: string): void {
       localStorage.setItem('access_token', token);
     }

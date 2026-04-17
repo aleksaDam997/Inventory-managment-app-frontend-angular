@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Users } from '../models/user.model';
-import { CreateUserRequest, UpdateUserRequest, UserFilterRequest } from '../models/request.model';
+import { LoginResponse, Users } from '../models/user.model';
+import { CreateUserRequest, UpdateuserProfileRequest, UpdateUserRequest, UserFilterRequest } from '../models/request.model';
 import { AuthService } from './auth.service';
 import { CreateApiResponse } from '../models/response.models';
 import { environment } from '../../environments/environment.development';
@@ -67,5 +67,13 @@ import { FormGroup } from '@angular/forms';
 
 
 
-
+    updateUserProfile(uupr: UpdateuserProfileRequest): Observable<LoginResponse> {
+      const token = this.authService.getAccessToken();
+    
+      return this.http.patch<LoginResponse>(environment.apiUrl + "/universal/update-user-profile",  uupr, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+    }
   }

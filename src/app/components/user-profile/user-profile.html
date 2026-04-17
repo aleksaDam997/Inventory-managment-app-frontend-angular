@@ -1,0 +1,98 @@
+<div class="container py-3">
+  <h1>Profil korisnika</h1>
+
+  <form [formGroup]="userForm" (ngSubmit)="onSubmit()" novalidate>
+
+    <!-- EMAIL -->
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input
+        type="email"
+        id="email"
+        class="form-control"
+        formControlName="email"
+        [ngClass]="{ 'is-invalid': submitted && userForm.get('email')?.invalid }"
+        placeholder="Unesite email"
+      />
+
+    </div>
+
+    <!-- PASSWORDS ROW -->
+    <div class="d-flex">
+      
+      <!-- PASSWORD -->
+      <div class="mb-3 me-2 w-50">
+        <label for="oldPassword" class="form-label">Stara lozinka</label>
+        <input
+          type="password"
+          id="oldPassword"
+          class="form-control"
+          formControlName="oldPassword"
+          [ngClass]="{ 'is-invalid': submitted && userForm.get('oldPassword')?.invalid }"
+          placeholder="Unesite lozinku"
+        />
+
+      </div>
+
+      <!-- PASSWORD REPEAT -->
+      <div class="mb-3 ms-2 w-50">
+        <label for="passwordRepeat" class="form-label">Ponovite lozinku</label>
+        <input
+          type="password"
+          id="passwordRepeat"
+          class="form-control"
+          formControlName="passwordRepeat"
+          [ngClass]="{ 'is-invalid': submitted && userForm.get('passwordRepeat')?.invalid }"
+          placeholder="Ponovite lozinku"
+        />
+
+      </div>
+
+    </div>
+
+    <div class="mb-3 w-50">
+    <label for="password" class="form-label">Unesite novu lozinku</label>
+    <input
+        type="password"
+        id="password"
+        class="form-control"
+        formControlName="password"
+        [ngClass]="{ 'is-invalid': submitted && userForm.get('password')?.invalid }"
+        placeholder="Unesite novu lozinku"
+    />
+
+    </div>
+
+    <!-- ADDRESS -->
+    <div class="mb-3">
+      <label for="address" class="form-label">Adresa</label>
+      <input
+        type="text"
+        id="address"
+        class="form-control"
+        formControlName="address"
+        [ngClass]="{ 'is-invalid': submitted && userForm.get('address')?.invalid }"
+        placeholder="Unesite adresu"
+      />
+
+    </div>
+
+    <!-- PHONE -->
+    <div class="mb-3">
+      <label for="phone" class="form-label">Telefon</label>
+      <input
+        type="text"
+        id="phone"
+        class="form-control"
+        formControlName="phone"
+        [ngClass]="{ 'is-invalid': submitted && userForm.get('phone')?.invalid }"
+        placeholder="Unesite telefon"
+      />
+
+    </div>
+
+    <!-- SUBMIT -->
+    <button type="submit" class="btn btn-primary">Sačuvaj</button>
+
+  </form>
+</div>

@@ -1,7 +1,7 @@
 <div class="container-fluid">
   <div class="bg-white shadow-sm p-3 rounded mb-4 text-center text-md-start">
   <h2>Narudžbe</h2>
-  <p>Ovdje možete pratiti sve narudžbe i njihove statuse.</p>
+  <p>Narudžbe i statusi narudžbi.</p>
 </div>
 
 <form class="mb-2 mx-3" [formGroup]="orderFilterForm" (ngSubmit)="onFilterSubmit()">
@@ -76,8 +76,7 @@
 </form>
 
 <!-- Download dugmad -->
-<div class="mb-3 d-flex flex-wrap align-items-center gap-2">
-  <b><i class="bi bi-download"></i> Preuzmi</b>
+<div class="mb-3 ms-3 d-flex flex-wrap align-items-center gap-2">
   <button class="btn btn-outline-success" (click)="downloadExcel()">
     <i class="bi bi-file-pdf"></i>
   </button>
@@ -88,7 +87,7 @@
 
 <!-- Tabela -->
 <div class="table-responsive mt-3">
-  <table #ordersTable id="ordersTable" class="table table-borderless text-center">
+  <table #ordersTable id="ordersTable" class="table table-borderless text-left">
     <thead>
       <tr>
         <th>Id</th>

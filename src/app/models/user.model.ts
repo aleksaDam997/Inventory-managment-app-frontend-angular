@@ -22,5 +22,6 @@ export interface LoginResponse {
   role: UserRole;
   companyId: number;
   status: number
+  originPass: boolean;
   expiresIn: string;
 }

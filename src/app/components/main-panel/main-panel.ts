@@ -15,7 +15,9 @@ export class MainPanel {
   @ViewChild(RouterOutlet) outlet!: RouterOutlet;
 
 
-   prepareRoute(outlet: RouterOutlet) {
-    return outlet?.activatedRouteData?.['animation'];
+  prepareRoute(outlet: RouterOutlet) {
+    return outlet?.activatedRouteData?.['animation'] ?? null;
   }
+
+  
 }
