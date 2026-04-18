@@ -6,7 +6,7 @@ import { Company } from '../../../../models/models';
 import { UserManagmentService } from '../../../../services/user.managment.service';
 import { CreateUserRequest, UpdateUserRequest } from '../../../../models/request.model';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { CreateApiResponse } from '../../../../models/response.models';
+import { ApiResponse } from '../../../../models/response.models';
 import { Users } from '../../../../models/user.model';
 import { NotificationService } from '../../../../services/notification.service';
 
@@ -26,7 +26,7 @@ export class UpsertUserModal {
 
   @Input() userRole: string | null = '';
 
-  @Output() confirm: EventEmitter<CreateApiResponse<Users>> = new EventEmitter();
+  @Output() confirm: EventEmitter<ApiResponse<Users>> = new EventEmitter();
 
   roles = ["ADMIN", "EDITOR", "USER"]
 

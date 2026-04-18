@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { Order, OrderStatus, Product } from '../models/models';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
-import { CreateApiResponse, OrderResponse } from '../models/response.models';
+import { ApiResponse, OrderResponse } from '../models/response.models';
 import {  CreateOrderProductReq, CreateOrderRequest, OrderFilterRequest } from '../models/request.model';
 import { OrderProduct } from '../models/models'
 import { FormArray, FormGroup } from '@angular/forms';
@@ -16,7 +16,7 @@ export class OrderService {
 
 constructor(private http: HttpClient, private authService: AuthService) { }
 
-getOrdersByCriteria(orderFilterForm: FormGroup): Observable<CreateApiResponse<OrderResponse[]>> {
+getOrdersByCriteria(orderFilterForm: FormGroup): Observable<ApiResponse<OrderResponse[]>> {
 
      const orderFilterReq: OrderFilterRequest = {
       startDate: orderFilterForm.get('startDate')?.value,
@@ -28,14 +28,14 @@ getOrdersByCriteria(orderFilterForm: FormGroup): Observable<CreateApiResponse<Or
 
     const token = this.authService.getAccessToken();
 
-    return this.http.post<CreateApiResponse<OrderResponse[]>>(environment.apiUrl + '/protected/get-orders-by-criteria', orderFilterReq, {
+    return this.http.post<ApiResponse<OrderResponse[]>>(environment.apiUrl + '/protected/get-orders-by-criteria', orderFilterReq, {
     headers: {
         Authorization: `Bearer ${token}`
     }
     });
 }
 
-getUserOrders(orderFilterForm: any): Observable<CreateApiResponse<OrderResponse[]>> {
+getUserOrders(orderFilterForm: any): Observable<ApiResponse<OrderResponse[]>> {
 
     const token = this.authService.getAccessToken();    
 
@@ -44,7 +44,7 @@ getUserOrders(orderFilterForm: any): Observable<CreateApiResponse<OrderResponse[
     .set('date-to', orderFilterForm.endDate.toISOString())
     .set('status', orderFilterForm.status);
 
-    return this.http.get<CreateApiResponse<OrderResponse[]>>(environment.apiUrl + '/base/get-my-orders', {
+    return this.http.get<ApiResponse<OrderResponse[]>>(environment.apiUrl + '/base/get-my-orders', {
         params,
         headers: {
             Authorization: `Bearer ${token}`
@@ -52,7 +52,7 @@ getUserOrders(orderFilterForm: any): Observable<CreateApiResponse<OrderResponse[
     });
 }
 
-makeOrder(orderForm: FormGroup): Observable<CreateApiResponse<Order>> {
+makeOrder(orderForm: FormGroup): Observable<ApiResponse<Order>> {
 
     const orderProductsArray = orderForm.get('orderProducts');
     if (!(orderProductsArray instanceof FormArray)) throw new Error('orderProducts nije FormArray!');
@@ -80,7 +80,7 @@ makeOrder(orderForm: FormGroup): Observable<CreateApiResponse<Order>> {
 
     const token = this.authService.getAccessToken();
 
-    return this.http.post<CreateApiResponse<Order>>(environment.apiUrl + '/base/make-order', order, {
+    return this.http.post<ApiResponse<Order>>(environment.apiUrl + '/base/make-order', order, {
     headers: {
         Authorization: `Bearer ${token}`
     }
@@ -89,7 +89,7 @@ makeOrder(orderForm: FormGroup): Observable<CreateApiResponse<Order>> {
 
 
 
-updateOrder(orderForm: FormGroup): Observable<CreateApiResponse<Order>> {
+updateOrder(orderForm: FormGroup): Observable<ApiResponse<Order>> {
 
     const orderProductsArray = orderForm.get('orderProducts');
     if (!(orderProductsArray instanceof FormArray)) throw new Error('orderProducts nije FormArray!');
@@ -118,7 +118,7 @@ updateOrder(orderForm: FormGroup): Observable<CreateApiResponse<Order>> {
 
     const token = this.authService.getAccessToken();
 
-    return this.http.patch<CreateApiResponse<Order>>(environment.apiUrl + '/universal/update-order', order, {
+    return this.http.patch<ApiResponse<Order>>(environment.apiUrl + '/universal/update-order', order, {
     headers: {
         Authorization: `Bearer ${token}`
     }
@@ -128,7 +128,7 @@ updateOrder(orderForm: FormGroup): Observable<CreateApiResponse<Order>> {
 deleteOrder(orderId: number) {
     const token = this.authService.getAccessToken();
 
-    return this.http.delete<CreateApiResponse<Order>>(environment.apiUrl + '/base/delete-order-by-id/' + orderId, {
+    return this.http.delete<ApiResponse<Order>>(environment.apiUrl + '/base/delete-order-by-id/' + orderId, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -136,11 +136,11 @@ deleteOrder(orderId: number) {
 }
 
 
-forwardUserOrderStatus(orderId: number): Observable<CreateApiResponse<null>> {
+forwardUserOrderStatus(orderId: number): Observable<ApiResponse<null>> {
     const token = this.authService.getAccessToken();
     console.log("Token:", token);
 
-    return this.http.patch<CreateApiResponse<null>>(
+    return this.http.patch<ApiResponse<null>>(
         `${environment.apiUrl}/base/forward-order-status-user/${orderId}`,
         null, // <-- body, ako nemaš šta slati, stavi null
         {
@@ -151,11 +151,11 @@ forwardUserOrderStatus(orderId: number): Observable<CreateApiResponse<null>> {
     );
 }
 
-forwardEditorOrderStatus(orderId: number): Observable<CreateApiResponse<null>> {
+forwardEditorOrderStatus(orderId: number): Observable<ApiResponse<null>> {
     const token = this.authService.getAccessToken();
     console.log("Token:", token);
 
-    return this.http.patch<CreateApiResponse<null>>(
+    return this.http.patch<ApiResponse<null>>(
         `${environment.apiUrl}/protected/forward-order-status-editor/${orderId}`,
         null, // <-- body, ako nemaš šta slati, stavi null
         {

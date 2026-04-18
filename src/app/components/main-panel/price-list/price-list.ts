@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Company, OrgUnit, Product } from '../../../models/models';
-import { CreateApiResponse } from '../../../models/response.models';
+import { ApiResponse, ApiError } from '../../../models/response.models';
 import { UserRole } from '../../../models/user.model';
 import { AuthService } from '../../../services/auth.service';
 import { CompanyManagmentService } from '../../../services/company.managment.service';
@@ -12,6 +12,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ConfirmDialogBox } from '../../pop-up/confirm-dialog-box/confirm-dialog-box';
 import { take } from 'rxjs';
 import { NotificationService } from '../../../services/notification.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-price-list',
@@ -60,17 +61,15 @@ export class PriceList {
     this.productManagemntService.getAllProducts().subscribe({
       next: (products) => {
         this.products = products;
-        console.log('Products fetched:', this.products);
       },
-      error: (error) => {
-        if (error.error && error.error.error) {
-          this.notifyService.error(error.error.error);
-        } 
-        else if (typeof error.error === 'string') {
-          this.notifyService.error(error.error);
-        } 
-        else {
-          this.notifyService.error(error);
+      error: (err: HttpErrorResponse) => {
+
+        const res = err.error as ApiResponse<null>;
+
+        const error = res?.error;
+
+        if (error && err.status !== 403) {
+          this.notifyService.error(error.details);
         }
       }
     });
@@ -79,15 +78,14 @@ export class PriceList {
       next: (companies) => {
         this.companies = companies;
       },
-      error: (error) => {
-        if (error.error && error.error.error) {
-          this.notifyService.error(error.error.error);
-        } 
-        else if (typeof error.error === 'string') {
-          this.notifyService.error(error.error);
-        } 
-        else {
-          this.notifyService.error(error);
+      error: (err: HttpErrorResponse) => {
+        
+        const res = err.error as ApiResponse<null>;
+
+        const error = res?.error;
+
+        if (error) {
+          this.notifyService.error(error.details);
         }
       }
     });
@@ -110,22 +108,22 @@ export class PriceList {
   }
 
   
-  confirmModal(apiResponse: CreateApiResponse<any>) {
+  confirmModal(apiResponse: ApiResponse<any>) {
 
     this.productManagemntService.getAllProducts().subscribe({
 
       next: (products) => {
         this.products = products;
       },
-      error: (error) => {
-        if (error.error && error.error.error) {
-          this.notifyService.error(error.error.error);
-        } 
-        else if (typeof error.error === 'string') {
-          this.notifyService.error(error.error);
-        } 
-        else {
-          this.notifyService.error(error);
+      error: (err: HttpErrorResponse) => {
+        
+
+        const res = err.error as ApiResponse<null>;
+
+        const error = res?.error;
+
+        if (error) {
+          this.notifyService.error(error.details);
         }
       }
     });
@@ -142,15 +140,15 @@ export class PriceList {
             next: () => {
               this.products = this.products.filter(p => p.productId !== productId);
             },
-            error: (error) => {
-              if (error.error && error.error.error) {
-                this.notifyService.error(error.error.error);
-              } 
-              else if (typeof error.error === 'string') {
-                this.notifyService.error(error.error);
-              } 
-              else {
-                this.notifyService.error(error);
+            error: (err: HttpErrorResponse) => {
+              
+
+              const res = err.error as ApiResponse<null>;
+
+              const error = res?.error;
+
+              if (error) {
+                this.notifyService.error(error.details);
               }
             }
           });
@@ -191,16 +189,16 @@ export class PriceList {
           next: (products) => {
             this.products = products;
           },
-          error: (error) => {
-            if (error.error && error.error.error) {
-              this.notifyService.error(error.error.error);
-            } 
-            else if (typeof error.error === 'string') {
-              this.notifyService.error(error.error);
-            } 
-            else {
-              this.notifyService.error(error);
-            }
+          error: (err: HttpErrorResponse) => {
+              
+
+              const res = err.error as ApiResponse<null>;
+
+              const error = res?.error;
+
+              if (error) {
+                this.notifyService.error(error.details);
+              }
           }
       });
     }
@@ -210,15 +208,15 @@ export class PriceList {
         next: (products) => {
           this.products = products;
         },
-        error: (error) => {
-          if (error.error && error.error.error) {
-            this.notifyService.error(error.error.error);
-          } 
-          else if (typeof error.error === 'string') {
-            this.notifyService.error(error.error);
-          } 
-          else {
-            this.notifyService.error(error);
+        error: (err: HttpErrorResponse) => {
+          
+
+          const res = err.error as ApiResponse<null>;
+
+          const error = res?.error;
+
+          if (error) {
+            this.notifyService.error(error.details);
           }
         }
       });

@@ -4,8 +4,8 @@ import { Observable } from 'rxjs';
 import { LoginResponse, Users } from '../models/user.model';
 import { CreateUserRequest, UpdateuserProfileRequest, UpdateUserRequest, UserFilterRequest } from '../models/request.model';
 import { AuthService } from './auth.service';
-import { CreateApiResponse } from '../models/response.models';
-import { environment } from '../../environments/environment.development';
+import { ApiResponse } from '../models/response.models';
+import { environment } from '../../environments/environment.dev';
 import { FormGroup } from '@angular/forms';
 // import * as CryptoJS from 'crypto-js';
 
@@ -46,10 +46,10 @@ import { FormGroup } from '@angular/forms';
     }
 
 
-    updateAnotherUser(user: UpdateUserRequest): Observable<CreateApiResponse<Users>> {
+    updateAnotherUser(user: UpdateUserRequest): Observable<ApiResponse<Users>> {
       const token = this.authService.getAccessToken();
 
-      return this.http.patch<CreateApiResponse<Users>>(environment.apiUrl + '/protected/update-another-user', user, {
+      return this.http.patch<ApiResponse<Users>>(environment.apiUrl + '/protected/update-another-user', user, {
         headers: {
           Authorization: `Bearer ${token}`
         }

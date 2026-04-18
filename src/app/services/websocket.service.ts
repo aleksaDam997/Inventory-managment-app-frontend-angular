@@ -1,8 +1,8 @@
 // ws.service.ts
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { Notification } from '../models/models';
-import { environment } from '../../environments/environment.development';
+import { environment } from '../../environments/environment.dev';
 
 
 
@@ -11,7 +11,7 @@ import { environment } from '../../environments/environment.development';
 })
 export class WsService {
   private ws!: WebSocket;
-  public notifications$ = new Subject<Notification[]>();
+  public notifications$ = new BehaviorSubject<Notification[]>([]);
 
   connect(token : string | null) {
 

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { CreateApiResponse } from '../../../../models/response.models';
+import { ApiResponse } from '../../../../models/response.models';
 import { OrgUnitsManagmentService } from '../../../../services/org_units.managment.service';
 import { Company, OrgUnit } from '../../../../models/models';
 import { UpsertOrgUnitForm } from '../../../../models/form.models';

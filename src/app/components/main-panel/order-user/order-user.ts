@@ -14,7 +14,7 @@ import { OrderService } from '../../../services/order.service';
 import { ProductService } from '../../../services/product.service';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { OrderUserModal } from './order-user-modal/order-user-modal';
-import { CreateApiResponse, OrderResponse } from '../../../models/response.models';
+import { ApiResponse, OrderResponse } from '../../../models/response.models';
 import { NotificationService } from '../../../services/notification.service';
 import { ConfirmDialogBox } from '../../pop-up/confirm-dialog-box/confirm-dialog-box';
 import { ActivatedRoute } from '@angular/router';
@@ -231,7 +231,7 @@ export class OrderUser {
   deleteOrder(orderId: number) {
     
     this.orderService.deleteOrder(orderId).subscribe({
-        next: (response: CreateApiResponse<Order>) => {
+        next: (response: ApiResponse<Order>) => {
 
           this.onFilterSubmit();
         },

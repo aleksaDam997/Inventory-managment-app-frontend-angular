@@ -4,7 +4,7 @@ import { ChartConfiguration } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { AuthService } from '../../../services/auth.service';
 import { ReportsService } from '../../../services/reports.service';
-import { CreateApiResponse, Report, SpendByMonth } from '../../../models/response.models';
+import { ApiResponse, Report, SpendByMonth } from '../../../models/response.models';
 import { NotificationService } from '../../../services/notification.service';
 import { Subject, takeUntil } from 'rxjs';
 import { UserRole } from '../../../models/user.model';
@@ -103,7 +103,7 @@ export class Graphs implements OnInit {
 
   onSubmit() {
     this.reportsService.takeCurrentLastMonthReport(this.reportFilterForm).subscribe({
-      next: (res: CreateApiResponse<Report>) => {
+      next: (res: ApiResponse<Report>) => {
         const report = res.data;
 
         this.spendMonth = report ? report.spendByMonth : [];

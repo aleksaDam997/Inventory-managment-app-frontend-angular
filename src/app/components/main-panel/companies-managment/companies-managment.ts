@@ -4,12 +4,13 @@ import { Company } from '../../../models/models';
 import { CommonModule } from '@angular/common';
 import { CompanyManagmentService } from '../../../services/company.managment.service';
 import { UpsertCompaniesModal } from './upsert-companies-modal/upsert-companies-modal';
-import { CreateApiResponse } from '../../../models/response.models';
+import { ApiError, ApiResponse } from '../../../models/response.models';
 import { BsModalRef, BsModalService, ModalModule } from 'ngx-bootstrap/modal';
 import { NotificationService } from '../../../services/notification.service';
 import { Subject, take, takeUntil } from 'rxjs';
 import { ConfirmDialogBox } from '../../pop-up/confirm-dialog-box/confirm-dialog-box';
 import { InitForms } from '../../../init/init.forms';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-companies-managment',
@@ -43,16 +44,14 @@ export class CompaniesManagment implements OnInit{
       next: (companies) => {
          this.companies = companies;
       },
-      error: (error) => {
-        if (error.error && error.error.error) {
-          this.notifyService.error(error.error.error);
-        } 
-        else if (typeof error.error === 'string') {
-          this.notifyService.error(error.error);
-        } 
-        else {
-          this.notifyService.error(error);
-        }
+      error: (err: HttpErrorResponse) => {
+          const res = err.error as ApiResponse<null>;
+
+          const error = res?.error;
+
+          if (error) {
+            this.notifyService.error(error.details);
+          }
       }
     });
   }
@@ -82,16 +81,14 @@ export class CompaniesManagment implements OnInit{
                 next: (response) => {
                   this.companies = this.companies.filter(company => company.companyId !== companyId);
                 },
-                error: (error) => {
-                  if (error.error && error.error.error) {
-                    this.notifyService.error(error.error.error);
-                  } 
-                  else if (typeof error.error === 'string') {
-                    this.notifyService.error(error.error);
-                  } 
-                  else {
-                    this.notifyService.error(error);
-                  }
+                error: (err: HttpErrorResponse) => {
+                    const res = err.error as ApiResponse<null>;
+
+                    const error = res?.error;
+
+                    if (error) {
+                      this.notifyService.error(error.details);
+                    }
                 }
               });
             },

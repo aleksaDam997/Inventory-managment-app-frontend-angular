@@ -64,7 +64,7 @@
             }
 
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item text-center small" href="#">Prikaži sve</a></li>
+            <li><a class="dropdown-item text-center small">Prikaži sve</a></li>
           </ul>
         </div>
 
@@ -98,7 +98,7 @@
               <!-- <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Podešavanja</a></li> -->
               <li><a class="dropdown-item" routerLink="/user-profile" routerLinkActive="active" title="Profil"><i class="bi bi-person me-2"></i>Profil</a></li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>Odjavi se</a></li>
+              <li><a class="dropdown-item text-danger" (click)="onLogout()"><i class="bi bi-box-arrow-right me-2"></i>Odjavi se</a></li>
             </ul>
           </div>
         }

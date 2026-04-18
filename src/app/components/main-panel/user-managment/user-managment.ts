@@ -6,7 +6,7 @@ import { UserManagmentService } from '../../../services/user.managment.service';
 import {  UpsertUserModal } from './upsert-user-modal/upsert-user-modal';
 import { CompanyManagmentService } from '../../../services/company.managment.service';
 import { Company } from '../../../models/models';
-import { CreateApiResponse } from '../../../models/response.models';
+import { ApiResponse } from '../../../models/response.models';
 import { InitForms } from '../../../init/init.forms';
 import { AuthService } from '../../../services/auth.service';
 import { BsModalRef, BsModalService, ModalModule } from 'ngx-bootstrap/modal';
@@ -151,7 +151,7 @@ export class UserManagment implements OnInit, OnDestroy {
     this.showModal = false;
   }
 
-  confirmModal(apiResponse: CreateApiResponse<Users>) {
+  confirmModal(apiResponse: ApiResponse<Users>) {
 
     this.userManagmentService
       .getUsersByFilterCriteria(this.userFilterForm)
@@ -232,7 +232,7 @@ export class UserManagment implements OnInit, OnDestroy {
 
       this.modalRef.content?.confirm
       .pipe(take(1))
-      .subscribe((response: CreateApiResponse<Users>) => {
+      .subscribe((response: ApiResponse<Users>) => {
         this.confirmModal(response);
       });
     }

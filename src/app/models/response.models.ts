@@ -1,9 +1,15 @@
 import { OrderProduct, OrderStatus, Product } from "./models";
 
-export interface CreateApiResponse<T> {
+export interface ApiResponse<T> {
   data: T | null;
   message: string;
   status: string;
+  error?: ApiError;
+}
+
+export interface ApiError {
+  code: string;
+  details: string;
 }
 
 export interface OrderResponse {

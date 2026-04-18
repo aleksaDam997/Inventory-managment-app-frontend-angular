@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { UpsertOuModal } from './upsert-ou-modal/upsert-ou-modal';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { CreateApiResponse } from '../../../models/response.models';
+import { ApiResponse } from '../../../models/response.models';
 import { Company, OrgUnit } from '../../../models/models';
 import { OrgUnitsManagmentService } from '../../../services/org_units.managment.service';
 import { CompanyManagmentService } from '../../../services/company.managment.service';

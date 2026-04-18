@@ -4,20 +4,19 @@ import { Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: HttpHandlerFn): Observable<HttpEvent<any>> => {
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
 
   return next(req).pipe(
     catchError(error => {
 
-      console.log('Interceptor caught status:', error.status);
-      console.log('Error body:', error.error);
+      const code = error?.error?.error?.code;
 
       if (error.status === 401) {
         router.navigate(['/login']);
       }
 
-      if (error.status === 307 && String(error.error).includes('Password change required')) {
+      if (error.status === 403 && code === 'PASSWORD_CHANGE_REQUIRED') {
         router.navigate(['/user-profile']);
       }
 

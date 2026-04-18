@@ -1,23 +1,26 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { NavigationPanel } from '../header/navigation-panel/navigation-panel';
-import { RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { fadeSlideAnimation } from '../../animations/animations';
+import { filter, map } from 'rxjs';
+import { AsyncPipe, CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-main-panel',
-  imports: [NavigationPanel, RouterOutlet],
+  imports: [NavigationPanel, RouterOutlet, AsyncPipe, CommonModule],
   templateUrl: './main-panel.html',
   styleUrl: './main-panel.css',
   animations: [fadeSlideAnimation]
 })
 export class MainPanel {
 
-  @ViewChild(RouterOutlet) outlet!: RouterOutlet;
+  private router = inject(Router);
 
-
-  prepareRoute(outlet: RouterOutlet) {
-    return outlet?.activatedRouteData?.['animation'] ?? null;
-  }
-
-  
+  routeState$ = this.router.events.pipe(
+    filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+    map(() => {
+      const outlet = this.router.routerState.root.firstChild;
+      return outlet?.snapshot?.data?.['animation'] ?? 'None';
+    })
+  );
 }

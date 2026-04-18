@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { OrgUnit } from '../models/models';
 import { environment } from '../../environments/environment';
-import { CreateApiResponse } from '../models/response.models';
+import { ApiResponse } from '../models/response.models';
 import { AuthService } from './auth.service';
 import { CreateOrgUnit } from '../models/request.model';
 // import * as CryptoJS from 'crypto-js';
@@ -40,29 +40,29 @@ getOrgUnitsByCompanyId(companyId: number): Observable<OrgUnit[]> {
 }
 
 
-createNewOrgUnit(orgUnit: CreateOrgUnit): Observable<CreateApiResponse<OrgUnit>> {
+createNewOrgUnit(orgUnit: CreateOrgUnit): Observable<ApiResponse<OrgUnit>> {
 
     const token = this.authService.getAccessToken();
 
-    return this.http.post<CreateApiResponse<OrgUnit>>(environment.apiUrl + '/protected/create-org-unit', orgUnit, {
+    return this.http.post<ApiResponse<OrgUnit>>(environment.apiUrl + '/protected/create-org-unit', orgUnit, {
             headers: {
               Authorization: `Bearer ${token}`
             }
           });
 }
 
-updateOrgUnit(orgUnit: CreateOrgUnit): Observable<CreateApiResponse<OrgUnit>> {
+updateOrgUnit(orgUnit: CreateOrgUnit): Observable<ApiResponse<OrgUnit>> {
     const token = this.authService.getAccessToken();
-    return this.http.put<CreateApiResponse<OrgUnit>>(environment.apiUrl + '/protected/update-org-unit', orgUnit, {
+    return this.http.put<ApiResponse<OrgUnit>>(environment.apiUrl + '/protected/update-org-unit', orgUnit, {
             headers: {
               Authorization: `Bearer ${token}`
             }
           });
 }
 
-deleteOrgUnit(orgUnitId: number): Observable<CreateApiResponse<OrgUnit>> {
+deleteOrgUnit(orgUnitId: number): Observable<ApiResponse<OrgUnit>> {
     const token = this.authService.getAccessToken();
-    return this.http.delete<CreateApiResponse<OrgUnit>>(environment.apiUrl + '/protected/delete-org-unit-by-id/' + orgUnitId, {
+    return this.http.delete<ApiResponse<OrgUnit>>(environment.apiUrl + '/protected/delete-org-unit-by-id/' + orgUnitId, {
             headers: {
               Authorization: `Bearer ${token}`
             }

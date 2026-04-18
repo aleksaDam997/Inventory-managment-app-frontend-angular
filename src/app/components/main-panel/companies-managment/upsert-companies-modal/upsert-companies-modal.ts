@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Company } from '../../../../models/models';
 import { CompanyManagmentService } from '../../../../services/company.managment.service';
-import { CreateApiResponse } from '../../../../models/response.models';
+import { ApiResponse } from '../../../../models/response.models';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { UpsertCompanyForm } from '../../../../models/form.models';
@@ -45,7 +45,7 @@ export class UpsertCompaniesModal {
 
     if(this.isCreateCompanyModal) {
           this.companyManagmentService.createNewCompany(company).subscribe({
-      next: (companyResponse: CreateApiResponse<Company>) => {
+      next: (companyResponse: ApiResponse<Company>) => {
 
         this.close();
 
@@ -75,7 +75,7 @@ export class UpsertCompaniesModal {
     }else {
     
     this.companyManagmentService.updateCompany(company).subscribe({
-      next: (companyResponse: CreateApiResponse<Company>) => {
+      next: (companyResponse: ApiResponse<Company>) => {
 
         this.close();
 

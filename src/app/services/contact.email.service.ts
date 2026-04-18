@@ -1,9 +1,8 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { AuthService } from "./auth.service";
 import { SendContactEmailRequest } from "../models/request.model";
-import { CreateApiResponse } from "../models/response.models";
-import { environment } from "../../environments/environment.production";
+import { ApiResponse } from "../models/response.models";
+import { environment } from "../../environments/environment";
 import { Observable } from "rxjs/internal/Observable";
 
 @Injectable({
@@ -13,9 +12,9 @@ export class ContactEmailService {
 
     constructor(private http: HttpClient) { }
 
-    sendContactEmail(contactData: SendContactEmailRequest): Observable<CreateApiResponse<null>> {
+    sendContactEmail(contactData: SendContactEmailRequest): Observable<ApiResponse<null>> {
 
-        return this.http.post<CreateApiResponse<null>>(environment.apiUrl + "/send-contact-email",  contactData);
+        return this.http.post<ApiResponse<null>>(environment.apiUrl + "/send-contact-email",  contactData);
     }
 
 }

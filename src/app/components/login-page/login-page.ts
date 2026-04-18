@@ -1,4 +1,4 @@
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule, HttpErrorResponse } from '@angular/common/http';
 import { Component, Inject } from '@angular/core';
 import { Form, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
@@ -8,6 +8,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { NotificationService } from '../../services/notification.service';
 import { ConfirmAuthModel } from '../../models/request.model';
 import { LoginResponse } from '../../models/user.model';
+import { ApiResponse } from '../../models/response.models';
 
 @Component({
   selector: 'app-login-page',
@@ -63,7 +64,6 @@ modalRefConfirm?: BsModalRef<ConfirmCodeBox>;
           case 111: {
 
             const confirmData = res as ConfirmAuthModel;
-            console.log(res)
             const modalRef = this.modalService.show(ConfirmCodeBox, {
 
               initialState: {
@@ -89,11 +89,14 @@ modalRefConfirm?: BsModalRef<ConfirmCodeBox>;
         }
       },
 
-      error: (error) => {
-        const msg =
-          error?.error?.error ??
-          (typeof error?.error === 'string' ? error.error : 'Došlo je do greške');
-        this.notify.error(msg);
+      error: (err: HttpErrorResponse) => {
+          const res = err.error as ApiResponse<null>;
+
+          const error = res?.error;
+
+          if (error) {
+            this.notify.error(error.details);
+          }
       }
     });
 

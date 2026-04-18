@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { LoginResponse, Users } from '../models/user.model';
 import { ConfirmAuthModel, LoginRequestModel, UpdateuserProfileRequest } from '../models/request.model';
-import { environment } from '../../environments/environment.development';
+import { environment } from '../../environments/environment.dev';
 // import * as CryptoJS from 'crypto-js';
 
 @Injectable({
@@ -84,5 +84,9 @@ import { environment } from '../../environments/environment.development';
 
     getUserData(): LoginResponse | null {
       return this.userData;
+    }
+
+    removeUserdata(): void {
+      this.userData = null;
     }
   }

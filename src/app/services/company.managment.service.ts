@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { CompanyRequest, LoginRequestModel } from '../models/request.model';
 import { Company } from '../models/models';
 import { environment } from '../../environments/environment';
-import { CreateApiResponse } from '../models/response.models';
+import { ApiResponse } from '../models/response.models';
 import { AuthService } from './auth.service';
 // import * as CryptoJS from 'crypto-js';
 
@@ -28,28 +28,28 @@ import { AuthService } from './auth.service';
               });
     }
 
-    createNewCompany(company: CompanyRequest): Observable<CreateApiResponse<Company>> {
+    createNewCompany(company: CompanyRequest): Observable<ApiResponse<Company>> {
       const token = this.authService.getAccessToken();
 
-      return this.http.post<CreateApiResponse<Company>>(environment.apiUrl + '/protected/create-new-company', company, {
+      return this.http.post<ApiResponse<Company>>(environment.apiUrl + '/protected/create-new-company', company, {
                 headers: {
                   Authorization: `Bearer ${token}`
                 }
               });
     }
 
-    updateCompany(company: CompanyRequest): Observable<CreateApiResponse<Company>> {
+    updateCompany(company: CompanyRequest): Observable<ApiResponse<Company>> {
       const token = this.authService.getAccessToken();
-      return this.http.put<CreateApiResponse<Company>>(environment.apiUrl + '/protected/update-existing-company', company, {
+      return this.http.put<ApiResponse<Company>>(environment.apiUrl + '/protected/update-existing-company', company, {
                 headers: {
                   Authorization: `Bearer ${token}`
                 }
               });
     }
 
-    deleteCompany(companyId: number): Observable<CreateApiResponse<Company>> {
+    deleteCompany(companyId: number): Observable<ApiResponse<Company>> {
       const token = this.authService.getAccessToken();
-      return this.http.delete<CreateApiResponse<Company>>(environment.apiUrl + '/protected/delete-company-by-id/' + companyId, {
+      return this.http.delete<ApiResponse<Company>>(environment.apiUrl + '/protected/delete-company-by-id/' + companyId, {
                 headers: {
                   Authorization: `Bearer ${token}`
                 }

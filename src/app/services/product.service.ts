@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Product } from '../models/models';
 import { environment } from '../../environments/environment';
-import { CreateApiResponse } from '../models/response.models';
+import { ApiResponse } from '../models/response.models';
 import { AuthService } from './auth.service';
 import { CreateProduct } from '../models/request.model';
 // import * as CryptoJS from 'crypto-js';
@@ -40,29 +40,29 @@ getProductsByCompanyId(companyId: number): Observable<Product[]> {
 }
 
 
-createNewProduct(product: CreateProduct): Observable<CreateApiResponse<Product>> {
+createNewProduct(product: CreateProduct): Observable<ApiResponse<Product>> {
 
     const token = this.authService.getAccessToken();
 
-    return this.http.post<CreateApiResponse<Product>>(environment.apiUrl + '/protected/create-product', product, {
+    return this.http.post<ApiResponse<Product>>(environment.apiUrl + '/protected/create-product', product, {
             headers: {
               Authorization: `Bearer ${token}`
             }
           });
 }
 
-updateProduct(product: CreateProduct): Observable<CreateApiResponse<Product>> {
+updateProduct(product: CreateProduct): Observable<ApiResponse<Product>> {
     const token = this.authService.getAccessToken();
-    return this.http.put<CreateApiResponse<Product>>(environment.apiUrl + '/protected/update-product', product, {
+    return this.http.put<ApiResponse<Product>>(environment.apiUrl + '/protected/update-product', product, {
             headers: {
               Authorization: `Bearer ${token}`
             }
           });
 }
 
-deleteProduct(productId: number): Observable<CreateApiResponse<Product>> {
+deleteProduct(productId: number): Observable<ApiResponse<Product>> {
     const token = this.authService.getAccessToken();
-    return this.http.delete<CreateApiResponse<Product>>(environment.apiUrl + '/protected/delete-product-by-id/' + productId, {
+    return this.http.delete<ApiResponse<Product>>(environment.apiUrl + '/protected/delete-product-by-id/' + productId, {
             headers: {
               Authorization: `Bearer ${token}`
             }
