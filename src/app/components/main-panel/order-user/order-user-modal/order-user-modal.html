@@ -65,7 +65,7 @@
                   {{getProductById(group.get('productId')?.value).price}} KM
                 </td>
                 <td>
-                  {{+getProductById(group.get('productId')?.value).price * +group.get('quantity')?.value}} KM
+                  {{+getProductById(group.get('productId')?.value).price * +group.get('quantity')?.value  | number:'1.2-2' }} KM
                 </td>
                 <td>
                   <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeProduct(i)">
