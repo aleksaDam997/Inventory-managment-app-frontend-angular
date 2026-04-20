@@ -13,6 +13,7 @@ import { BsModalRef, BsModalService, ModalModule } from 'ngx-bootstrap/modal';
 import { Subject, take, takeUntil } from 'rxjs';
 import { ConfirmDialogBox } from '../../pop-up/confirm-dialog-box/confirm-dialog-box';
 import { NotificationService } from '../../../services/notification.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-user-managment',
@@ -58,15 +59,13 @@ export class UserManagment implements OnInit, OnDestroy {
         this.users = users;
         console.log(this.users);
       },
-      error: (error) => {
-        if (error.error && error.error.error) {
-          this.notifyService.error(error.error.error);
-        } 
-        else if (typeof error.error === 'string') {
-          this.notifyService.error(error.error);
-        } 
-        else {
-          this.notifyService.error(error);
+      error: (err: HttpErrorResponse) => {
+        
+        const res = err.error as ApiResponse<null>;
+        const error = res?.error;
+
+        if (error) {
+          this.notifyService.error(error.details);
         }
       }
     });
@@ -76,15 +75,13 @@ export class UserManagment implements OnInit, OnDestroy {
         next: (companies) => {
           this.companies = companies;
         },
-        error: (error) => {
-          if (error.error && error.error.error) {
-            this.notifyService.error(error.error.error);
-          } 
-          else if (typeof error.error === 'string') {
-            this.notifyService.error(error.error);
-          } 
-          else {
-            this.notifyService.error(error);
+        error: (err: HttpErrorResponse) => {
+          
+          const res = err.error as ApiResponse<null>;
+          const error = res?.error;
+
+          if (error) {
+            this.notifyService.error(error.details);
           }
         }
     });
@@ -120,15 +117,13 @@ export class UserManagment implements OnInit, OnDestroy {
         next: (users) => {
           this.users = users;
         },
-        error: (error) => {
-          if (error.error && error.error.error) {
-            this.notifyService.error(error.error.error);
-          } 
-          else if (typeof error.error === 'string') {
-            this.notifyService.error(error.error);
-          } 
-          else {
-            this.notifyService.error(error);
+        error: (err: HttpErrorResponse) => {
+          
+          const res = err.error as ApiResponse<null>;
+          const error = res?.error;
+
+          if (error) {
+            this.notifyService.error(error.details);
           }
         }
       });
@@ -160,15 +155,13 @@ export class UserManagment implements OnInit, OnDestroy {
           this.users = users;
 
         },
-        error: (error) => {
-          if (error.error && error.error.error) {
-            this.notifyService.error(error.error.error);
-          } 
-          else if (typeof error.error === 'string') {
-            this.notifyService.error(error.error);
-          } 
-          else {
-            this.notifyService.error(error);
+        error: (err: HttpErrorResponse) => {
+          
+          const res = err.error as ApiResponse<null>;
+          const error = res?.error;
+
+          if (error) {
+            this.notifyService.error(error.details);
           }
         }
       });
@@ -193,15 +186,13 @@ export class UserManagment implements OnInit, OnDestroy {
                 this.onFilterSubmit();
                 this.notifyService.success("Korisnik uspješno izbrisan.")
               },
-              error: (error) => {
-                if (error.error && error.error.error) {
-                  this.notifyService.error(error.error.error);
-                } 
-                else if (typeof error.error === 'string') {
-                  this.notifyService.error(error.error);
-                } 
-                else {
-                  this.notifyService.error(error);
+              error: (err: HttpErrorResponse) => {
+                
+                const res = err.error as ApiResponse<null>;
+                const error = res?.error;
+
+                if (error) {
+                  this.notifyService.error(error.details);
                 }
               }
             });

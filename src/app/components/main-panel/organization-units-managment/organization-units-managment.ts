@@ -14,6 +14,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { NotificationService } from '../../../services/notification.service';
 import { ConfirmDialogBox } from '../../pop-up/confirm-dialog-box/confirm-dialog-box';
 import { InitForms } from '../../../init/init.forms';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-organization-units-managment',
@@ -58,17 +59,15 @@ export class OrganizationUnitsManagment implements OnInit{
             console.log(this.orgUnits)
 
       },
-      error: (error) => {
-        if (error.error && error.error.error) {
-          this.notifyService.error(error.error.error);
-        } 
-        else if (typeof error.error === 'string') {
-          this.notifyService.error(error.error);
-        } 
-        else {
-          this.notifyService.error(error);
+        error: (err: HttpErrorResponse) => {
+          
+          const res = err.error as ApiResponse<null>;
+          const error = res?.error;
+
+          if (error) {
+            this.notifyService.error(error.details);
+          }
         }
-      }
     });
 
     this.companyManagmentService.getAllCompanies().subscribe({

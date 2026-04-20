@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ContactEmailService } from '../../services/contact.email.service';
 import { NotificationService } from '../../services/notification.service';
 import { SendContactEmailRequest } from '../../models/request.model';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ApiResponse } from '../../models/response.models';
 
 @Component({
   selector: 'app-contact',
@@ -47,11 +49,15 @@ export class ContactPage {
           next: (response) => {
             this.notify.success(response.message);
           },
-          error: (error) => {
-            console.error('Greška prilikom slanja emaila:', error);
-            this.notify.error('Failed to send email.');
-            
+        error: (err: HttpErrorResponse) => {
+          
+          const res = err.error as ApiResponse<null>;
+          const error = res?.error;
+
+          if (error) {
+            this.notify.error(error.details);
           }
+        }
         });
       }
     }

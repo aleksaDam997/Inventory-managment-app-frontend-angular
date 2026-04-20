@@ -65,7 +65,6 @@ export class PriceList {
       error: (err: HttpErrorResponse) => {
 
         const res = err.error as ApiResponse<null>;
-
         const error = res?.error;
 
         if (error && err.status !== 403) {
@@ -81,7 +80,6 @@ export class PriceList {
       error: (err: HttpErrorResponse) => {
         
         const res = err.error as ApiResponse<null>;
-
         const error = res?.error;
 
         if (error) {
@@ -117,9 +115,7 @@ export class PriceList {
       },
       error: (err: HttpErrorResponse) => {
         
-
         const res = err.error as ApiResponse<null>;
-
         const error = res?.error;
 
         if (error) {
@@ -142,9 +138,7 @@ export class PriceList {
             },
             error: (err: HttpErrorResponse) => {
               
-
               const res = err.error as ApiResponse<null>;
-
               const error = res?.error;
 
               if (error) {
@@ -190,15 +184,13 @@ export class PriceList {
             this.products = products;
           },
           error: (err: HttpErrorResponse) => {
-              
+            
+            const res = err.error as ApiResponse<null>;
+            const error = res?.error;
 
-              const res = err.error as ApiResponse<null>;
-
-              const error = res?.error;
-
-              if (error) {
-                this.notifyService.error(error.details);
-              }
+            if (error) {
+              this.notifyService.error(error.details);
+            }
           }
       });
     }
@@ -210,9 +202,7 @@ export class PriceList {
         },
         error: (err: HttpErrorResponse) => {
           
-
           const res = err.error as ApiResponse<null>;
-
           const error = res?.error;
 
           if (error) {

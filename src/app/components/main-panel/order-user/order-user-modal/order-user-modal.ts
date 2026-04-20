@@ -7,6 +7,8 @@ import { UserRole } from '../../../../models/user.model';
 import { OrderService } from '../../../../services/order.service';
 import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../../../services/notification.service';
+import { ApiResponse } from '../../../../models/response.models';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-order-user-modal',
@@ -46,15 +48,13 @@ export class OrderUserModal {
           this.notificationService.success(response.message);
           this.close()
         },
-        error: (error) => {
-          if (error.error && error.error.error) {
-            this.notificationService.error(error.error.error);
-          } 
-          else if (typeof error.error === 'string') {
-            this.notificationService.error(error.error);
-          } 
-          else {
-            this.notificationService.error(error);
+        error: (err: HttpErrorResponse) => {
+          
+          const res = err.error as ApiResponse<null>;
+          const error = res?.error;
+
+          if (error) {
+            this.notificationService.error(error.details);
           }
         }
       });
@@ -65,15 +65,13 @@ export class OrderUserModal {
           this.notificationService.success(response.message);
           this.close()
         },
-        error: (error) => {
-          if (error.error && error.error.error) {
-            this.notificationService.error(error.error.error);
-          } 
-          else if (typeof error.error === 'string') {
-            this.notificationService.error(error.error);
-          } 
-          else {
-            this.notificationService.error(error);
+        error: (err: HttpErrorResponse) => {
+          
+          const res = err.error as ApiResponse<null>;
+          const error = res?.error;
+
+          if (error) {
+            this.notificationService.error(error.details);
           }
         }
       });

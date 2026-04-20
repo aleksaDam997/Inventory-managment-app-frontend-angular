@@ -7,6 +7,8 @@ import { UserRole } from '../../../../models/user.model';
 import { OrderService } from '../../../../services/order.service';
 import { CreateOrderRequest } from '../../../../models/request.model';
 import { NotificationService } from '../../../../services/notification.service';
+import { ApiResponse } from '../../../../models/response.models';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-im-upsert-modal',
@@ -43,15 +45,13 @@ export class ImUpsertModal {
         next: (response) => {
           this.close()
         },
-        error: (error) => {
-          if (error.error && error.error.error) {
-            this.notifyService.error(error.error.error);
-          } 
-          else if (typeof error.error === 'string') {
-            this.notifyService.error(error.error);
-          } 
-          else {
-            this.notifyService.error(error);
+        error: (err: HttpErrorResponse) => {
+          
+          const res = err.error as ApiResponse<null>;
+          const error = res?.error;
+
+          if (error) {
+            this.notifyService.error(error.details);
           }
         }
       });
@@ -60,15 +60,13 @@ export class ImUpsertModal {
         next: (response) => {
           this.close()
         },
-        error: (error) => {
-          if (error.error && error.error.error) {
-            this.notifyService.error(error.error.error);
-          } 
-          else if (typeof error.error === 'string') {
-            this.notifyService.error(error.error);
-          } 
-          else {
-            this.notifyService.error(error);
+        error: (err: HttpErrorResponse) => {
+          
+          const res = err.error as ApiResponse<null>;
+          const error = res?.error;
+
+          if (error) {
+            this.notifyService.error(error.details);
           }
         }
       });

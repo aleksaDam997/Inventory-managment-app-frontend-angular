@@ -22,6 +22,7 @@ import { InitForms } from '../../../init/init.forms';
 import { NotificationService } from '../../../services/notification.service';
 import { ConfirmDialogBox } from '../../pop-up/confirm-dialog-box/confirm-dialog-box';
 import { ActivatedRoute } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-inventory-managment',
@@ -95,17 +96,15 @@ export class InventoryManagment implements OnInit, OnDestroy {
         next: (companies) => {
           this.companies = companies;
         },
-        error: (error) => {
-          if (error.error && error.error.error) {
-            this.notifyService.error(error.error.error);
-          } 
-          else if (typeof error.error === 'string') {
-            this.notifyService.error(error.error);
-          } 
-          else {
-            this.notifyService.error(error);
-          }
+      error: (err: HttpErrorResponse) => {
+        
+        const res = err.error as ApiResponse<null>;
+        const error = res?.error;
+
+        if (error) {
+          this.notifyService.error(error.details);
         }
+      }
     });
 
     this.productManagmentService.getAllProducts().pipe(takeUntil(this.destroy$)).subscribe(products => {
@@ -150,17 +149,15 @@ export class InventoryManagment implements OnInit, OnDestroy {
 
         
         },
-        error: (error) => {
-          if (error.error && error.error.error) {
-            this.notifyService.error(error.error.error);
-          } 
-          else if (typeof error.error === 'string') {
-            this.notifyService.error(error.error);
-          } 
-          else {
-            this.notifyService.error(error);
-          }
+      error: (err: HttpErrorResponse) => {
+        
+        const res = err.error as ApiResponse<null>;
+        const error = res?.error;
+
+        if (error) {
+          this.notifyService.error(error.details);
         }
+      }
     });
   }
 
@@ -225,17 +222,15 @@ export class InventoryManagment implements OnInit, OnDestroy {
               this.notifyService.success(response.message);
               this.onFilterSubmit();
             },
-            error: (error) => {
-              if (error.error && error.error.error) {
-                this.notifyService.error(error.error.error);
-              } 
-              else if (typeof error.error === 'string') {
-                this.notifyService.error(error.error);
-              } 
-              else {
-                this.notifyService.error(error);
-              }
+          error: (err: HttpErrorResponse) => {
+            
+            const res = err.error as ApiResponse<null>;
+            const error = res?.error;
+
+            if (error) {
+              this.notifyService.error(error.details);
             }
+          }
           });
         },
         onCancel: () => {

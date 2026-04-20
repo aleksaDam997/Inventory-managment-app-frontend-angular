@@ -9,6 +9,7 @@ import { ProductService } from '../../../../services/product.service';
 import { CreateProduct } from '../../../../models/request.model';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { NotificationService } from '../../../../services/notification.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-upsert-price-list-modal',
@@ -51,15 +52,13 @@ export class UpsertPriceListModal {
       this.productService.createNewProduct(product).subscribe({
         next: (response) => {
         },
-        error: (error) => {
-          if (error.error && error.error.error) {
-            this.notifyService.error(error.error.error);
-          } 
-          else if (typeof error.error === 'string') {
-            this.notifyService.error(error.error);
-          } 
-          else {
-            this.notifyService.error(error);
+        error: (err: HttpErrorResponse) => {
+          
+          const res = err.error as ApiResponse<null>;
+          const error = res?.error;
+
+          if (error) {
+            this.notifyService.error(error.details);
           }
         }
       });
@@ -68,15 +67,13 @@ export class UpsertPriceListModal {
       this.productService.updateProduct(product).subscribe({
         next: (response) => {
         },
-        error: (error) => {
-          if (error.error && error.error.error) {
-            this.notifyService.error(error.error.error);
-          } 
-          else if (typeof error.error === 'string') {
-            this.notifyService.error(error.error);
-          } 
-          else {
-            this.notifyService.error(error);
+        error: (err: HttpErrorResponse) => {
+          
+          const res = err.error as ApiResponse<null>;
+          const error = res?.error;
+
+          if (error) {
+            this.notifyService.error(error.details);
           }
         }
       });

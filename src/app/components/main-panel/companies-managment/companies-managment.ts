@@ -45,13 +45,13 @@ export class CompaniesManagment implements OnInit{
          this.companies = companies;
       },
       error: (err: HttpErrorResponse) => {
-          const res = err.error as ApiResponse<null>;
+        
+        const res = err.error as ApiResponse<null>;
+        const error = res?.error;
 
-          const error = res?.error;
-
-          if (error) {
-            this.notifyService.error(error.details);
-          }
+        if (error) {
+          this.notifyService.error(error.details);
+        }
       }
     });
   }
@@ -82,14 +82,14 @@ export class CompaniesManagment implements OnInit{
                   this.companies = this.companies.filter(company => company.companyId !== companyId);
                 },
                 error: (err: HttpErrorResponse) => {
-                    const res = err.error as ApiResponse<null>;
+        
+                const res = err.error as ApiResponse<null>;
+                const error = res?.error;
 
-                    const error = res?.error;
-
-                    if (error) {
-                      this.notifyService.error(error.details);
-                    }
+                if (error) {
+                  this.notifyService.error(error.details);
                 }
+              }
               });
             },
             onCancel: () => {

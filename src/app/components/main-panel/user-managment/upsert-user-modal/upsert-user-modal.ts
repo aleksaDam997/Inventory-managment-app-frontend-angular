@@ -9,6 +9,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ApiResponse } from '../../../../models/response.models';
 import { Users } from '../../../../models/user.model';
 import { NotificationService } from '../../../../services/notification.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-upsert-user-modal',
@@ -113,17 +114,16 @@ export class UpsertUserModal {
 
           this.close();
         },
-        error: (error) => {
-          if (error.error && error.error.error) {
-            this.notifyService.error(error.error.error);
-          } 
-          else if (typeof error.error === 'string') {
-            this.notifyService.error(error.error);
-          } 
-          else {
-            this.notifyService.error(error);
-          }
+        error: (err: HttpErrorResponse) => {
+
+        const res = err.error as ApiResponse<null>;
+
+        const error = res?.error;
+
+        if (error && err.status !== 403) {
+          this.notifyService.error(error.details);
         }
+      }
       });
     } else {
 
@@ -161,17 +161,16 @@ export class UpsertUserModal {
 
           this.close();
         },
-        error: (error) => {
-          if (error.error && error.error.error) {
-            this.notifyService.error(error.error.error);
-          } 
-          else if (typeof error.error === 'string') {
-            this.notifyService.error(error.error);
-          } 
-          else {
-            this.notifyService.error(error);
-          }
+        error: (err: HttpErrorResponse) => {
+
+        const res = err.error as ApiResponse<null>;
+
+        const error = res?.error;
+
+        if (error && err.status !== 403) {
+          this.notifyService.error(error.details);
         }
+      }
       });
     }
   }

@@ -18,6 +18,7 @@ import { ApiResponse, OrderResponse } from '../../../models/response.models';
 import { NotificationService } from '../../../services/notification.service';
 import { ConfirmDialogBox } from '../../pop-up/confirm-dialog-box/confirm-dialog-box';
 import { ActivatedRoute } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-order-user',
@@ -174,15 +175,13 @@ export class OrderUser {
               this.notificationService.success(response.message);
               this.onFilterSubmit();
             },
-            error: (error) => {
-              if (error.error && error.error.error) {
-                this.notificationService.error(error.error.error);
-              } 
-              else if (typeof error.error === 'string') {
-                this.notificationService.error(error.error);
-              } 
-              else {
-                this.notificationService.error(error);
+            error: (err: HttpErrorResponse) => {
+              
+              const res = err.error as ApiResponse<null>;
+              const error = res?.error;
+
+              if (error) {
+                this.notificationService.error(error.details);
               }
             }
           });
@@ -235,15 +234,13 @@ export class OrderUser {
 
           this.onFilterSubmit();
         },
-        error: (error) => {
-          if (error.error && error.error.error) {
-            this.notificationService.error(error.error.error);
-          } 
-          else if (typeof error.error === 'string') {
-            this.notificationService.error(error.error);
-          } 
-          else {
-            this.notificationService.error(error);
+        error: (err: HttpErrorResponse) => {
+          
+          const res = err.error as ApiResponse<null>;
+          const error = res?.error;
+
+          if (error) {
+            this.notificationService.error(error.details);
           }
         }
       });
@@ -272,15 +269,13 @@ export class OrderUser {
     next: (orders) => {
       this.orders = orders.data!;
     },
-    error: (error) => {
-      if (error.error && error.error.error) {
-        this.notificationService.error(error.error.error);
-      } 
-      else if (typeof error.error === 'string') {
-        this.notificationService.error(error.error);
-      } 
-      else {
-        this.notificationService.error(error);
+    error: (err: HttpErrorResponse) => {
+      
+      const res = err.error as ApiResponse<null>;
+      const error = res?.error;
+
+      if (error) {
+        this.notificationService.error(error.details);
       }
     }
     });

@@ -8,6 +8,7 @@ import { UpsertOrgUnitForm } from '../../../../models/form.models';
 import { CreateOrgUnit } from '../../../../models/request.model';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { NotificationService } from '../../../../services/notification.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-upsert-ou-modal',
@@ -58,15 +59,14 @@ export class UpsertOuModal {
         next: (response) => {
           this.close();
         },
-        error: (error) => {
-          if (error.error && error.error.error) {
-            this.notifyService.error(error.error.error);
-          } 
-          else if (typeof error.error === 'string') {
-            this.notifyService.error(error.error);
-          } 
-          else {
-            this.notifyService.error(error);
+        error: (err: HttpErrorResponse) => {
+
+          const res = err.error as ApiResponse<null>;
+
+          const error = res?.error;
+
+          if (error && err.status !== 403) {
+            this.notifyService.error(error.details);
           }
         }
       });
@@ -75,15 +75,14 @@ export class UpsertOuModal {
         next: (response) => {
           this.close();
         },
-        error: (error) => {
-          if (error.error && error.error.error) {
-            this.notifyService.error(error.error.error);
-          } 
-          else if (typeof error.error === 'string') {
-            this.notifyService.error(error.error);
-          } 
-          else {
-            this.notifyService.error(error);
+        error: (err: HttpErrorResponse) => {
+
+          const res = err.error as ApiResponse<null>;
+
+          const error = res?.error;
+
+          if (error && err.status !== 403) {
+            this.notifyService.error(error.details);
           }
         }
       });

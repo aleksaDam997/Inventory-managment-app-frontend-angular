@@ -13,6 +13,7 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { InitForms } from '../../../init/init.forms';
 import { ProductService } from '../../../services/product.service';
 import { Product } from '../../../models/models';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-graphs',
@@ -62,15 +63,13 @@ export class Graphs implements OnInit {
         next: (companies) => {
           this.companies = companies;
         },
-        error: (error) => {
-          if (error.error && error.error.error) {
-            this.notify.error(error.error.error);
-          } 
-          else if (typeof error.error === 'string') {
-            this.notify.error(error.error);
-          } 
-          else {
-            this.notify.error(error);
+        error: (err: HttpErrorResponse) => {
+          
+          const res = err.error as ApiResponse<null>;
+          const error = res?.error;
+
+          if (error) {
+            this.notify.error(error.details);
           }
         }
     });
@@ -80,15 +79,13 @@ export class Graphs implements OnInit {
         next: (products) => { 
           this.products = products;
         },
-        error: (error) => {
-          if (error.error && error.error.error) {
-            this.notify.error(error.error.error);
-          } 
-          else if (typeof error.error === 'string') {
-            this.notify.error(error.error);
-          } 
-          else {
-            this.notify.error(error);
+        error: (err: HttpErrorResponse) => {
+          
+          const res = err.error as ApiResponse<null>;
+          const error = res?.error;
+
+          if (error) {
+            this.notify.error(error.details);
           }
         }
     });
@@ -153,20 +150,13 @@ export class Graphs implements OnInit {
           datasets: [{ data: this.top5ProductsPreviousMonth.map(d => d.value), label: 'Iznos (KM)' }]
         };
       },
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
+        
+        const res = err.error as ApiResponse<null>;
+        const error = res?.error;
 
-        if(this.role === 'ADMIN') {
-          this.notify.info("Molim izaberite firmu");
-        }else {
-          if (err.error && err.error.error) {
-            this.notify.error(err.error.error);
-          } 
-          else if (typeof err.error === 'string') {
-            this.notify.error(err.error);
-          } 
-          else {
-            this.notify.error(err);
-          }
+        if (error) {
+          this.notify.error(error.details);
         }
       }
     });

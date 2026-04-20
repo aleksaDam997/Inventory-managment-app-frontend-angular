@@ -6,6 +6,8 @@ import { NotificationService } from '../../services/notification.service';
 import { LoginResponse, Users } from '../../models/user.model';
 import { UserManagmentService } from '../../services/user.managment.service';
 import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ApiResponse } from '../../models/response.models';
 
 @Component({
   selector: 'app-user-profile',
@@ -42,10 +44,15 @@ export class UserProfile implements OnInit {
           address: response.address,
           phone: response.phone
         });
-      }, error: (error) => {
-        this.notify.error('Došlo je do greške prilikom učitavanja profila. Molimo pokušajte ponovo.');
-        console.error('Greška prilikom učitavanja profila:', error);
-      }});
+      }, error: (err: HttpErrorResponse) => {
+                
+          const res = err.error as ApiResponse<null>;
+          const error = res?.error;
+
+          if (error) {
+            this.notify.error(error.details);
+          }
+        }});
   }
 
   onSubmit() {
@@ -86,9 +93,14 @@ export class UserProfile implements OnInit {
             }
 
         },
-        error: (error) => {
-          this.notify.error('Došlo je do greške prilikom ažuriranja profila. Molimo pokušajte ponovo.');
-          console.error('Greška prilikom ažuriranja profila:', error);
+        error: (err: HttpErrorResponse) => {
+                
+          const res = err.error as ApiResponse<null>;
+          const error = res?.error;
+
+          if (error) {
+            this.notify.error(error.details);
+          }
         }
     });
 

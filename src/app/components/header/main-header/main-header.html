@@ -51,7 +51,7 @@
               aria-labelledby="dropdownNotification">
             <li class="dropdown-header">Notifikacije</li>
 
-            @for (notification of notifications; track $index) {
+            @for (notification of (showAll ? notifications : notifications.slice(0, 5)); track $index) {
               <li>
                 <button
                   type="button"
@@ -64,7 +64,16 @@
             }
 
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item text-center small">Prikaži sve</a></li>
+
+            @if (!showAll && notifications.length > 5) {
+              <li>
+                <a class="dropdown-item text-center small" 
+                  style="cursor: pointer;"
+                  (click)="showAll = true; $event.stopPropagation()">
+                  Prikaži sve
+                </a>
+              </li>
+            }
           </ul>
         </div>
 

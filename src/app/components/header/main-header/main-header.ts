@@ -18,7 +18,7 @@ export class MainHeader implements OnInit{
 
   notifications: Notification[] = [];
   isLoggedIn: boolean = false;
-
+showAll = false;
   constructor(private wsService: WsService, private authService: AuthService, private router: Router){}
 
   ngOnInit(): void {
